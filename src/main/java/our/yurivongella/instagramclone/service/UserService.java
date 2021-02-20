@@ -38,14 +38,12 @@ public class UserService {
 
     public boolean unFollow(Long fromUserId, Long toUserId) {
         Optional<Users> fromUser = usersRepository.findById(fromUserId);
-        Optional<Users> toUser = usersRepository.findById(toUserId);
-
         Optional<Follow> follow = followRepository.findByFromUserIdAndToUserId(fromUserId, toUserId);
 
-        follow.get().unFollow();
-//
-//        Follow follow = new Follow();
-//        follow.addFollow(fromUser.get(), toUser.get());
+        fromUser.get().unFollow(follow.get());
+
+        // Follow follow = new Follow();
+        // follow.addFollow(fromUser.get(), toUser.get());
         followRepository.delete(follow.get()); //쿼리나감
 
         return true;

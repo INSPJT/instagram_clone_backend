@@ -72,5 +72,9 @@ public class Users extends BaseEntity {
         return follow;
     }
 
+    public void unFollow(Follow follow) {
+        follow.getToUser().getFollowers().remove(follow);
+        this.getFollowings().remove(follow);
+    }
 
 }
