@@ -5,15 +5,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
-import com.sun.istack.NotNull;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -44,7 +39,7 @@ public class Users extends BaseEntity {
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<PostLike> postLikes= new ArrayList<>();
+    private List<PostLike> postLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
@@ -59,11 +54,23 @@ public class Users extends BaseEntity {
     private List<Follow> followers = new ArrayList<>();
 
     @Builder
-    public Users(String name, String email, String nickName, String password){
+    public Users(String name, String email, String nickName, String password) {
         this.name = name;
         this.email = email;
         this.nickName = nickName;
         this.password = password;
     }
+
+    public Follow follow(Users toUser) {
+        Follow follow = Follow.builder()
+                              .fromUser(this)
+                              .toUser(toUser)
+                              .build();
+
+        this.followings.add(follow);
+        toUser.followers.add(follow);
+        return follow;
+    }
+
 
 }

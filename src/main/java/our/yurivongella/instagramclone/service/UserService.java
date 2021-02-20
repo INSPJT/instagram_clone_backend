@@ -27,9 +27,27 @@ public class UserService {
         Optional<Users> fromUser = usersRepository.findById(fromUserId);
         Optional<Users> toUser = usersRepository.findById(toUserId);
 
-        Follow follow = new Follow();
-        follow.addFollow(fromUser.get(), toUser.get());
-        followRepository.save(follow);
+        Follow follow = fromUser.get().follow(toUser.get());
+//
+//        Follow follow = new Follow();
+//        follow.addFollow(fromUser.get(), toUser.get());
+        followRepository.save(follow); //쿼리나감
+
+        return true;
+    }
+
+    public boolean unFollow(Long fromUserId, Long toUserId) {
+        Optional<Users> fromUser = usersRepository.findById(fromUserId);
+        Optional<Users> toUser = usersRepository.findById(toUserId);
+
+        Optional<Follow> follow = followRepository.findByFromUserIdAndToUserId(fromUserId, toUserId);
+
+        follow.get().unFollow();
+//
+//        Follow follow = new Follow();
+//        follow.addFollow(fromUser.get(), toUser.get());
+        followRepository.delete(follow.get()); //쿼리나감
+
         return true;
     }
 

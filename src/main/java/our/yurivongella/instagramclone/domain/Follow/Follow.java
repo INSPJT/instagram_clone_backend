@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
@@ -32,12 +33,24 @@ public class Follow extends BaseEntity {
     @JoinColumn(name = "to_user_id")
     private Users toUser;
 
+    @Deprecated
+    @Builder
+    public Follow(Users fromUser, Users toUser) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+    }
+
     public void addFollow(Users fromUser, Users toUsers){
         this.fromUser=fromUser;
         this.toUser=toUsers;
 
         fromUser.getFollowers().add(this);
         toUsers.getFollowings().add(this);
+    }
+
+    public void unFollow() {
+        this.fromUser.getFollowings().remove(this);
+        this.toUser.getFollowers().remove(this);
     }
 
 }

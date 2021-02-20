@@ -36,6 +36,12 @@ public class UserApi {
         return ResponseEntity.ok("결과:"+follow);
     }
 
+    @PutMapping("/unfollow")
+    public ResponseEntity unfollow(@RequestBody FollowRequestDto followRequestDto){
+        boolean followResult = userService.unFollow(followRequestDto.getFromUser(), followRequestDto.getToUser());
+        return ResponseEntity.ok("결과:"+followResult);
+    }
+
     @GetMapping("/getFollowers/{id}")
     public ResponseEntity getFollowers(@PathVariable Long id){
         final List<Follow> followers = userService.getFollowers(id);
