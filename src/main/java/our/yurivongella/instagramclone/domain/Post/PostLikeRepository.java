@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.PostLike;
+package our.yurivongella.instagramclone.domain.Post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

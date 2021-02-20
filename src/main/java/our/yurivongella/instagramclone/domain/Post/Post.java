@@ -3,6 +3,7 @@ package our.yurivongella.instagramclone.domain.Post;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,9 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
+import our.yurivongella.instagramclone.domain.Comment.Comment;
 import our.yurivongella.instagramclone.domain.Users.Users;
 
 @Getter
@@ -30,12 +33,22 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Users user;
 
+    @Column(columnDefinition = "text")
     private String content;
 
     @OneToMany(mappedBy = "post")
     List<PictureURL> pictureURLs = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Users users;
+    @OneToMany(mappedBy = "post")
+    List<PostLike> postLikes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    List<Comment> comments = new ArrayList<>();
+
+    @Builder
+    public Post(Users user, String content, List<PictureURL> pictureURLs) {
+        this.user = user;
+        this.content = content;
+        this.pictureURLs = pictureURLs;
+    }
 }

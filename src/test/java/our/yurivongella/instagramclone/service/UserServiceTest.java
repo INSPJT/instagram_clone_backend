@@ -1,8 +1,8 @@
 package our.yurivongella.instagramclone.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.UsersRequestDto;
+import our.yurivongella.instagramclone.domain.Comment.Comment;
+import our.yurivongella.instagramclone.domain.Comment.CommentLike;
+import our.yurivongella.instagramclone.domain.Post.Post;
+import our.yurivongella.instagramclone.domain.Post.PostLike;
+import our.yurivongella.instagramclone.domain.Users.Users;
 
 @Transactional
 @SpringBootTest
@@ -38,13 +43,31 @@ class UserServiceTest {
         boolean follow2 = userService.follow(1L, 3L);
         boolean follow3 = userService.follow(2L, 1L);
         boolean follow4 = userService.follow(2L, 3L);
-        boolean follow5= userService.follow(3L, 1L);
+        boolean follow5 = userService.follow(3L, 1L);
         boolean follow6 = userService.follow(3L, 2L);
 
-        assertEquals(1,aLong);
-        assertEquals(2,aLong1);
-        assertEquals(3,aLong2);
+        assertEquals(1, aLong);
+        assertEquals(2, aLong1);
+        assertEquals(3, aLong2);
     }
 
+    @Test
+    public void test() throws Exception {
+        Users users = Users.builder()
+                           .name("test")
+                           .build();
+
+        Post post = Post.builder()
+                        .build();
+
+        List<CommentLike> commentLikes = users.getCommentLikes();
+
+        //내가 좋아요한 포스트
+        List<PostLike> postLikes = users.getPostLikes();
+        for(PostLike postLike : postLikes){
+            Post post1 = postLike.getPost();
+        }
+
+    }
 
 }
