@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.domain.Comment;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ import our.yurivongella.instagramclone.domain.Users.Users;
 public class CommentLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_link_id")
     private Long id;
 
     @JoinColumn(name = "comment_id")

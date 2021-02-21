@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ import our.yurivongella.instagramclone.domain.Post.PostLike;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "users")
 public class Users extends BaseEntity {
 
     @Id
