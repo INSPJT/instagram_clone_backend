@@ -19,15 +19,35 @@ jacoco{
 	toolVersion = "0.8.5"
 }
 
-jacocoTestReport{
-	reports{
-		xml.enabled = true // for Codecov
-		html.enabled = true
+jacocoTestReport {
+	reports {
+		html.enabled true
+		xml.enabled false
+		csv.enabled false
 	}
 }
 
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			enabled = true
+
+			element = 'CLASS'
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.60
+			}
+		}
+	}
+}
+
+
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
@@ -47,4 +67,20 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacoco.exec")
+	}
+	finalizedBy 'jacocoTestReport'
+}
+
+task testCoverage(type: Test) {
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	dependsOn(':test',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
