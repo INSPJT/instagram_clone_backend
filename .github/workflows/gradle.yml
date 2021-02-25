@@ -32,7 +32,8 @@ jobs:
       run: ./gradlew build -x test
 
     - name: Test with Gradle
-      run: ./gradlew test
+      run: ./gradlew test testCoverage
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
