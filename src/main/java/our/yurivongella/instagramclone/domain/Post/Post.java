@@ -47,9 +47,9 @@ public class Post extends BaseEntity {
     List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(Users user, String content, List<PictureURL> pictureURLs) {
+    public Post(Users user, String content) {
         this.user = user;
+        user.getPosts().add(this);
         this.content = content;
-        this.pictureURLs = pictureURLs;
     }
 }
