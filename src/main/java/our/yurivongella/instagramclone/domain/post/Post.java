@@ -3,6 +3,7 @@ package our.yurivongella.instagramclone.domain.post;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,16 +41,14 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     List<PictureURL> pictureURLs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<PostLike> postLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(Member member, String content, List<PictureURL> pictureURLs) {
-        this.member = member;
+    public Post(String content) {
         this.content = content;
-        this.pictureURLs = pictureURLs;
     }
 }
