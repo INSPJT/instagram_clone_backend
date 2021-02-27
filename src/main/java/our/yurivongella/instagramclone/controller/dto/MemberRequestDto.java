@@ -6,10 +6,10 @@ import our.yurivongella.instagramclone.domain.member.Member;
 
 @NoArgsConstructor
 @Data
-public class UsersRequestDto {
+public class MemberRequestDto {
     private String name;
 
-    public Member toUsers(){
+    public Member toMember(){
         return Member.builder()
                     .name(getName())
                     .build();

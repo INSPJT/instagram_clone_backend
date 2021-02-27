@@ -5,10 +5,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class UsersResponseDto {
+public class MemberResponseDto {
     private String name;
 
-    public UsersResponseDto(String name) {
+    public MemberResponseDto(String name) {
         this.name = name;
     }
 }
