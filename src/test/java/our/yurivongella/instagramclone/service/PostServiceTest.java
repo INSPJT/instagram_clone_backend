@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.PostRequestDto;
-import our.yurivongella.instagramclone.controller.dto.PostResponseDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostRequestDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostResponseDto;
 import our.yurivongella.instagramclone.controller.dto.UsersRequestDto;
 import our.yurivongella.instagramclone.domain.Post.Post;
 import our.yurivongella.instagramclone.domain.Post.PostRepository;
@@ -75,16 +75,16 @@ public class PostServiceTest {
         // request mock Post
         Long postId = postService.create(postRequestDto, userService.findById(userId).get());
         // reqeust mock get
-        PostResponseDto postResponseDto = postService.read(postId);
+        PostResponseDto postResponseDto = postService.read(postId, userId);
 
-        assertThat(postResponseDto.getUser().getId()).isEqualTo(userId);
+        assertThat(postResponseDto.getAuthor().getId()).isEqualTo(userId);
         assertThat(postResponseDto.getContent()).isEqualTo(postRequestDto.getContent());
 
         for (int i = 0; i < postRequestDto.getPictureUrls().size(); ++i) {
-            assertThat(postResponseDto.getPictureURLs().get(i).getUrl()).isEqualTo(postRequestDto.getPictureUrls().get(i));
+            assertThat(postResponseDto.getPictureUrls().get(i)).isEqualTo(postRequestDto.getPictureUrls().get(i));
         }
 
-        assertThat(postResponseDto.getPostLikes().size()).isEqualTo(0);
-        assertThat(postResponseDto.getComments().size()).isEqualTo(0);
+        assertThat(postResponseDto.getLikeCount()).isEqualTo(0);
+        assertThat(postResponseDto.getCommentCount()).isEqualTo(0);
     }
 }
