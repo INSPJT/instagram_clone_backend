@@ -11,12 +11,12 @@ class FollowingResponseDtoTest {
 
     @Test
     public void dto_test() throws Exception {
-        UsersResponseDto usersResponseDto = new UsersResponseDto("test");
-        List<UsersResponseDto> usersResponseDtos = new ArrayList<>();
-        usersResponseDtos.add(usersResponseDto);
+        MemberResponseDto memberResponseDto = new MemberResponseDto("test");
+        List<MemberResponseDto> memberResponseDtos = new ArrayList<>();
+        memberResponseDtos.add(memberResponseDto);
         FollowingResponseDto followingResponseDto = new FollowingResponseDto();
-        followingResponseDto.getFollowings().add(usersResponseDto);
-        assertEquals(usersResponseDtos,followingResponseDto.getFollowings());
+        followingResponseDto.getFollowings().add(memberResponseDto);
+        assertEquals(memberResponseDtos,followingResponseDto.getFollowings());
     }
 
 }

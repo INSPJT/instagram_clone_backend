@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.users;
+package our.yurivongella.instagramclone.domain.member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,12 @@ import our.yurivongella.instagramclone.domain.post.PostLike;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "users")
-public class Users extends BaseEntity {
+@Table
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     private String name;
@@ -37,45 +37,45 @@ public class Users extends BaseEntity {
     private String nickName;
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<PostLike> postLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<CommentLike> commentLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toUser")
+    @OneToMany(mappedBy = "toMember")
     private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromUser")
+    @OneToMany(mappedBy = "fromMember")
     private List<Follow> followers = new ArrayList<>();
 
     @Builder
-    public Users(String name, String email, String nickName, String password) {
+    public Member(String name, String email, String nickName, String password) {
         this.name = name;
         this.email = email;
         this.nickName = nickName;
         this.password = password;
     }
 
-    public Follow follow(Users toUser) {
+    public Follow follow(Member toMember) {
         Follow follow = Follow.builder()
-                              .fromUser(this)
-                              .toUser(toUser)
+                              .fromMember(this)
+                              .toMember(toMember)
                               .build();
 
         this.followings.add(follow);
-        toUser.followers.add(follow);
+        toMember.followers.add(follow);
         return follow;
     }
 
     public void unFollow(Follow follow) {
-        follow.getToUser().getFollowers().remove(follow);
+        follow.getToMember().getFollowers().remove(follow);
         this.getFollowings().remove(follow);
     }
 

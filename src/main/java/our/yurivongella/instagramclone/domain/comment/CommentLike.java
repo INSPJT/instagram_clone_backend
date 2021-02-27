@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.users.Users;
+import our.yurivongella.instagramclone.domain.member.Member;
 
 @NoArgsConstructor
 @Getter
@@ -30,6 +30,6 @@ public class CommentLike extends BaseEntity {
     private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 }
