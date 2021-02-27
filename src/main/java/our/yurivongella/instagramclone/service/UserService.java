@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.UsersRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
-import our.yurivongella.instagramclone.domain.users.Users;
-import our.yurivongella.instagramclone.domain.users.UsersRepository;
+import our.yurivongella.instagramclone.domain.member.Users;
+import our.yurivongella.instagramclone.domain.member.UsersRepository;
 
 @RequiredArgsConstructor
 @Service

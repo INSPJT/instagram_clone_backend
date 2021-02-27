@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.users;
+package our.yurivongella.instagramclone.domain.member;
 
 import java.util.ArrayList;
 import java.util.List;

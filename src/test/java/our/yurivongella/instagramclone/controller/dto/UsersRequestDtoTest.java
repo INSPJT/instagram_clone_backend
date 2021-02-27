@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import our.yurivongella.instagramclone.domain.users.Users;
+import our.yurivongella.instagramclone.domain.member.Users;
 
 class UsersRequestDtoTest {
     @Test

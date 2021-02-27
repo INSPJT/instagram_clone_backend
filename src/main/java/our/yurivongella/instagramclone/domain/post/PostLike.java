@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.users.Users;
+import our.yurivongella.instagramclone.domain.member.Users;
 
 @Getter
 @Entity

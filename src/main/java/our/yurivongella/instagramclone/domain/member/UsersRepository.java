@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.users;
+package our.yurivongella.instagramclone.domain.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -2,7 +2,7 @@ package our.yurivongella.instagramclone.controller.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.users.Users;
+import our.yurivongella.instagramclone.domain.member.Users;
 
 @NoArgsConstructor
 @Data
