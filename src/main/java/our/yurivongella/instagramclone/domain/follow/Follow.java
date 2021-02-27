@@ -14,9 +14,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.member.Users;
+import our.yurivongella.instagramclone.domain.member.Member;
 
-@Table(name = "follow_id")
+@Table(name = "follow")
 @Getter
 @Entity
 @NoArgsConstructor
@@ -28,31 +28,31 @@ public class Follow extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_user_id")
-    private Users fromUser;
+    @JoinColumn(name = "from_member_id")
+    private Member fromMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_user_id")
-    private Users toUser;
+    @JoinColumn(name = "to_member_id")
+    private Member toMember;
 
     @Deprecated
     @Builder
-    public Follow(Users fromUser, Users toUser) {
-        this.fromUser = fromUser;
-        this.toUser = toUser;
+    public Follow(Member fromMember, Member toMember) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
     }
 
-    public void addFollow(Users fromUser, Users toUsers){
-        this.fromUser=fromUser;
-        this.toUser=toUsers;
+    public void addFollow(Member fromMember, Member toMember) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
 
-        fromUser.getFollowers().add(this);
-        toUsers.getFollowings().add(this);
+        fromMember.getFollowers().add(this);
+        toMember.getFollowings().add(this);
     }
 
     public void unFollow() {
-        this.fromUser.getFollowings().remove(this);
-        this.toUser.getFollowers().remove(this);
+        this.fromMember.getFollowings().remove(this);
+        this.toMember.getFollowers().remove(this);
     }
 
 }

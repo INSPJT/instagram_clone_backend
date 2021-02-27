@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.member.Users;
+import our.yurivongella.instagramclone.domain.member.Member;
 
 @Table(name = "comment")
 @Getter
@@ -33,9 +33,9 @@ public class Comment extends BaseEntity {
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Users user;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

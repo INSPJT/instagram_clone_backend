@@ -6,8 +6,8 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class FollowRequestDto {
-    private Long fromUser;
-    private Long toUser;
+    private Long fromMember;
+    private Long toMember;
 
     public FollowRequestDto() {
     }

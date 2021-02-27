@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FollowingResponseDto {
-    private List<UsersResponseDto> followings = new ArrayList<>();
+    private List<MemberResponseDto> followings = new ArrayList<>();
 }

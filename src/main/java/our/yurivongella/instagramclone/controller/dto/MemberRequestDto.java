@@ -2,15 +2,15 @@ package our.yurivongella.instagramclone.controller.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.member.Users;
+import our.yurivongella.instagramclone.domain.member.Member;
 
 @NoArgsConstructor
 @Data
 public class UsersRequestDto {
     private String name;
 
-    public Users toUsers(){
-        return Users.builder()
+    public Member toUsers(){
+        return Member.builder()
                     .name(getName())
                     .build();
     }
