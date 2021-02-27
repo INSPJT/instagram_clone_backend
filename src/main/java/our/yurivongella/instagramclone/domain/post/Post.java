@@ -1,7 +1,8 @@
-package our.yurivongella.instagramclone.domain.Post;
+package our.yurivongella.instagramclone.domain.post;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +18,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.Comment.Comment;
-import our.yurivongella.instagramclone.domain.Users.Users;
+import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.domain.users.Users;
 
 @Getter
 @NoArgsConstructor

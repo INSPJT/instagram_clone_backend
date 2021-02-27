@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.Follow;
+package our.yurivongella.instagramclone.domain.follow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.Users.Users;
+import our.yurivongella.instagramclone.domain.users.Users;
 
 @Table(name = "follow_id")
 @Getter

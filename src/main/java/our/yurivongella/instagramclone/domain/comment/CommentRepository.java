@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.Comment;
+package our.yurivongella.instagramclone.domain.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.Users;
+package our.yurivongella.instagramclone.domain.users;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +15,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.Comment.Comment;
-import our.yurivongella.instagramclone.domain.Comment.CommentLike;
-import our.yurivongella.instagramclone.domain.Follow.Follow;
-import our.yurivongella.instagramclone.domain.Post.Post;
-import our.yurivongella.instagramclone.domain.Post.PostLike;
+import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.domain.comment.CommentLike;
+import our.yurivongella.instagramclone.domain.follow.Follow;
+import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.domain.post.PostLike;
 
 @Getter
 @Entity
