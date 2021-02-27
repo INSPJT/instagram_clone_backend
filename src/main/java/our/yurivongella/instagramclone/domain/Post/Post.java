@@ -37,6 +37,8 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "text")
     private String content;
 
+    private Long views;
+
     @OneToMany(mappedBy = "post")
     List<PictureURL> pictureURLs = new ArrayList<>();
 
@@ -51,5 +53,6 @@ public class Post extends BaseEntity {
         this.user = user;
         user.getPosts().add(this);
         this.content = content;
+        this.views = 0L;
     }
 }
