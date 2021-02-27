@@ -25,9 +25,10 @@ public class PostRequestDto {
                 .build();
     }
 
-    public List<PictureURL> toPictureURLs() {
+    public List<PictureURL> toPictureURLs(Post post) {
         return pictureUrls.stream().map(url -> PictureURL.builder()
                 .url(url)
+                .post(post)
                 .build()).collect(Collectors.toList());
     }
 }
