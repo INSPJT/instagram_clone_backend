@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.Comment;
+package our.yurivongella.instagramclone.domain.comment;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.Users.Users;
+import our.yurivongella.instagramclone.domain.users.Users;
 
 @NoArgsConstructor
 @Getter

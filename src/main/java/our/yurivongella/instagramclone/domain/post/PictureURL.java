@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.Post;
+package our.yurivongella.instagramclone.domain.post;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,28 +10,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.sun.istack.NotNull;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.Users.Users;
 
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "post_like")
-public class PostLike extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_like_id")
+@Table(name = "picture_url")
+public class PictureURL extends BaseEntity {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "picture_url_id")
     private Long id;
+
+    @NotNull
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
-
-
 }

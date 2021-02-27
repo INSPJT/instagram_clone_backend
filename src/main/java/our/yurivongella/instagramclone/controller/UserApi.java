@@ -15,7 +15,7 @@ import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
 import our.yurivongella.instagramclone.controller.dto.FollowerResponseDto;
 import our.yurivongella.instagramclone.controller.dto.UsersRequestDto;
 import our.yurivongella.instagramclone.controller.dto.UsersResponseDto;
-import our.yurivongella.instagramclone.domain.Follow.Follow;
+import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.service.UserService;
 
 @RequiredArgsConstructor
