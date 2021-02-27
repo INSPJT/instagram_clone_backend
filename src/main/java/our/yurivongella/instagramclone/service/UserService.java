@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.UsersRequestDto;
-import our.yurivongella.instagramclone.domain.Follow.Follow;
-import our.yurivongella.instagramclone.domain.Follow.FollowRepository;
-import our.yurivongella.instagramclone.domain.Users.Users;
-import our.yurivongella.instagramclone.domain.Users.UsersRepository;
+import our.yurivongella.instagramclone.domain.follow.Follow;
+import our.yurivongella.instagramclone.domain.follow.FollowRepository;
+import our.yurivongella.instagramclone.domain.users.Users;
+import our.yurivongella.instagramclone.domain.users.UsersRepository;
 
 @RequiredArgsConstructor
 @Service

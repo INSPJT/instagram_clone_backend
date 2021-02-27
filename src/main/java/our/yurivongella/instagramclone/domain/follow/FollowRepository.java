@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.Follow;
+package our.yurivongella.instagramclone.domain.follow;
 
 import java.util.List;
 import java.util.Optional;
