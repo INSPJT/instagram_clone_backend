@@ -2,7 +2,6 @@ package our.yurivongella.instagramclone.domain.post;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.users.Users;
+import our.yurivongella.instagramclone.domain.member.Member;
 
 @Getter
 @NoArgsConstructor
@@ -32,8 +31,8 @@ public class Post extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(columnDefinition = "text")
     private String content;
@@ -48,8 +47,8 @@ public class Post extends BaseEntity {
     List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(Users user, String content, List<PictureURL> pictureURLs) {
-        this.user = user;
+    public Post(Member member, String content, List<PictureURL> pictureURLs) {
+        this.member = member;
         this.content = content;
         this.pictureURLs = pictureURLs;
     }
