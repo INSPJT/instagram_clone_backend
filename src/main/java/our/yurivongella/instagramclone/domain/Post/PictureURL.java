@@ -35,7 +35,8 @@ public class PictureURL extends BaseEntity {
     private Post post;
 
     @Builder
-    public PictureURL(String url) {
+    public PictureURL(String url, Post post) {
         this.url = url;
+        this.post = post;
     }
 }
