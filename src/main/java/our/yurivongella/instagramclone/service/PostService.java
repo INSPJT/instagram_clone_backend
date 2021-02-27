@@ -3,8 +3,8 @@ package our.yurivongella.instagramclone.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.PostRequestDto;
-import our.yurivongella.instagramclone.controller.dto.PostResponseDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostRequestDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostResponseDto;
 import our.yurivongella.instagramclone.domain.Post.PictureURL;
 import our.yurivongella.instagramclone.domain.Post.PictureURLRepository;
 import our.yurivongella.instagramclone.domain.Post.Post;
@@ -36,11 +36,13 @@ public class PostService {
         return post.getId();
     }
 
+    /*
     @Transactional
     public PostResponseDto read(Long postId) {
         Post post = postRepository.findById(postId).get();
         return PostResponseDto.toPostResponseDto(post);
     }
+     */
 
     @Transactional
     public Long testCreate(PostRequestDto postRequestDto, Long userId) {
@@ -51,5 +53,12 @@ public class PostService {
         post.getPictureURLs().addAll(list);
 
         return post.getId();
+    }
+
+    public PostResponseDto read(Long postId, Long userId) {
+        Users user = usersRepository.findById(userId).get();
+        Post post = postRepository.findById(postId).get();
+        return PostResponseDto.toPostResponseDto(post, user);
+
     }
 }

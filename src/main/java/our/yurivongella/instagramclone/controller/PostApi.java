@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import our.yurivongella.instagramclone.controller.dto.PostRequestDto;
-import our.yurivongella.instagramclone.controller.dto.PostResponseDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostRequestDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostResponseDto;
 import our.yurivongella.instagramclone.domain.Users.Users;
 import our.yurivongella.instagramclone.service.PostService;
 
@@ -34,8 +34,16 @@ public class PostApi {
         return new ResponseEntity<>(id + "인 포스트가 만들어졌습니다.", HttpStatus.OK);
     }
 
+    /*
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponseDto> read(@PathVariable Long postId) {
         return new ResponseEntity<>(postService.read(postId), HttpStatus.OK);
+    }
+     */
+
+    @GetMapping("/{postId}/{userId}")
+    public ResponseEntity<PostResponseDto> read(@PathVariable Long postId, @PathVariable Long userId) {
+        PostResponseDto postResponseDto = postService.read(postId, userId);
+        return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 }
