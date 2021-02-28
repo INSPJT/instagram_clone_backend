@@ -22,7 +22,7 @@ import our.yurivongella.instagramclone.domain.member.Member;
 public class CommentLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_link_id")
+    @Column(name = "comment_like_id")
     private Long id;
 
     @JoinColumn(name = "comment_id")
