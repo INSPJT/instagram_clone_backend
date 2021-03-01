@@ -20,33 +20,33 @@ jacoco {
 }
 
 jacocoTestReport {
-	reports {
-		html.enabled true
-		xml.enabled true
-		csv.enabled false
-	}
+    reports {
+        html.enabled true
+        xml.enabled true
+        csv.enabled false
+    }
 }
 
 
 jacocoTestCoverageVerification {
-	violationRules {
-		rule {
-			enabled = true
+    violationRules {
+        rule {
+            enabled = true
 
-			element = 'CLASS'
+            element = 'CLASS'
 
-			limit {
-				counter = 'LINE'
-				value = 'COVEREDRATIO'
-				minimum = 0.60
-			}
-		}
-	}
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+        }
+    }
 }
 
 
 repositories {
-	jcenter()
+    jcenter()
 }
 
 dependencies {
@@ -56,9 +56,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'mysql:mysql-connector-java'
 
-	implementation 'io.springfox:springfox-swagger2:2.6.1'
+    implementation 'io.springfox:springfox-swagger2:2.6.1'
     implementation 'io.springfox:springfox-swagger-ui:2.6.1'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -66,21 +66,21 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform()
-	jacoco {
-		destinationFile = file("$buildDir/jacoco/jacoco.exec")
-	}
-	finalizedBy 'jacocoTestReport'
+    useJUnitPlatform()
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacoco.exec")
+    }
+    finalizedBy 'jacocoTestReport'
 }
 
 task testCoverage(type: Test) {
-	group 'verification'
-	description 'Runs the unit tests with coverage'
+    group 'verification'
+    description 'Runs the unit tests with coverage'
 
-	dependsOn(':test',
-			':jacocoTestReport',
-			':jacocoTestCoverageVerification')
+    dependsOn(':test',
+            ':jacocoTestReport',
+            ':jacocoTestCoverageVerification')
 
-	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
-	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+    tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+    tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
