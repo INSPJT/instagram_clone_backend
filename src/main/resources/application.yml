@@ -1,4 +1,14 @@
+logging:
+  level:
+    our.yurivongella.instagramclone: debug
+
+---
+
 spring:
+  config:
+    activate:
+      on-profile: h2
+
   h2:
     console:
       enabled: true
@@ -18,7 +28,25 @@ spring:
         format_sql: true
         show_sql: true
 
+---
 
-logging:
-  level:
-    our.yurivongella.instagramclone: debug
+spring:
+  config:
+    activate:
+      on-profile: mysql
+
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC
+      username: yuri
+      password: 1234
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
