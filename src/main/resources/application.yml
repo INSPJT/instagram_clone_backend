@@ -2,6 +2,10 @@ logging:
   level:
     our.yurivongella.instagramclone: debug
 
+spring:
+  profiles:
+    active: mysql
+
 ---
 
 spring:
