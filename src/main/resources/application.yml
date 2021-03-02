@@ -4,7 +4,7 @@ logging:
 
 spring:
   profiles:
-    active: mysql
+    active: h2
 
 ---
 
@@ -40,8 +40,7 @@ spring:
       on-profile: mysql
 
   datasource:
-    hikari:
-      jdbc-url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC
+      url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
       username: yuri
       password: 1234
       driver-class-name: com.mysql.cj.jdbc.Driver
