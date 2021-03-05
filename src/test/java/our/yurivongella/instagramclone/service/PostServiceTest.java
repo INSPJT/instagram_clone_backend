@@ -77,9 +77,9 @@ public class PostServiceTest {
         // request mock Post
         Long postId = postService.create(postCreateRequestDto, memberService.findById(userId).get());
         System.out.println("post id : " + postId + " member Id : " + memberService.findById(userId).get());
-        Member member= memberService.findById(userId).get();
+        Member member = memberService.findById(userId).get();
         // reqeust mock get
-         PostReadResponseDto postResponseDto = postService.read(postId, userId);
+        PostReadResponseDto postResponseDto = postService.read(postId, userId);
 
         assertThat(postResponseDto.getAuthor().getId()).isEqualTo(userId);
         assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());

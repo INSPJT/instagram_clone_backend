@@ -50,7 +50,7 @@ public class PostService {
     public PostReadResponseDto read(Long postId, Long userId) {
         Member member = memberRepository.findById(userId).get();
         Optional<Post> post = postRepository.findById(postId);
-        if(post.isPresent())
+        if (post.isPresent())
             return PostReadResponseDto.toPostResponseDto(post.get(), member);
         else
             return null;
