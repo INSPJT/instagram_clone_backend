@@ -3,17 +3,12 @@ package our.yurivongella.instagramclone.domain.member;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
@@ -36,6 +31,9 @@ public class Member extends BaseEntity {
     private String email;
     private String nickName;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
@@ -61,22 +59,23 @@ public class Member extends BaseEntity {
         this.email = email;
         this.nickName = nickName;
         this.password = password;
+        this.authority = Authority.ROLE_USER;
     }
 
-    public Follow follow(Member toMember) {
+    public Follow follow(Member targetMember) {
         Follow follow = Follow.builder()
                               .fromMember(this)
-                              .toMember(toMember)
+                              .toMember(targetMember)
                               .build();
 
         this.followings.add(follow);
-        toMember.followers.add(follow);
+        targetMember.followers.add(follow);
         return follow;
     }
 
     public void unFollow(Follow follow) {
         follow.getToMember().getFollowers().remove(follow);
-        this.getFollowings().remove(follow);
+        this.followings.remove(follow);
     }
 
 }
