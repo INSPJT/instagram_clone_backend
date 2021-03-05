@@ -50,7 +50,8 @@ public class Post extends BaseEntity {
     List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(String content) {
+    public Post(String content, Member member) {
+        this.member = member;
         this.content = content;
     }
 }

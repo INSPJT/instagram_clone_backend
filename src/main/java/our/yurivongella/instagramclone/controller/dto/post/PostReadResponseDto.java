@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-public class PostResponseDto {
+public class PostReadResponseDto {
     Long id;
     MemberDto author;
     @JsonProperty("images")
@@ -34,7 +34,7 @@ public class PostResponseDto {
     //Boolean bookMark;
 
     @Builder
-    public PostResponseDto(Long id, MemberDto author, List<String> pictureUrls, String content, LocalDateTime created, Boolean isLike, MemberDto usersWhoLike, Long likeCount, List<CommentResponseDto> commentPreview, Long commentCount, Long viewCount) {
+    public PostReadResponseDto(Long id, MemberDto author, List<String> pictureUrls, String content, LocalDateTime created, Boolean isLike, MemberDto usersWhoLike, Long likeCount, List<CommentResponseDto> commentPreview, Long commentCount, Long viewCount) {
         this.id = id;
         this.author = author;
         this.pictureUrls = pictureUrls;
@@ -48,8 +48,8 @@ public class PostResponseDto {
         this.viewCount = viewCount;
     }
 
-    public static PostResponseDto toPostResponseDto(Post post, Member member) {
-        return PostResponseDto.builder()
+    public static PostReadResponseDto toPostResponseDto(Post post, Member member) {
+        return PostReadResponseDto.builder()
                 .id(post.getId())
                 .author(MemberDto.toMemberDto(post.getMember(), member))
                 .pictureUrls(post.getPictureURLs().stream().map(PictureURL::getUrl).collect(Collectors.toList()))

@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PostRequestDto {
+public class PostCreateRequestDto {
     private List<String> pictureUrls;
     private String content;
 
     public Post toPosts(Member member) {
         return Post.builder()
+                .member(member)
                 .content(content)
                 .build();
     }
