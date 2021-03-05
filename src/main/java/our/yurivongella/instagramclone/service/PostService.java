@@ -57,7 +57,8 @@ public class PostService {
             return PostReadResponseDto.toPostResponseDto(post.get(), member);
         }
         else {
-            throw new RuntimeException("게시물이 없습니다.");
+            return null;
+            //throw new RuntimeException("게시물이 없습니다.");
         }
     }
 
