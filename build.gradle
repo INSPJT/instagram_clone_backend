@@ -43,7 +43,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.60
+                minimum = 0.0
             }
 
             excludes = [] + Qdomains as List<String>
