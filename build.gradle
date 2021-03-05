@@ -29,17 +29,24 @@ jacocoTestReport {
 
 
 jacocoTestCoverageVerification {
+    def Qdomains = []
+
+    for (qPattern in "*.QA".."*.QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
+        Qdomains.add(qPattern + "*")
+    }
+
     violationRules {
         rule {
             enabled = true
-
-            element = 'CLASS'
+            element = 'PACKAGE'
 
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
                 minimum = 0.60
             }
+
+            excludes = [] + Qdomains as List<String>
         }
     }
 }
