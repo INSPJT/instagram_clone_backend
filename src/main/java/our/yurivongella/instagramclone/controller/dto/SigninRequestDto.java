@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowRequestDto {
-    private Long id;
+public class SigninRequestDto {
+    private String email;
+    private String password;
 }

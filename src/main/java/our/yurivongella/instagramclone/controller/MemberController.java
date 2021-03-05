@@ -7,50 +7,34 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
-import our.yurivongella.instagramclone.controller.dto.FollowerResponseDto;
-import our.yurivongella.instagramclone.controller.dto.MemberRequestDto;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
-import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.service.MemberService;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
 
-    @PostMapping("/signUp")
-    public ResponseEntity signUp(@RequestBody MemberRequestDto memberRequestDto){
-        Long id = memberService.signUp(memberRequestDto);
-        return ResponseEntity.ok(id+"로 저장되었습니다.");
-    }
-
     @PutMapping("/follow")
-    public ResponseEntity follow(@RequestBody FollowRequestDto followRequestDto){
-        boolean follow = memberService.follow(followRequestDto.getFromMember(), followRequestDto.getToMember());
-        return ResponseEntity.ok("결과:"+follow);
+    public ResponseEntity<String> follow(@RequestBody FollowRequestDto followRequestDto) {
+        boolean success = memberService.follow(followRequestDto);
+        return ResponseEntity.ok("팔로우 결과: " + success);
     }
 
     @PutMapping("/unfollow")
-    public ResponseEntity unfollow(@RequestBody FollowRequestDto followRequestDto){
-        boolean followResult = memberService.unFollow(followRequestDto.getFromMember(), followRequestDto.getToMember());
-        return ResponseEntity.ok("결과:"+followResult);
+    public ResponseEntity<String> unfollow(@RequestBody FollowRequestDto followRequestDto) {
+        boolean success = memberService.unFollow(followRequestDto);
+        return ResponseEntity.ok("언팔로우 결과: " + success);
     }
 
-    @GetMapping("/getFollowers/{id}")
-    public ResponseEntity getFollowers(@PathVariable Long id){
-        final List<Follow> followers = memberService.getFollowers(id);
-        // from - to(여기)
-        FollowerResponseDto response = new FollowerResponseDto();
-        for(Follow follow : followers) response.getFollowers().add(new MemberResponseDto(follow.getFromMember().getName()));
-        return ResponseEntity.ok(response);
+    @GetMapping("/followers")
+    public ResponseEntity<List<MemberResponseDto>> getFollowers() {
+        return ResponseEntity.ok(memberService.getFollowers());
     }
 
-    @GetMapping("/getFollowings/{id}")
-    public ResponseEntity getFollowing(@PathVariable Long id){
-        final List<Follow> following = memberService.getFollowing(id);
-        // from(여기) - to
-        final FollowerResponseDto response = new FollowerResponseDto();
-        for(Follow follow : following) response.getFollowers().add(new MemberResponseDto(follow.getToMember().getName()));
-        return ResponseEntity.ok(response);
+    @GetMapping("/followings")
+    public ResponseEntity<List<MemberResponseDto>> getFollowing() {
+        return ResponseEntity.ok(memberService.getFollowings());
     }
 }

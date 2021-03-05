@@ -5,15 +5,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.MemberRequestDto;
+import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,21 +29,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PostServiceTest {
 
     @Autowired
-    private MemberService memberService;
-    @Autowired
     private PostService postService;
+
     @Autowired
     private PostRepository postRepository;
 
-    private static Long userId;
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private AuthService authService;
+
+    private Long userId;
     private static PostCreateRequestDto postCreateRequestDto;
 
+    private final String name = "test";
+    private final String nickName = "testNickname";
+    private final String email = "authService1@test.net";
+    private final String password = "1q2w3e4r";
+
     @BeforeEach
-    public void userSignUp() {
-        // 가입시키고
-        MemberRequestDto memberRequestDto1 = new MemberRequestDto();
-        memberRequestDto1.setName("슈르 킴");
-        userId = memberService.signUp(memberRequestDto1);
+    public void signupBeforeTest() {
+        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+                .name(name)
+                .nickName(nickName)
+                .email(email)
+                .password(password)
+                .build();
+
+        // 가입
+        authService.signup(signupRequestDto);
+        userId = memberRepository.findByEmail(email).get().getId();
     }
 
     @BeforeEach
@@ -60,7 +81,7 @@ public class PostServiceTest {
     @Test
     public void createPost() {
         // request mock Post
-        postService.create(postCreateRequestDto, memberService.findById(userId).get());
+        postService.create(postCreateRequestDto, memberRepository.findById(userId).get());
 
         List<Post> list = postRepository.findAll();
         System.out.println(list);
@@ -75,9 +96,9 @@ public class PostServiceTest {
     @Test
     public void readOnePost() {
         // request mock Post
-        Long postId = postService.create(postCreateRequestDto, memberService.findById(userId).get());
-        System.out.println("post id : " + postId + " member Id : " + memberService.findById(userId).get());
-        Member member = memberService.findById(userId).get();
+        Long postId = postService.create(postCreateRequestDto, memberRepository.findById(userId).get());
+        System.out.println("post id : " + postId + " member Id : " + memberRepository.findById(userId).get());
+
         // reqeust mock get
         PostReadResponseDto postResponseDto = postService.read(postId, userId);
 
@@ -95,7 +116,7 @@ public class PostServiceTest {
     @DisplayName("게시물 삭제")
     @Test
     public void DeleteOnePost() {
-        Long postId = postService.create(postCreateRequestDto, memberService.findById(userId).get());
+        Long postId = postService.create(postCreateRequestDto, memberRepository.findById(userId).get());
 
         postService.delete(postId, userId);
         Optional<PostReadResponseDto> post = Optional.ofNullable(postService.read(postId, userId));
