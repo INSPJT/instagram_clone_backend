@@ -26,7 +26,7 @@ public class CustomUserDetailsServiceTest {
         // given
         String name = "test";
         String nickName = "testNickname";
-        String email = "test@test.net";
+        String email = "customUserDetailsService@test.net";
         String password = "1q2w3e4r";
 
         Member member = Member.builder()
@@ -38,10 +38,12 @@ public class CustomUserDetailsServiceTest {
 
         // when
         memberRepository.save(member);
+
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         // then
-        assertThat(userDetails.getUsername()).isEqualTo("1");
+        Member foundMember = memberRepository.findByEmail(email).get();
+        assertThat(userDetails.getUsername()).isEqualTo(foundMember.getId().toString());
         assertThat(memberRepository.findByEmail(email).isPresent()).isTrue();
     }
 }
