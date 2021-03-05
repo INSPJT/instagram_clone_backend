@@ -99,6 +99,7 @@ public class PostServiceTest {
 
         postService.delete(postId, userId);
         Optional<PostReadResponseDto> post = Optional.ofNullable(postService.read(postId, userId));
+
         assertThat(post).isEmpty();
     }
 }

@@ -15,6 +15,7 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 
 @RequiredArgsConstructor
@@ -36,6 +37,7 @@ public class PostService {
         return post.getId();
     }
 
+    /* TODO : deleted */
     @Transactional
     public Long testCreate(PostCreateRequestDto postCreateRequestDto, Long userId) {
         Post post = postCreateRequestDto.toPosts(memberRepository.findById(userId).get());
@@ -50,10 +52,13 @@ public class PostService {
     public PostReadResponseDto read(Long postId, Long userId) {
         Member member = memberRepository.findById(userId).get();
         Optional<Post> post = postRepository.findById(postId);
-        if (post.isPresent())
+        PostReadResponseDto postReadResponseDto;
+        if (post.isPresent()) {
             return PostReadResponseDto.toPostResponseDto(post.get(), member);
-        else
-            return null;
+        }
+        else {
+            throw new RuntimeException("게시물이 없습니다.");
+        }
     }
 
     @Transactional

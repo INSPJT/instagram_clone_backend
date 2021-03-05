@@ -12,11 +12,11 @@ import our.yurivongella.instagramclone.service.PostService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/post")
-public class PostApi {
+public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<String> create(@RequestBody PostCreateRequestDto postRequestDto) {
         /* 계정 작업 전 Test를 위한 임시 계정 */
         Member member = Member.builder()
@@ -29,6 +29,7 @@ public class PostApi {
         return new ResponseEntity<>(id + "인 포스트가 만들어졌습니다.", HttpStatus.OK);
     }
 
+    /* todo Delete */
     @PostMapping("/test/{userId}")
     public ResponseEntity<String> create(@RequestBody PostCreateRequestDto postRequestDto, @PathVariable Long userId) {
         Long id = postService.testCreate(postRequestDto, userId); // mock users
@@ -42,7 +43,7 @@ public class PostApi {
     }
      */
 
-    /* 아래 Path의 userId는 추후 Token을 통해 인식 할 예 */
+    /* 아래 Path의 userId는 추후 Token을 통해 인식 할 예정 */
     @GetMapping("/{postId}/{userId}")
     public ResponseEntity<PostReadResponseDto> read(@PathVariable Long postId, @PathVariable Long userId) {
         PostReadResponseDto postResponseDto = postService.read(postId, userId);
@@ -55,5 +56,4 @@ public class PostApi {
         Long id = postService.delete(postId, usreId);
         return new ResponseEntity<>(id + "인 포스트가 삭제되었습니다.", HttpStatus.OK);
     }
-
 }
