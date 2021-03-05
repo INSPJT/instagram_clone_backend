@@ -1,14 +1,14 @@
 package our.yurivongella.instagramclone.controller.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class FollowRequestDto {
-    private Long fromMember;
-    private Long toMember;
-
-    public FollowRequestDto() {
-    }
+    private Long id;
 }
