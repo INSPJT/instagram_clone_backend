@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.sun.istack.NotNull;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
@@ -21,7 +22,8 @@ import our.yurivongella.instagramclone.domain.BaseEntity;
 @NoArgsConstructor
 @Table(name = "picture_url")
 public class PictureURL extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "picture_url_id")
     private Long id;
 
@@ -31,4 +33,10 @@ public class PictureURL extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @Builder
+    public PictureURL(String url, Post post) {
+        this.url = url;
+        this.post = post;
+    }
 }

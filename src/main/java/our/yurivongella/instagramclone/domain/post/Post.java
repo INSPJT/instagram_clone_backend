@@ -38,6 +38,8 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "text")
     private String content;
 
+    private Long views;
+
     @OneToMany(mappedBy = "post")
     List<PictureURL> pictureURLs = new ArrayList<>();
 
