@@ -6,6 +6,12 @@ spring:
   profiles:
     active: h2
 
+# HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
+# Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
+# $ echo 'spring-boot-security-jwt-inspjt-instgram-clone-backend-spring-boot-security-jwt' | base64
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=
+
 ---
 
 spring:
@@ -53,3 +59,5 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+
+---
