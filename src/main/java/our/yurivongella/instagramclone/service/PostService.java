@@ -15,7 +15,6 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -25,10 +24,10 @@ public class PostService {
     final private MemberRepository memberRepository;
 
     @Transactional
-    public Long create(PostCreateRequestDto postCreateRequestDto, Long memberId) {
-        Optional<Member> member =memberRepository.findById(SecurityUtil.getCurrentMemberId());
-        Post post = postCreateRequestDto.toPost(member.orElseThrow(() -> new RuntimeException()));
-        post = postRepository.save(post);
+    public Long create(PostCreateRequestDto postCreateRequestDto) {
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId())
+                .orElseThrow(() -> new RuntimeException("조회자 정보가 존재하지 않습니다."));
+        Post post = postRepository.save(postCreateRequestDto.toPost(member));
 
         List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.getPictureURLs(post));
         post.getPictureURLs().addAll(list);
@@ -38,20 +37,21 @@ public class PostService {
 
     public PostReadResponseDto read(Long postId) {
         Long userId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(userId).get();
-        Optional<Post> post = postRepository.findById(postId);
+        Member member = memberRepository.findById(userId).orElseThrow();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
 
-        return PostReadResponseDto.of(post.orElseThrow(()
-                -> new RuntimeException("게시물이 없습니다.")), member);
+        return PostReadResponseDto.of(post, member);
     }
 
     @Transactional
     public Long delete(@NotNull Long postId) {
-        Optional<Post> post = postRepository.findById(postId);
-        if(post.orElseThrow(() -> new RuntimeException("게시물이 없습니다.")).getId().equals(SecurityUtil.getCurrentMemberId())) {
-            throw new RuntimeException("잘못된 요청입니다.");
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+        if (post.getId().equals(member.getId())) {
+            throw new RuntimeException("게시물 삭제 권한이 없습니다.");
         }
-        postRepository.delete(post.get());
+        postRepository.delete(post);
         return postId;
     }
 }
