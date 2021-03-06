@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import our.yurivongella.instagramclone.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,6 +60,10 @@ public class PostServiceTest {
         // 가입
         authService.signup(signupRequestDto);
         userId = memberRepository.findByEmail(email).get().getId();
+
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(userId, "", Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @BeforeEach
@@ -81,10 +85,9 @@ public class PostServiceTest {
     @Test
     public void createPost() {
         // request mock Post
-        postService.create(postCreateRequestDto, memberRepository.findById(userId).get());
+        postService.create(postCreateRequestDto);
 
         List<Post> list = postRepository.findAll();
-        System.out.println(list);
 
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(userId);
@@ -96,11 +99,10 @@ public class PostServiceTest {
     @Test
     public void readOnePost() {
         // request mock Post
-        Long postId = postService.create(postCreateRequestDto, memberRepository.findById(userId).get());
-        System.out.println("post id : " + postId + " member Id : " + memberRepository.findById(userId).get());
+        Long postId = postService.create(postCreateRequestDto);
 
         // reqeust mock get
-        PostReadResponseDto postResponseDto = postService.read(postId, userId);
+        PostReadResponseDto postResponseDto = postService.read(postId);
 
         assertThat(postResponseDto.getAuthor().getId()).isEqualTo(userId);
         assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());
@@ -116,11 +118,15 @@ public class PostServiceTest {
     @DisplayName("게시물 삭제")
     @Test
     public void DeleteOnePost() {
-        Long postId = postService.create(postCreateRequestDto, memberRepository.findById(userId).get());
+        Long postId = postService.create(postCreateRequestDto);
 
-        postService.delete(postId, userId);
-        Optional<PostReadResponseDto> post = Optional.ofNullable(postService.read(postId, userId));
+        System.out.println("Request UserId : "+SecurityUtil.getCurrentMemberId());
 
-        assertThat(post).isEmpty();
+        postService.delete(postId);
+
+        Assertions.assertThrows(
+                RuntimeException.class,
+                () -> postService.read(postId)
+        );
     }
 }
