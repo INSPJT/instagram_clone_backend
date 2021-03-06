@@ -15,8 +15,6 @@ import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -27,19 +25,11 @@ public class AuthService {
 
     @Transactional
     public String signup(SignupRequestDto signupRequestDto) {
-        Optional<Member> existsMember = memberRepository.findByEmail(signupRequestDto.getEmail());
-
-        if (existsMember.isPresent()) {
+        if (memberRepository.existsByEmail(signupRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
-        Member member = Member.builder()
-                .name(signupRequestDto.getName())
-                .email(signupRequestDto.getEmail())
-                .password(passwordEncoder.encode(signupRequestDto.getPassword()))
-                .nickName(signupRequestDto.getNickName())
-                .build();
-
+        Member member = signupRequestDto.toMember(passwordEncoder);
         return memberRepository.save(member).getEmail();
     }
 
