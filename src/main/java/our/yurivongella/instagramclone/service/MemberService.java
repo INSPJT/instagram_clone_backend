@@ -1,9 +1,9 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -26,59 +26,36 @@ public class MemberService {
     @Transactional
     public boolean follow(FollowRequestDto followRequestDto) {
         Member currentMember = getCurrentMember();
+        Member targetMember = memberRepository.findById(followRequestDto.getId())
+                .orElseThrow(() -> new RuntimeException("팔로우 대상이 존재하지 않습니다."));
 
-        if (currentMember.getId().equals(followRequestDto.getId()))  {
+        if (currentMember.equals(targetMember))  {
             throw new RuntimeException("자기 자신은 팔로우 할 수 없습니다.");
         }
 
-        Optional<Member> targetMember = memberRepository.findById(followRequestDto.getId());
+        try {
+            Follow follow = Follow.builder()
+                    .fromMember(currentMember)
+                    .toMember(targetMember)
+                    .build();
 
-        if (targetMember.isEmpty()) {
-            throw new RuntimeException("팔로우 대상이 존재하지 않습니다.");
-        }
-
-
-        boolean isAlreadyFollow = followRepository.findByFromMemberIdAndToMemberId(
-                currentMember.getId(),
-                targetMember.get().getId()
-        ).isPresent();
-
-        if (isAlreadyFollow) {
+            followRepository.save(follow);
+            return true;
+        } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("이미 팔로우 중 입니다.");
         }
-
-        Follow newFollow = currentMember.follow(targetMember.get());
-        followRepository.save(newFollow);
-        return true;
     }
 
     @Transactional
     public boolean unFollow(FollowRequestDto followRequestDto) {
-        Member currentMember = getCurrentMember();
+        Follow follow = followRepository.findByFromMemberIdAndToMemberId(
+                                SecurityUtil.getCurrentMemberId(),
+                                followRequestDto.getId()
+                        )
+                        .orElseThrow(() -> new RuntimeException("팔로우 중이지 않습니다."))
+                        .unfollow();
 
-
-        if (currentMember.getId().equals(followRequestDto.getId()))  {
-            throw new RuntimeException("자기 자신은 언팔로우 할 수 없습니다.");
-        }
-
-        Optional<Member> targetMember = memberRepository.findById(followRequestDto.getId());
-
-        if (targetMember.isEmpty()) {
-            throw new RuntimeException("언팔로우 대상이 존재하지 않습니다.");
-        }
-
-
-        Optional<Follow> follow = followRepository.findByFromMemberIdAndToMemberId(
-                currentMember.getId(),
-                targetMember.get().getId()
-        );
-
-        if (follow.isEmpty()) {
-            throw new RuntimeException("팔로우 중이지 않습니다.");
-        }
-
-        currentMember.unFollow(follow.get());
-        followRepository.delete(follow.get());
+        followRepository.delete(follow);
         return true;
     }
 

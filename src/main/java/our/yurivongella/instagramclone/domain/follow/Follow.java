@@ -1,14 +1,6 @@
 package our.yurivongella.instagramclone.domain.follow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -38,24 +30,17 @@ public class Follow extends BaseEntity {
     @JoinColumn(name = "to_member_id")
     private Member toMember;
 
-    @Deprecated
     @Builder
     public Follow(Member fromMember, Member toMember) {
         this.fromMember = fromMember;
         this.toMember = toMember;
+        fromMember.getFollowings().add(this);
+        toMember.getFollowers().add(this);
     }
 
-    public void addFollow(Member fromMember, Member toMember) {
-        this.fromMember = fromMember;
-        this.toMember = toMember;
-
-        fromMember.getFollowers().add(this);
-        toMember.getFollowings().add(this);
-    }
-
-    public void unFollow() {
+    public Follow unfollow() {
         this.fromMember.getFollowings().remove(this);
         this.toMember.getFollowers().remove(this);
+        return this;
     }
-
 }
