@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +25,12 @@ public class MemberDto {
     }
 
     public static MemberDto of(Member otherUser, Member user) {
-        return MemberDto.builder()
+        return builder()
                 .id(otherUser.getId())
                 .name(otherUser.getName())
-                .following(otherUser.getFollowers().stream().anyMatch(v -> v.getFromMember().getId().equals(user.getId())))
+                .following(otherUser.getFollowers()
+                                    .stream()
+                                    .anyMatch(v -> v.getFromMember().getId().equals(user.getId())))
                 .build();
     }
 }

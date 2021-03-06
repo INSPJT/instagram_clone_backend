@@ -66,4 +66,5 @@ public class Member extends BaseEntity {
     public boolean equals(Member other) {
         return Objects.equals(id, other.getId()) || Objects.equals(email, other.getEmail());
     }
+
 }

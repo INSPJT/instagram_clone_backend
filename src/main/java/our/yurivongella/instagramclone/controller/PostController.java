@@ -17,7 +17,6 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-    private final MemberRepository memberRepository;
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody PostCreateRequestDto postRequestDto) {
