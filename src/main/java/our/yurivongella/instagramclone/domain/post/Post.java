@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -38,7 +39,9 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "text")
     private String content;
 
-    @OneToMany(mappedBy = "post")
+    private Long views;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<PictureURL> pictureURLs = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
@@ -50,5 +53,12 @@ public class Post extends BaseEntity {
     @Builder
     public Post(String content) {
         this.content = content;
+    }
+
+    public Post addMember(Member member) {
+        this.member = member;
+        member.getPosts().add(this);
+
+        return this;
     }
 }

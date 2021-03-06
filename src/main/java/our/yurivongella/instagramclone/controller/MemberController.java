@@ -14,7 +14,6 @@ import our.yurivongella.instagramclone.service.MemberService;
 @RestController
 @RequestMapping("/member")
 public class MemberController {
-
     private final MemberService memberService;
 
     @PutMapping("/follow")
