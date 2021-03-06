@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class CommentResponseDto {
-    Long id;
-    MemberDto author;
-    Boolean isLike;
+    private Long id;
+    private MemberDto author;
+    private Boolean isLike;
     @JsonProperty("likeLength")
-    Long likeCount;
+    private Long likeCount;
     //Long replyLength;
-    LocalDateTime created;
+    private LocalDateTime created;
 
     @Builder
     public CommentResponseDto(Long id, MemberDto author, Boolean isLike, Long likeCount, LocalDateTime created) {
@@ -29,10 +29,10 @@ public class CommentResponseDto {
         this.created = created;
     }
 
-    public static CommentResponseDto toCommentResponseDto(Comment comment, Member member) {
+    public static CommentResponseDto of(Comment comment, Member member) {
         return CommentResponseDto.builder()
                 .id(comment.getId())
-                .author(MemberDto.toMemberDto(comment.getMember(), member))
+                .author(MemberDto.of(comment.getMember(), member))
                 .isLike(member.getCommentLikes().stream().anyMatch(v -> v.getComment().getId().equals(comment.getId())))
                 .likeCount((long) comment.getCommentLikes().size())
                 .created(comment.getCreatedDate())

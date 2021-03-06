@@ -25,12 +25,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto signupRequestDto) {
         String email = authService.signup(signupRequestDto);
-        return new ResponseEntity<>(email + " 회원가입이 완료되었습니다.", HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(email + " 회원가입이 완료되었습니다.");
     }
 
     @PostMapping("/signin")
     public ResponseEntity<TokenDto> signin(@RequestBody SigninRequestDto signinRequestDto) {
         TokenDto tokenDto = authService.signin(signinRequestDto);
-        return new ResponseEntity<>(tokenDto, HttpStatus.OK);
+        return ResponseEntity.ok(tokenDto);
     }
 }
