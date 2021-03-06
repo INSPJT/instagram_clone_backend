@@ -16,10 +16,13 @@ import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
 
-@Table(name = "follow")
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(
+        name = "follow",
+        uniqueConstraints = {@UniqueConstraint(columnNames = { "from_member_id", "to_member_id" })}
+)
 public class Follow extends BaseEntity {
 
     @Id
