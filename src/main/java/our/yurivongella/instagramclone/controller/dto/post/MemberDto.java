@@ -27,7 +27,6 @@ public class MemberDto {
         return MemberDto.builder()
                 .id(otherUser.getId())
                 .name(otherUser.getName())
-                .pictureUrl(null)
                 .following(otherUser.getFollowers().stream().anyMatch(v -> v.getFromMember().getId().equals(user.getId())))
                 .build();
     }
