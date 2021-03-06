@@ -208,9 +208,9 @@ class MemberServiceTest {
             Member member2 = memberRepository.findByEmail(targetEmail).get();
             Member member3 = memberRepository.findByEmail(targetEmail + 3).get();
 
-            member1.follow(member2);
-            member1.follow(member3);
-            member2.follow(member1);
+            followRepository.save(Follow.builder().fromMember(member1).toMember(member2).build());
+            followRepository.save(Follow.builder().fromMember(member1).toMember(member3).build());
+            followRepository.save(Follow.builder().fromMember(member2).toMember(member1).build());
 
             // 한명 로그인 처리
             Authentication authentication =
