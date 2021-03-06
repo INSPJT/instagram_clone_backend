@@ -46,11 +46,13 @@ public class PostService {
 
     @Transactional
     public Long delete(@NotNull Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
-        if (post.getId().equals(member.getId())) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
+
+        if (!post.getMember().getId().equals(SecurityUtil.getCurrentMemberId())) {
             throw new RuntimeException("게시물 삭제 권한이 없습니다.");
         }
+
         postRepository.delete(post);
         return postId;
     }

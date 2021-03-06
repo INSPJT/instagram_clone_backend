@@ -21,7 +21,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody PostCreateRequestDto postRequestDto) {
-        Long id = postService.create(postRequestDto, SecurityUtil.getCurrentMemberId()); // mock users
+        Long id = postService.create(postRequestDto); // mock users
         return ResponseEntity.ok(id + "인 포스트가 만들어졌습니다.");
     }
 

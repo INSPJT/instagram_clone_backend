@@ -20,9 +20,9 @@ public class PostCreateRequestDto {
 
     public Post toPost(Member member) {
         return Post.builder()
-                .member(member)
                 .content(content)
-                .build();
+                .build()
+                .addMember(member);
     }
 
     public List<PictureURL> getPictureURLs(Post post) {
