@@ -18,14 +18,14 @@ public class PostCreateRequestDto {
     private List<String> pictureUrls;
     private String content;
 
-    public Post toPosts(Member member) {
+    public Post toPost(Member member) {
         return Post.builder()
                 .member(member)
                 .content(content)
                 .build();
     }
 
-    public List<PictureURL> toPictureURLs(Post post) {
+    public List<PictureURL> getPictureURLs(Post post) {
         return pictureUrls.stream().map(url -> PictureURL.builder()
                 .url(url)
                 .post(post)

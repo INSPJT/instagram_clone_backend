@@ -23,7 +23,7 @@ public class MemberDto {
         this.following = following;
     }
 
-    public static MemberDto toMemberDto(Member otherUser, Member user) {
+    public static MemberDto of(Member otherUser, Member user) {
         return MemberDto.builder()
                 .id(otherUser.getId())
                 .name(otherUser.getName())

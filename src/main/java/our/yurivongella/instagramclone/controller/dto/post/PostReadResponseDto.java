@@ -15,22 +15,22 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 public class PostReadResponseDto {
-    Long id;
-    MemberDto author;
+    private Long id;
+    private MemberDto author;
     @JsonProperty("images")
-    List<String> pictureUrls;
+    private List<String> pictureUrls;
     @JsonProperty("body")
-    String content;
-    LocalDateTime created;
-    Boolean isLike;
+    private String content;
+    private LocalDateTime created;
+    private Boolean isLike;
     @JsonProperty("likeUser")
-    MemberDto usersWhoLike;
+    private MemberDto usersWhoLike;
     @JsonProperty("likeLength")
-    Long likeCount;
-    List<CommentResponseDto> commentPreview;
+    private Long likeCount;
+    private List<CommentResponseDto> commentPreview;
     @JsonProperty("commentLength")
-    Long commentCount;
-    Long viewCount;
+    private Long commentCount;
+    private Long viewCount;
     //Boolean bookMark;
 
     @Builder
@@ -48,16 +48,16 @@ public class PostReadResponseDto {
         this.viewCount = viewCount;
     }
 
-    public static PostReadResponseDto toPostResponseDto(Post post, Member member) {
+    public static PostReadResponseDto of(Post post, Member member) {
         return PostReadResponseDto.builder()
                 .id(post.getId())
-                .author(MemberDto.toMemberDto(post.getMember(), member))
+                .author(MemberDto.of(post.getMember(), member))
                 .pictureUrls(post.getPictureURLs().stream().map(PictureURL::getUrl).collect(Collectors.toList()))
                 .content(post.getContent())
                 .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
-                .usersWhoLike(post.getPostLikes().size() == 0 ? null : post.getPostLikes().stream().findFirst().map(v -> MemberDto.toMemberDto(v.getMember(), member)).get())
+                .usersWhoLike(post.getPostLikes().size() == 0 ? null : post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).get())
                 .likeCount((long) post.getPostLikes().size())
-                .commentPreview(post.getComments().stream().limit(3).map(v -> CommentResponseDto.toCommentResponseDto(v, member)).collect(Collectors.toList()))
+                .commentPreview(post.getComments().stream().limit(3).map(v -> CommentResponseDto.of(v, member)).collect(Collectors.toList()))
                 .commentCount((long) post.getComments().size())
                 .viewCount(post.getViews())
                 .build();
