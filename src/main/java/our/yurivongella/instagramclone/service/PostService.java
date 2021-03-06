@@ -12,11 +12,10 @@ import our.yurivongella.instagramclone.domain.post.PictureURL;
 import our.yurivongella.instagramclone.domain.post.PictureURLRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
-
 
 @RequiredArgsConstructor
 @Service
@@ -26,45 +25,33 @@ public class PostService {
     final private MemberRepository memberRepository;
 
     @Transactional
-    public Long create(PostCreateRequestDto postCreateRequestDto, Member member) {
-
-        Post post = postCreateRequestDto.toPosts(member);
+    public Long create(PostCreateRequestDto postCreateRequestDto, Long memberId) {
+        Optional<Member> member =memberRepository.findById(SecurityUtil.getCurrentMemberId());
+        Post post = postCreateRequestDto.toPost(member.orElseThrow(() -> new RuntimeException()));
         post = postRepository.save(post);
 
-        List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.toPictureURLs(post));
+        List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.getPictureURLs(post));
         post.getPictureURLs().addAll(list);
 
         return post.getId();
     }
 
-    /* TODO : deleted */
-    @Transactional
-    public Long testCreate(PostCreateRequestDto postCreateRequestDto, Long userId) {
-        Post post = postCreateRequestDto.toPosts(memberRepository.findById(userId).get());
-        post = postRepository.save(post);
-
-        List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.toPictureURLs(post));
-        post.getPictureURLs().addAll(list);
-
-        return post.getId();
-    }
-
-    public PostReadResponseDto read(Long postId, Long userId) {
+    public PostReadResponseDto read(Long postId) {
+        Long userId = SecurityUtil.getCurrentMemberId();
         Member member = memberRepository.findById(userId).get();
         Optional<Post> post = postRepository.findById(postId);
-        PostReadResponseDto postReadResponseDto;
-        if (post.isPresent()) {
-            return PostReadResponseDto.toPostResponseDto(post.get(), member);
-        }
-        else {
-            return null;
-            //throw new RuntimeException("게시물이 없습니다.");
-        }
+
+        return PostReadResponseDto.of(post.orElseThrow(()
+                -> new RuntimeException("게시물이 없습니다.")), member);
     }
 
     @Transactional
-    public Long delete(@NotNull Long postId, Long usreId) {
-        postRepository.deleteById(postId);
+    public Long delete(@NotNull Long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if(post.orElseThrow(() -> new RuntimeException("게시물이 없습니다.")).getId().equals(SecurityUtil.getCurrentMemberId())) {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+        postRepository.delete(post.get());
         return postId;
     }
 }
