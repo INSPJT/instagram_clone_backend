@@ -2,6 +2,7 @@ package our.yurivongella.instagramclone.domain.member;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -62,20 +63,7 @@ public class Member extends BaseEntity {
         this.authority = Authority.ROLE_USER;
     }
 
-    public Follow follow(Member targetMember) {
-        Follow follow = Follow.builder()
-                              .fromMember(this)
-                              .toMember(targetMember)
-                              .build();
-
-        this.followings.add(follow);
-        targetMember.followers.add(follow);
-        return follow;
+    public boolean equals(Member other) {
+        return Objects.equals(id, other.getId()) || Objects.equals(email, other.getEmail());
     }
-
-    public void unFollow(Follow follow) {
-        follow.getToMember().getFollowers().remove(follow);
-        this.followings.remove(follow);
-    }
-
 }

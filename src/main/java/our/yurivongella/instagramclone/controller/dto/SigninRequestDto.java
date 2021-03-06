@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 @Getter
 @Builder
@@ -12,4 +13,8 @@ import lombok.NoArgsConstructor;
 public class SigninRequestDto {
     private String email;
     private String password;
+
+    public UsernamePasswordAuthenticationToken toAuthenticationToken() {
+        return new UsernamePasswordAuthenticationToken(email, password);
+    }
 }
