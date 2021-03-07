@@ -104,15 +104,9 @@ public class AuthServiceTest {
 
             // then
             assertThat(tokenDto.getAccessToken()).isNotNull();
-
-            Optional<Member> member = memberRepository.findById(SecurityUtil.getCurrentMemberId());
-            assertThat(member.isPresent()).isTrue();
-            assertThat(member.get().getNickName()).isEqualTo(nickName);
-            assertThat(member.get().getName()).isEqualTo(name);
-            assertThat(member.get().getEmail()).isEqualTo(email);
-            assertThat(
-                    passwordEncoder.matches(password, member.get().getPassword())
-            ).isTrue();
+            assertThat(tokenDto.getRefreshToken()).isNotNull();
+            assertThat(tokenDto.getGrantType()).isNotNull();
+            assertThat(tokenDto.getAccessTokenExpiresIn()).isNotNull();
         }
 
         @DisplayName("이메일 불일치로 실패")

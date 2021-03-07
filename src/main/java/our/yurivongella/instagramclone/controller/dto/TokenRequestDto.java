@@ -1,14 +1,11 @@
 package our.yurivongella.instagramclone.controller.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class TokenDto {
-    private String grantType;
+public class TokenRequestDto {
     private String accessToken;
     private String refreshToken;
-    private Long accessTokenExpiresIn;
 }
