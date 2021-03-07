@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -138,6 +139,94 @@ public class AuthServiceTest {
             Assertions.assertThrows(
                     BadCredentialsException.class,
                     () -> authService.signin(signinRequestDto)
+            );
+        }
+    }
+
+    @DisplayName("토큰 재발급")
+    @Nested
+    class ReissueTest {
+
+        private TokenDto tokenDto;
+
+        @BeforeEach
+        public void signinBeforeTest() {
+            tokenDto = authService.signin(
+                    SigninRequestDto.builder()
+                            .email(email)
+                            .password(password)
+                            .build()
+            );
+        }
+
+
+        @DisplayName("Access + Refresh 요청해서 성공")
+        @Test
+        public void accessRefresh() {
+            // given
+            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
+                    .accessToken(tokenDto.getAccessToken())
+                    .refreshToken(tokenDto.getRefreshToken())
+                    .build();
+
+            // when
+            TokenDto reissue = authService.reissue(tokenRequestDto);
+
+            // then
+            boolean accessIsLongerThanRefresh = reissue.getAccessToken().length() > reissue.getRefreshToken().length();
+
+            assertThat(accessIsLongerThanRefresh).isTrue();
+            assertThat(reissue.getAccessToken()).isInstanceOf(String.class);
+            assertThat(reissue.getRefreshToken()).isInstanceOf(String.class);
+            assertThat(reissue.getGrantType()).isEqualTo("bearer");
+            assertThat(reissue.getAccessTokenExpiresIn()).isInstanceOf(Long.class);
+        }
+
+        @DisplayName("Access + Access 요청해서 실패")
+        @Test
+        public void accessAccess() {
+            // given
+            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
+                    .accessToken(tokenDto.getAccessToken())
+                    .refreshToken(tokenDto.getAccessToken())
+                    .build();
+
+            // when
+            Assertions.assertThrows(
+                    RuntimeException.class,
+                    () -> authService.reissue(tokenRequestDto)
+            );
+        }
+
+        @DisplayName("Refresh + Refresh 요청해서 실패")
+        @Test
+        public void refreshRefresh() {
+            // given
+            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
+                    .accessToken(tokenDto.getRefreshToken())
+                    .refreshToken(tokenDto.getRefreshToken())
+                    .build();
+
+            // when
+            Assertions.assertThrows(
+                    RuntimeException.class,
+                    () -> authService.reissue(tokenRequestDto)
+            );
+        }
+
+        @DisplayName("Refresh + Access 요청해서 실패")
+        @Test
+        public void refreshAccess() {
+            // given
+            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
+                    .accessToken(tokenDto.getRefreshToken())
+                    .refreshToken(tokenDto.getAccessToken())
+                    .build();
+
+            // when
+            Assertions.assertThrows(
+                    RuntimeException.class,
+                    () -> authService.reissue(tokenRequestDto)
             );
         }
     }
