@@ -55,11 +55,12 @@ public class PostReadResponseDto {
                 .pictureUrls(post.getPictureURLs().stream().map(PictureURL::getUrl).collect(Collectors.toList()))
                 .content(post.getContent())
                 .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
-                .usersWhoLike(post.getPostLikes().size() == 0 ? null : post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).get())
+                .usersWhoLike(post.getPostLikes().isEmpty() ? null : post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).get())
                 .likeCount((long) post.getPostLikes().size())
                 .commentPreview(post.getComments().stream().limit(3).map(v -> CommentResponseDto.of(v, member)).collect(Collectors.toList()))
                 .commentCount((long) post.getComments().size())
                 .viewCount(post.getViews())
+
                 .build();
     }
 }
