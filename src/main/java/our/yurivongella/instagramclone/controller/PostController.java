@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
+import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.service.PostService;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,14 +28,17 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostReadResponseDto> read(@PathVariable Long postId) {
-        PostReadResponseDto postResponseDto = postService.read(postId);
-        return ResponseEntity.ok(postResponseDto);
+        return ResponseEntity.ok(postService.read(postId));
     }
-
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<String> delete(@PathVariable Long postId) {
         Long id = postService.delete(postId);
         return ResponseEntity.ok(id + "인 포스트가 삭제되었습니다.");
+    }
+
+    @GetMapping("/postlist/{userId}")
+    public ResponseEntity<?> readPostList(@PathVariable Long userId) {
+        return ResponseEntity.ok(postService.getPostList(userId));
     }
 }

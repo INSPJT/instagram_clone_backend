@@ -15,6 +15,8 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -25,8 +27,7 @@ public class PostService {
 
     @Transactional
     public Long create(PostCreateRequestDto postCreateRequestDto) {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(() -> new RuntimeException("조회자 정보가 존재하지 않습니다."));
+        Member member = getCurrentMember();
         Post post = postRepository.save(postCreateRequestDto.toPost(member));
 
         List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.getPictureURLs(post));
@@ -36,8 +37,7 @@ public class PostService {
     }
 
     public PostReadResponseDto read(Long postId) {
-        Long userId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(userId).orElseThrow();
+        Member member = getCurrentMember();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
 
@@ -55,5 +55,19 @@ public class PostService {
 
         postRepository.delete(post);
         return postId;
+    }
+
+    public List<PostReadResponseDto> getPostList(Long userId) {
+        Member member = getCurrentMember();
+        List<Post> postList = member.getPosts();
+
+        return postList.stream()
+                .map(post -> PostReadResponseDto.of(post,member))
+                .collect(Collectors.toList());
+    }
+
+    private Member getCurrentMember() {
+        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
+                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 }

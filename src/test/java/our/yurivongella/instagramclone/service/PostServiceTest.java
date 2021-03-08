@@ -120,13 +120,21 @@ public class PostServiceTest {
     public void DeleteOnePost() {
         Long postId = postService.create(postCreateRequestDto);
 
-        System.out.println("Request UserId : "+SecurityUtil.getCurrentMemberId());
-
         postService.delete(postId);
 
         Assertions.assertThrows(
                 RuntimeException.class,
                 () -> postService.read(postId)
         );
+    }
+
+    @DisplayName("특정 유저 게시물 리스트 블러오")
+    @Test
+    public void GetUsersPostList() {
+        Long postId = postService.create(postCreateRequestDto);
+
+        List<PostReadResponseDto> postlist = postService.getPostList(SecurityUtil.getCurrentMemberId());
+
+        assertThat(postlist.get(0).getAuthor().getId().equals(SecurityUtil.getCurrentMemberId()));
     }
 }
