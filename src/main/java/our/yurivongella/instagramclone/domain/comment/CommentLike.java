@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
 
@@ -19,6 +20,7 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @Getter
 @Entity
 @Table(name = "comment_like")
+@ToString(of = "comment")
 public class CommentLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +34,15 @@ public class CommentLike extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public CommentLike like(Member member, Comment comment) {
+        this.member = member;
+        this.comment = comment;
+        comment.getCommentLikes().add(this);
+        return this;
+    }
+
+    public void unlike() {
+        comment.getCommentLikes().remove(this);
+    }
 }
