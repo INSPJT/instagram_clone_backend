@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/post")
+@RequestMapping
 public class PostController {
 
     private final PostService postService;
@@ -37,8 +37,8 @@ public class PostController {
         return ResponseEntity.ok(id + "인 포스트가 삭제되었습니다.");
     }
 
-    @GetMapping("/postlist/{userId}")
-    public ResponseEntity<?> readPostList(@PathVariable Long userId) {
-        return ResponseEntity.ok(postService.getPostList(userId));
+    @GetMapping("/members/{memberId}/posts")
+    public ResponseEntity<?> readPostList(@PathVariable Long memberId) {
+        return ResponseEntity.ok(postService.getPostList(memberId));
     }
 }
