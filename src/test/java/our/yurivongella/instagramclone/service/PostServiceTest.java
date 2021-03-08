@@ -68,16 +68,13 @@ public class PostServiceTest {
 
     @BeforeEach
     public void generatePostRequestDto() {
+        // set mediaUrls mock PostRequestDto
+        List<String> mediaUrls = new ArrayList<>();
+        mediaUrls.add("mock url 1");
+        mediaUrls.add("mock url 2");
+        mediaUrls.add("mock url 3");
         // make mock PostRequestDto
-        PostCreateRequestDto postCreateRequestDto = new PostCreateRequestDto();
-        // set content of mock PostRequestDto to mock Post content
-        postCreateRequestDto.setContent("시험중인 글 입니다.");
-        // set pictureUrls mock PostRequestDto
-        List<String> pictureUrls = new ArrayList<>();
-        pictureUrls.add("mock url 1");
-        pictureUrls.add("mock url 2");
-        pictureUrls.add("mock url 3");
-        postCreateRequestDto.setPictureUrls(pictureUrls);
+        PostCreateRequestDto postCreateRequestDto = new PostCreateRequestDto(mediaUrls, "시험중인 글 입니다.");
         this.postCreateRequestDto = postCreateRequestDto;
     }
 
@@ -92,7 +89,7 @@ public class PostServiceTest {
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(userId);
         assertThat(list.get(0).getContent()).isEqualTo(postCreateRequestDto.getContent());
-        assertThat(list.get(0).getPictureURLs().size()).isEqualTo(3);
+        assertThat(list.get(0).getMediaUrls().size()).isEqualTo(3);
     }
 
     @DisplayName("게시글 한개 읽기")
@@ -107,8 +104,8 @@ public class PostServiceTest {
         assertThat(postResponseDto.getAuthor().getId()).isEqualTo(userId);
         assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());
 
-        for (int i = 0; i < postCreateRequestDto.getPictureUrls().size(); ++i) {
-            assertThat(postResponseDto.getPictureUrls().get(i)).isEqualTo(postCreateRequestDto.getPictureUrls().get(i));
+        for (int i = 0; i < postCreateRequestDto.getMediaUrls().size(); ++i) {
+            assertThat(postResponseDto.getMediaUrls().get(i)).isEqualTo(postCreateRequestDto.getMediaUrls().get(i));
         }
 
         assertThat(postResponseDto.getLikeCount()).isEqualTo(0);
@@ -120,7 +117,7 @@ public class PostServiceTest {
     public void DeleteOnePost() {
         Long postId = postService.create(postCreateRequestDto);
 
-        System.out.println("Request UserId : "+SecurityUtil.getCurrentMemberId());
+        System.out.println("Request UserId : " + SecurityUtil.getCurrentMemberId());
 
         postService.delete(postId);
 
