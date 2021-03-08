@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.PictureURL;
+import our.yurivongella.instagramclone.domain.post.MediaUrl;
 import our.yurivongella.instagramclone.domain.post.Post;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class PostReadResponseDto {
     private Long id;
     private MemberDto author;
     @JsonProperty("images")
-    private List<String> pictureUrls;
+    private List<String> mediaUrls;
     @JsonProperty("body")
     private String content;
     private LocalDateTime created;
@@ -34,10 +34,10 @@ public class PostReadResponseDto {
     //Boolean bookMark;
 
     @Builder
-    public PostReadResponseDto(Long id, MemberDto author, List<String> pictureUrls, String content, LocalDateTime created, Boolean isLike, MemberDto usersWhoLike, Long likeCount, List<CommentResponseDto> commentPreview, Long commentCount, Long viewCount) {
+    public PostReadResponseDto(Long id, MemberDto author, List<String> mediaUrls, String content, LocalDateTime created, Boolean isLike, MemberDto usersWhoLike, Long likeCount, List<CommentResponseDto> commentPreview, Long commentCount, Long viewCount) {
         this.id = id;
         this.author = author;
-        this.pictureUrls = pictureUrls;
+        this.mediaUrls = mediaUrls;
         this.content = content;
         this.created = created;
         this.isLike = isLike;
@@ -52,7 +52,7 @@ public class PostReadResponseDto {
         return PostReadResponseDto.builder()
                 .id(post.getId())
                 .author(MemberDto.of(post.getMember(), member))
-                .pictureUrls(post.getPictureURLs().stream().map(PictureURL::getUrl).collect(Collectors.toList()))
+                .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
                 .content(post.getContent())
                 .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
                 .usersWhoLike(post.getPostLikes().isEmpty() ? null : post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).get())
