@@ -13,14 +13,14 @@ public class MemberDto {
     Long id;
     String name;
     @JsonProperty("image")
-    String pictureUrl;
+    String mediaUrl;
     Boolean following;
 
     @Builder
-    public MemberDto(Long id, String name, String pictureUrl, Boolean following) {
+    public MemberDto(Long id, String name, String mediaUrl, Boolean following) {
         this.id = id;
         this.name = name;
-        this.pictureUrl = pictureUrl;
+        this.mediaUrl = mediaUrl;
         this.following = following;
     }
 
