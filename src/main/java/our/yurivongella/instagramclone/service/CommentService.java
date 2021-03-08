@@ -61,7 +61,7 @@ public class CommentService {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
 
-        if (!member.getId().equals(comment.getMember().getId())) {
+        if (!member.equals(comment.getMember())) {
             log.error("유저가 일치하지 않습니다.");
             return ProcessStatus.FAIL;
         }
@@ -82,7 +82,7 @@ public class CommentService {
 
         boolean check = commentLikeRepository.findAllByCommentId(commentId)
                                              .stream()
-                                             .anyMatch(cl -> cl.getMember().getId().equals(member.getId()));
+                                             .anyMatch(cl -> cl.getMember().equals(member));
         if (!check) {
             log.info("{}가 댓글 {}를 좋아요 표시합니다.", member.getName(), comment.getContent());
             CommentLike commentLike = createCommentLike(member, comment);
@@ -105,7 +105,7 @@ public class CommentService {
 
         return commentLikeRepository.findAllByCommentId(commentId)
                                     .stream()
-                                    .filter(cl -> cl.getMember().getId().equals(member.getId()))
+                                    .filter(cl -> cl.getMember().equals(member))
                                     .findFirst()
                                     .map(cl -> {
                                         log.info("{}가 댓글 {}를 좋아요 취소합니다.", member.getName(), comment.getContent());
