@@ -19,9 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class PostService {
-    final private PostRepository postRepository;
-    final private PictureURLRepository pictureURLRepository;
-    final private MemberRepository memberRepository;
+    private final PostRepository postRepository;
+    private final PictureURLRepository pictureURLRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Long create(PostCreateRequestDto postCreateRequestDto) {

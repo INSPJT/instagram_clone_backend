@@ -29,11 +29,11 @@ jacocoTestReport {
 
 
 jacocoTestCoverageVerification {
-    def Qdomains = []
-
-    for (qPattern in "*.QA".."*.QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
-        Qdomains.add(qPattern + "*")
-    }
+//    def Qdomains = []
+//
+//    for (qPattern in "*.QA".."*.QZ") {
+//        Qdomains.add(qPattern + "*")
+//    }
 
     violationRules {
         rule {
@@ -46,7 +46,7 @@ jacocoTestCoverageVerification {
                 minimum = 0.0
             }
 
-            excludes = [] + Qdomains as List<String>
+            excludes = []
         }
     }
 }
@@ -65,10 +65,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     implementation 'mysql:mysql-connector-java'
-
     implementation 'io.springfox:springfox-swagger2:2.6.1'
     implementation 'io.springfox:springfox-swagger-ui:2.6.1'
-
+    implementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     compile group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
