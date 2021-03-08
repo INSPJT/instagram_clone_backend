@@ -4,12 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.sun.istack.NotNull;
+import com.sun.istack.Nullable;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
@@ -28,12 +38,17 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
+    @NotNull
     private String name;
+    @NotNull
     private String email;
+    @Nullable
     private String nickName;
+    @NotNull
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Authority authority;
 
     @OneToMany(mappedBy = "member")

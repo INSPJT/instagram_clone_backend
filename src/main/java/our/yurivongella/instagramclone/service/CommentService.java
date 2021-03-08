@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +34,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     public List<CommentResponseDto> getComments(Long postId) {
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(currentMemberId)
-                                        .orElseThrow(() -> new NoSuchElementException("유저가 존재하지 않습니다."));
+        Member member = getCurrentMember();
 
         return postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."))
                              .getComments()
@@ -48,9 +45,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentCreateDto commentCreateDto) {
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(currentMemberId)
-                                        .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
+        Member member = getCurrentMember();
 
         Post post = postRepository.findById(postId)
                                   .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
@@ -63,12 +58,8 @@ public class CommentService {
 
     @Transactional
     public ProcessStatus deleteComment(Long commentId) throws Exception {
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(currentMemberId)
-                                        .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
-
-        Comment comment = commentRepository.findById(commentId)
-                                           .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+        Member member = getCurrentMember();
+        Comment comment = getCurrentComment(commentId);
 
         if (!member.getId().equals(comment.getMember().getId())) {
             log.error("유저가 일치하지 않습니다.");
@@ -86,17 +77,13 @@ public class CommentService {
 
     @Transactional
     public ProcessStatus likeComment(Long commentId) throws Exception {
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(currentMemberId)
-                                        .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
-
-        Comment comment = commentRepository.findById(commentId)
-                                           .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
+        Member member = getCurrentMember();
+        Comment comment = getCurrentComment(commentId);
 
         boolean check = commentLikeRepository.findAllByCommentId(commentId)
                                              .stream()
                                              .anyMatch(cl -> cl.getMember().getId().equals(member.getId()));
-        if(!check){
+        if (!check) {
             log.info("{}가 댓글 {}를 좋아요 표시합니다.", member.getName(), comment.getContent());
             CommentLike commentLike = createCommentLike(member, comment);
             commentLikeRepository.save(commentLike);
@@ -113,12 +100,8 @@ public class CommentService {
 
     @Transactional
     public ProcessStatus unlikeComment(Long commentId) throws Exception {
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
-        Member member = memberRepository.findById(currentMemberId)
-                                        .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
-
-        Comment comment = commentRepository.findById(commentId)
-                                           .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
+        Member member = getCurrentMember();
+        Comment comment = getCurrentComment(commentId);
 
         return commentLikeRepository.findAllByCommentId(commentId)
                                     .stream()
@@ -132,10 +115,13 @@ public class CommentService {
                                     }).orElse(ProcessStatus.FAIL);
     }
 
-    public long getCommentLikes(Long commentId) {
-        return commentRepository.findById(commentId)
-                                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."))
-                                .getCommentLikes().size();
+    private Member getCurrentMember() {
+        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
+                               .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
+    private Comment getCurrentComment(Long commentId) throws NotFoundException {
+        return commentRepository.findById(commentId)
+                                .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+    }
 }
