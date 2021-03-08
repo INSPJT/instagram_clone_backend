@@ -1,8 +1,6 @@
 package our.yurivongella.instagramclone.domain.comment;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,8 +18,8 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.domain.post.Post;
 
 @Table(name = "comment")
 @Getter
@@ -47,15 +45,12 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private Set<CommentLike> commentLikes = new HashSet<>();
 
-
-    public Comment create(Member member, Post post, String content){
+    public Comment create(Member member, Post post, String content) {
         this.member = member;
         this.post = post;
-        this.content =content;
-
+        this.content = content;
         member.getComments().add(this);
         post.getComments().add(this);
         return this;
     }
-
 }
