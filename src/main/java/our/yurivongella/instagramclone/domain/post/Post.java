@@ -42,7 +42,7 @@ public class Post extends BaseEntity {
     private Long views;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    List<PictureURL> pictureURLs = new ArrayList<>();
+    List<MediaUrl> mediaUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<PostLike> postLikes = new ArrayList<>();

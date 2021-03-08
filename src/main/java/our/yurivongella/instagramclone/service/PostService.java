@@ -8,8 +8,8 @@ import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.domain.post.PictureURL;
-import our.yurivongella.instagramclone.domain.post.PictureURLRepository;
+import our.yurivongella.instagramclone.domain.post.MediaUrl;
+import our.yurivongella.instagramclone.domain.post.MediaUrlRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-    private final PictureURLRepository pictureURLRepository;
+    private final MediaUrlRepository mediaUrlRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -29,8 +29,8 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("조회자 정보가 존재하지 않습니다."));
         Post post = postRepository.save(postCreateRequestDto.toPost(member));
 
-        List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.getPictureURLs(post));
-        post.getPictureURLs().addAll(list);
+        List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateRequestDto.getMediaUrls(post));
+        post.getMediaUrls().addAll(list);
 
         return post.getId();
     }

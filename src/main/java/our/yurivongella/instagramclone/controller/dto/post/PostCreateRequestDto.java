@@ -1,21 +1,21 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.PictureURL;
+import our.yurivongella.instagramclone.domain.post.MediaUrl;
 import our.yurivongella.instagramclone.domain.post.Post;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@Setter
 public class PostCreateRequestDto {
-    private List<String> pictureUrls;
+    private List<String> mediaUrls;
     private String content;
 
     public Post toPost(Member member) {
@@ -25,8 +25,8 @@ public class PostCreateRequestDto {
                 .addMember(member);
     }
 
-    public List<PictureURL> getPictureURLs(Post post) {
-        return pictureUrls.stream().map(url -> PictureURL.builder()
+    public List<MediaUrl> getMediaUrls(Post post) {
+        return mediaUrls.stream().map(url -> MediaUrl.builder()
                 .url(url)
                 .post(post)
                 .build()).collect(Collectors.toList());
