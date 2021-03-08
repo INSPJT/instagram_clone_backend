@@ -70,7 +70,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    compile group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
@@ -94,4 +94,8 @@ task testCoverage(type: Test) {
 
     tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
     tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+bootJar{
+    enabled = true
 }
