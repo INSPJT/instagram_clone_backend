@@ -31,12 +31,17 @@ public class PostService {
     @Transactional
     public Long create(PostCreateRequestDto postCreateRequestDto) {
         Member member = getCurrentMember();
-        Post post = postRepository.save(postCreateRequestDto.toPost(member));
+        try {
+            Post post = postRepository.save(postCreateRequestDto.toPost(member));
 
-        List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.getPictureURLs(post));
-        post.getPictureURLs().addAll(list);
+            List<PictureURL> list = pictureURLRepository.saveAll(postCreateRequestDto.getPictureURLs(post));
+            post.getPictureURLs().addAll(list);
 
-        return post.getId();
+            return post.getId();
+        } catch (Exception e) {
+            log.error("게시물 생성 에러 = {}", e.getMessage());
+            throw new RuntimeException("게시물 생성 에러");
+        }
     }
 
     public PostReadResponseDto read(Long postId) {
