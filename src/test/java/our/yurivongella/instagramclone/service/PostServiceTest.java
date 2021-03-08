@@ -117,7 +117,7 @@ public class PostServiceTest {
 
     @DisplayName("게시물 삭제")
     @Test
-    public void DeleteOnePost() {
+    public void deleteOnePost() {
         Long postId = postService.create(postCreateRequestDto);
 
         postService.delete(postId);
@@ -130,11 +130,11 @@ public class PostServiceTest {
 
     @DisplayName("특정 유저 게시물 리스트 불러오기")
     @Test
-    public void GetUsersPostList() {
+    public void getUsersPostList() {
         postService.create(postCreateRequestDto);
 
         List<PostReadResponseDto> postlist = postService.getPostList(SecurityUtil.getCurrentMemberId());
 
-        assertThat(postlist.get(0).getAuthor().getId().equals(SecurityUtil.getCurrentMemberId()));
+        assertThat(postlist.get(0).getAuthor().getId()).isEqualTo(SecurityUtil.getCurrentMemberId());
     }
 }
