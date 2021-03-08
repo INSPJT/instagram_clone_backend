@@ -67,9 +67,8 @@ public class PostService {
 
     public List<PostReadResponseDto> getPostList(Long memberId) {
         Member member = getMember(memberId);
-        List<Post> postList = member.getPosts();
 
-        return postList.stream()
+        return member.getPosts().stream()
                 .map(post -> PostReadResponseDto.of(post, member))
                 .collect(Collectors.toList());
     }

@@ -128,7 +128,7 @@ public class PostServiceTest {
         );
     }
 
-    @DisplayName("특정 유저 게시물 리스트 블러오")
+    @DisplayName("특정 유저 게시물 리스트 불러오기")
     @Test
     public void GetUsersPostList() {
         Long postId = postService.create(postCreateRequestDto);
