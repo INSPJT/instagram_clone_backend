@@ -93,9 +93,7 @@ public class CommentService {
     }
 
     private CommentLike createCommentLike(Member member, Comment comment) {
-        CommentLike commentLike = new CommentLike();
-        commentLike.like(member, comment);
-        return commentLike;
+        return new CommentLike().like(member, comment);
     }
 
     @Transactional
