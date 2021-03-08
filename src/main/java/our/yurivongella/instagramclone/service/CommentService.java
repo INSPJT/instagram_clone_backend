@@ -57,7 +57,6 @@ public class CommentService {
 
         Comment comment = new Comment();
         comment.create(member, post, commentCreateDto.getContent());
-
         commentRepository.save(comment);
         return CommentResponseDto.of(comment, member);
     }
@@ -71,13 +70,16 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                                            .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
 
-        if (member.getId().equals(comment.getMember().getId())) {
-            try {
-                commentRepository.deleteById(commentId);
-                return ProcessStatus.SUCCESS;
-            } catch (Exception e) {
-                log.error("삭제 도중 문제가 발생했습니다 = {}", e.getMessage());
-            }
+        if (!member.getId().equals(comment.getMember().getId())) {
+            log.error("유저가 일치하지 않습니다.");
+            return ProcessStatus.FAIL;
+        }
+
+        try {
+            commentRepository.deleteById(commentId);
+            return ProcessStatus.SUCCESS;
+        } catch (Exception e) {
+            log.error("삭제 도중 문제가 발생했습니다 = {}", e.getMessage());
         }
         return ProcessStatus.FAIL;
     }
@@ -96,14 +98,14 @@ public class CommentService {
                                              .anyMatch(cl -> cl.getMember().getId().equals(member.getId()));
         if(!check){
             log.info("{}가 댓글 {}를 좋아요 표시합니다.", member.getName(), comment.getContent());
-            CommentLike commentLike = likeComment(member, comment);
+            CommentLike commentLike = createCommentLike(member, comment);
             commentLikeRepository.save(commentLike);
             return ProcessStatus.SUCCESS;
         }
         return ProcessStatus.FAIL;
     }
 
-    private CommentLike likeComment(Member member, Comment comment) {
+    private CommentLike createCommentLike(Member member, Comment comment) {
         CommentLike commentLike = new CommentLike();
         commentLike.like(member, comment);
         return commentLike;
