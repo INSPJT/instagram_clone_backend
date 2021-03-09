@@ -1,7 +1,5 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,23 +9,22 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @NoArgsConstructor
 public class MemberDto {
     Long id;
-    String name;
-    @JsonProperty("image")
-    String mediaUrl;
+    String displayId;
+    String profileImageUrl;
     Boolean following;
 
     @Builder
-    public MemberDto(Long id, String name, String mediaUrl, Boolean following) {
+    public MemberDto(Long id, String displayId, String profileImageUrl, Boolean following) {
         this.id = id;
-        this.name = name;
-        this.mediaUrl = mediaUrl;
+        this.displayId = displayId;
+        this.profileImageUrl = profileImageUrl;
         this.following = following;
     }
 
     public static MemberDto of(Member otherUser, Member user) {
         return builder()
                 .id(otherUser.getId())
-                .name(otherUser.getName())
+                .displayId(otherUser.getDisplayId())
                 .following(otherUser.getFollowers()
                                     .stream()
                                     .anyMatch(v -> v.getFromMember().getId().equals(user.getId())))

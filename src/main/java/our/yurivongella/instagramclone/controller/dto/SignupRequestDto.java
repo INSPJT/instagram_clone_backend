@@ -12,17 +12,17 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupRequestDto {
-    private String name;
+    private String displayId;
     private String email;
-    private String nickName;
+    private String nickname;
     private String password;
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .name(name)
+                .displayId(displayId)
                 .email(email)
                 .password(passwordEncoder.encode(password))
-                .nickName(nickName)
+                .nickname(nickname)
                 .build();
     }
 }

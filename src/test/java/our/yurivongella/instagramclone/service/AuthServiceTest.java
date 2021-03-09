@@ -12,7 +12,6 @@ import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.Optional;
 
@@ -32,8 +31,8 @@ public class AuthServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private final String name = "test";
-    private final String nickName = "testNickname";
+    private final String displayId = "test";
+    private final String nickname = "testNickname";
     private final String email = "authService1@test.net";
     private final String password = "1q2w3e4r";
 
@@ -41,8 +40,8 @@ public class AuthServiceTest {
     public void signupBeforeTest() {
         // given
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                .name(name)
-                .nickName(nickName)
+                .displayId(displayId)
+                .nickname(nickname)
                 .email(email)
                 .password(password)
                 .build();
@@ -61,8 +60,8 @@ public class AuthServiceTest {
             // then
             Optional<Member> member = memberRepository.findByEmail(email);
             assertThat(member.isPresent()).isTrue();
-            assertThat(member.get().getNickName()).isEqualTo(nickName);
-            assertThat(member.get().getName()).isEqualTo(name);
+            assertThat(member.get().getNickname()).isEqualTo(nickname);
+            assertThat(member.get().getDisplayId()).isEqualTo(displayId);
             assertThat(member.get().getEmail()).isEqualTo(email);
             assertThat(
                     passwordEncoder.matches(password, member.get().getPassword())
@@ -73,8 +72,8 @@ public class AuthServiceTest {
         @Test
         public void failSignup() {
             SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .name("test2")
-                    .nickName("testNickname2")
+                    .displayId("test2")
+                    .nickname("testNickname2")
                     .email(email)
                     .password("1q2w3e4r5t")
                     .build();

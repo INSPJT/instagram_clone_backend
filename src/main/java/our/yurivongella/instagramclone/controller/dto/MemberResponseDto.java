@@ -12,16 +12,18 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @AllArgsConstructor
 public class MemberResponseDto {
     private Long id;
-    private String name;
+    private String displayId;
     private String email;
-    private String nickName;
+    private String nickname;
+    private String profileImageUrl;
 
     public static MemberResponseDto of(Member member) {
         return MemberResponseDto.builder()
                 .id(member.getId())
-                .name(member.getName())
+                .displayId(member.getDisplayId())
                 .email(member.getEmail())
-                .nickName(member.getNickName())
+                .nickname(member.getNickname())
+                .profileImageUrl(member.getProfileImageUrl())
                 .build();
     }
 }

@@ -13,24 +13,27 @@ class MemberResponseDtoTest {
     @DisplayName("Member -> MemberResponseDto")
     public void memberResponseDtoTest() {
         // given
-        String name = "test";
-        String nickName = "testNickname";
+        String displayId = "test";
+        String nickname = "testNickname";
         String email = "test@test.net";
         String password = "1q2w3e4r";
+        String profileImageUrl = "test.img";
 
         Member member = Member.builder()
-                .name(name)
-                .nickName(nickName)
+                .displayId(displayId)
+                .nickname(nickname)
                 .email(email)
                 .password(password)
+                .profileImageUrl(profileImageUrl)
                 .build();
 
         // when
         MemberResponseDto memberResponseDto = MemberResponseDto.of(member);
 
-        assertThat(memberResponseDto.getName()).isEqualTo(name);
-        assertThat(memberResponseDto.getNickName()).isEqualTo(nickName);
+        assertThat(memberResponseDto.getDisplayId()).isEqualTo(displayId);
+        assertThat(memberResponseDto.getNickname()).isEqualTo(nickname);
         assertThat(memberResponseDto.getEmail()).isEqualTo(email);
+        assertThat(memberResponseDto.getProfileImageUrl()).isEqualTo(profileImageUrl);
         assertThat(memberResponseDto.getId()).isNull();
     }
 }
