@@ -53,13 +53,13 @@ class CommentServiceTest {
 
     @BeforeEach
     public void signupBeforeTest() {
-        String name = "testName";
-        String nickName = "testNick";
+        String displayId = "testName";
+        String nickname = "testNick";
         String email = "test@naver.com";
         String password = "testPassword";
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .name(name)
-                                                            .nickName(nickName)
+                                                            .displayId(displayId)
+                                                            .nickname(nickname)
                                                             .email(email)
                                                             .password(password)
                                                             .build();
@@ -94,7 +94,7 @@ class CommentServiceTest {
         CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
 
         assertEquals("test", comment.getContent());
-        assertEquals("testName", comment.getAuthor().getName());
+        assertEquals("testName", comment.getAuthor().getDisplayId());
         assertEquals(0, comment.getLikeCount());
         assertFalse(comment.getIsLike());
     }
@@ -111,13 +111,13 @@ class CommentServiceTest {
     @DisplayName("타인이 타인 댓글 삭제")
     @Test
     public void delete_comment2() throws Exception {
-        String name = "other";
-        String nickName = "other";
+        String displayId = "other";
+        String nickname = "other";
         String email = "other@naver.com";
         String password = "other";
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .name(name)
-                                                            .nickName(nickName)
+                                                            .displayId(displayId)
+                                                            .nickname(nickname)
                                                             .email(email)
                                                             .password(password)
                                                             .build();

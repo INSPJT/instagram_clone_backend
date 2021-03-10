@@ -4,15 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
@@ -39,13 +31,21 @@ public class Member extends BaseEntity {
     private Long id;
 
     @NotNull
-    private String name;
+    @Column(unique = true)
+    private String displayId;
+
     @NotNull
+    @Column(unique = true)
     private String email;
-    @Nullable
-    private String nickName;
+
     @NotNull
     private String password;
+
+    @Nullable
+    private String nickname;
+
+    @Nullable
+    private String profileImageUrl;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -70,16 +70,33 @@ public class Member extends BaseEntity {
     private List<Follow> followers = new ArrayList<>();
 
     @Builder
-    public Member(String name, String email, String nickName, String password) {
-        this.name = name;
+    public Member(String displayId, String email, String nickname, String password, String profileImageUrl) {
+        this.displayId = displayId;
         this.email = email;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.password = password;
+        this.profileImageUrl = profileImageUrl;
         this.authority = Authority.ROLE_USER;
+    }
+
+    public enum Authority {
+        ROLE_USER, ROLE_ADMIN
     }
 
     public boolean equals(Member other) {
         return Objects.equals(id, other.getId()) || Objects.equals(email, other.getEmail());
+    }
+
+    public boolean isFollowingTo(Member other) {
+        return followings.stream()
+                .map(Follow::getToMember)
+                .anyMatch(toMember -> toMember.equals(other));
+    }
+
+    public boolean isFollowedBy(Member other) {
+        return followers.stream()
+                .map(Follow::getFromMember)
+                .anyMatch(fromMember -> fromMember.equals(other));
     }
 
 }

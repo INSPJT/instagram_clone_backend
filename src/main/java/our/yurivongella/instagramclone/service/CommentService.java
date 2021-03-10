@@ -84,7 +84,7 @@ public class CommentService {
                                              .stream()
                                              .anyMatch(cl -> cl.getMember().equals(member));
         if (!check) {
-            log.info("{}가 댓글 {}를 좋아요 표시합니다.", member.getName(), comment.getContent());
+            log.info("{}가 댓글 {}를 좋아요 표시합니다.", member.getDisplayId(), comment.getContent());
             CommentLike commentLike = createCommentLike(member, comment);
             commentLikeRepository.save(commentLike);
             return ProcessStatus.SUCCESS;
@@ -106,7 +106,7 @@ public class CommentService {
                                     .filter(cl -> cl.getMember().equals(member))
                                     .findFirst()
                                     .map(cl -> {
-                                        log.info("{}가 댓글 {}를 좋아요 취소합니다.", member.getName(), comment.getContent());
+                                        log.info("{}가 댓글 {}를 좋아요 취소합니다.", member.getDisplayId(), comment.getContent());
                                         cl.unlike();
                                         commentLikeRepository.delete(cl);
                                         return ProcessStatus.SUCCESS;

@@ -37,13 +37,13 @@ class MemberServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private final String myName = "test1";
-    private final String myNickName = "testNickname1";
+    private final String myDisplayId = "test1";
+    private final String myNickname = "testNickname1";
     private final String myEmail = "memberService1@test.net1";
     private final String myPassword = "1q2w3e4r1";
 
-    private final String targetName = "test2";
-    private final String targetNickName = "testNickname2";
+    private final String targetDisplayId = "test2";
+    private final String targetNickname = "testNickname2";
     private final String targetEmail = "memberService2@test.net2";
     private final String targetPassword = "1q2w3e4r2";
 
@@ -51,22 +51,22 @@ class MemberServiceTest {
     public void signupBeforeTest() {
         // 두명 가입시키기
         SignupRequestDto signupRequestDto1 = SignupRequestDto.builder()
-                .name(myName)
-                .nickName(myNickName)
+                .displayId(myDisplayId)
+                .nickname(myNickname)
                 .email(myEmail)
                 .password(myPassword)
                 .build();
 
         SignupRequestDto signupRequestDto2 = SignupRequestDto.builder()
-                .name(targetName)
-                .nickName(targetNickName)
+                .displayId(targetDisplayId)
+                .nickname(targetNickname)
                 .email(targetEmail)
                 .password(targetPassword)
                 .build();
 
         SignupRequestDto signupRequestDto3 = SignupRequestDto.builder()
-                .name(targetName + 3)
-                .nickName(targetNickName + 3)
+                .displayId(targetDisplayId + 3)
+                .nickname(targetNickname + 3)
                 .email(targetEmail + 3)
                 .password(targetPassword + 3)
                 .build();
@@ -109,14 +109,14 @@ class MemberServiceTest {
             assertThat(follows.size()).isEqualTo(1);
 
             Member targetMember = follows.get(0).getToMember();
-            assertThat(targetMember.getNickName()).isEqualTo(targetNickName);
-            assertThat(targetMember.getName()).isEqualTo(targetName);
+            assertThat(targetMember.getNickname()).isEqualTo(targetNickname);
+            assertThat(targetMember.getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(targetMember.getEmail()).isEqualTo(targetEmail);
             assertThat(targetMember.getFollowers().size()).isEqualTo(1);
 
             Member myMember = follows.get(0).getFromMember();
-            assertThat(myMember.getNickName()).isEqualTo(myNickName);
-            assertThat(myMember.getName()).isEqualTo(myName);
+            assertThat(myMember.getNickname()).isEqualTo(myNickname);
+            assertThat(myMember.getDisplayId()).isEqualTo(myDisplayId);
             assertThat(myMember.getEmail()).isEqualTo(myEmail);
             assertThat(myMember.getFollowings().size()).isEqualTo(1);
         }

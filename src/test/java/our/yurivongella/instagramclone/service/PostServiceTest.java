@@ -43,16 +43,16 @@ public class PostServiceTest {
     private Long userId;
     private static PostCreateRequestDto postCreateRequestDto;
 
-    private final String name = "test";
-    private final String nickName = "testNickname";
+    private final String displayId = "test";
+    private final String nickname = "testNickname";
     private final String email = "authService1@test.net";
     private final String password = "1q2w3e4r";
 
     @BeforeEach
     public void signupBeforeTest() {
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                .name(name)
-                .nickName(nickName)
+                .displayId(displayId)
+                .nickname(nickname)
                 .email(email)
                 .password(password)
                 .build();
