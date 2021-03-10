@@ -11,23 +11,22 @@ public class MemberDto {
     Long id;
     String displayId;
     String profileImageUrl;
-    Boolean following;
+    Boolean isFollowedByMe;
 
     @Builder
-    public MemberDto(Long id, String displayId, String profileImageUrl, Boolean following) {
+    public MemberDto(Long id, String displayId, String profileImageUrl, Boolean isFollowedByMe) {
         this.id = id;
         this.displayId = displayId;
         this.profileImageUrl = profileImageUrl;
-        this.following = following;
+        this.isFollowedByMe = isFollowedByMe;
     }
 
-    public static MemberDto of(Member otherUser, Member user) {
+    public static MemberDto of(Member other, Member currentMember) {
         return builder()
-                .id(otherUser.getId())
-                .displayId(otherUser.getDisplayId())
-                .following(otherUser.getFollowers()
-                                    .stream()
-                                    .anyMatch(v -> v.getFromMember().getId().equals(user.getId())))
+                .id(other.getId())
+                .displayId(other.getDisplayId())
+                .profileImageUrl(other.getProfileImageUrl())
+                .isFollowedByMe(other.isFollowedBy(currentMember))
                 .build();
     }
 }

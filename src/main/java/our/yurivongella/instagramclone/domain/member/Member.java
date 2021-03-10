@@ -87,4 +87,16 @@ public class Member extends BaseEntity {
         return Objects.equals(id, other.getId()) || Objects.equals(email, other.getEmail());
     }
 
+    public boolean isFollowingTo(Member other) {
+        return followings.stream()
+                .map(Follow::getToMember)
+                .anyMatch(toMember -> toMember.equals(other));
+    }
+
+    public boolean isFollowedBy(Member other) {
+        return followers.stream()
+                .map(Follow::getFromMember)
+                .anyMatch(fromMember -> fromMember.equals(other));
+    }
+
 }
