@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.controller.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +12,15 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberResponseDto {
+
     private Long id;
+
+    @NotNull
     private String displayId;
+
+    @NotNull
     private String email;
+
     private String nickname;
     private String profileImageUrl;
 

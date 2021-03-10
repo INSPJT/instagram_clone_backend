@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.controller.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @NoArgsConstructor
 @AllArgsConstructor
 public class SigninRequestDto {
+
+    @NotNull
     private String email;
+
+    @NotNull
     private String password;
 
     public UsernamePasswordAuthenticationToken toAuthenticationToken() {

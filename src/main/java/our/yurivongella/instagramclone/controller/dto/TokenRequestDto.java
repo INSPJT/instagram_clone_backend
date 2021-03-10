@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.controller.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenRequestDto {
+
+    @NotNull
     private String accessToken;
+
+    @NotNull
     private String refreshToken;
 }
