@@ -42,6 +42,6 @@ public class MemberDtoTest {
         // then
         assertThat(memberDto.getDisplayId()).isEqualTo(PREFIX + "other");
         assertThat(memberDto.getProfileImageUrl()).isEqualTo(null);
-        assertThat(memberDto.getFollowing()).isEqualTo(true);
+        assertThat(memberDto.getIsFollowedByMe()).isEqualTo(true);
     }
 }
