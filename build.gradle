@@ -69,6 +69,8 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.6.1'
     implementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.3'
+
 
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
