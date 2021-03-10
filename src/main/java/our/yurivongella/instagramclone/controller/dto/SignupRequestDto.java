@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.controller.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,17 +13,24 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupRequestDto {
-    private String name;
+
+    @NotNull
+    private String displayId;
+
+    @NotNull
     private String email;
-    private String nickName;
+
+    @NotNull
     private String password;
+
+    private String nickname;
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .name(name)
+                .displayId(displayId)
                 .email(email)
                 .password(passwordEncoder.encode(password))
-                .nickName(nickName)
+                .nickname(nickname)
                 .build();
     }
 }

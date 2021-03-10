@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("UserDetailsService 테스트")
 @SpringBootTest
+@Transactional
 public class CustomUserDetailsServiceTest {
 
     @Autowired
@@ -24,14 +26,14 @@ public class CustomUserDetailsServiceTest {
     @Test
     public void loadUserByUsernameTest() {
         // given
-        String name = "test";
-        String nickName = "testNickname";
+        String displayId = "test";
+        String nickname = "testNickname";
         String email = "customUserDetailsService@test.net";
         String password = "1q2w3e4r";
 
         Member member = Member.builder()
-                .name(name)
-                .nickName(nickName)
+                .displayId(displayId)
+                .nickname(nickname)
                 .email(email)
                 .password(password)
                 .build();
