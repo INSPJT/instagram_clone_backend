@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
@@ -24,14 +23,14 @@ public class MemberService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public boolean follow(FollowRequestDto followRequestDto) {
-        Member currentMember = getCurrentMember();
-        Member targetMember = memberRepository.findById(followRequestDto.getId())
-                .orElseThrow(() -> new RuntimeException("팔로우 대상이 존재하지 않습니다."));
-
-        if (currentMember.equals(targetMember))  {
+    public boolean follow(Long memberId) {
+        if (SecurityUtil.getCurrentMemberId().equals(memberId))  {
             throw new RuntimeException("자기 자신은 팔로우 할 수 없습니다.");
         }
+
+        Member currentMember = getCurrentMember();
+        Member targetMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("팔로우 대상이 존재하지 않습니다."));
 
         try {
             Follow follow = Follow.builder()
@@ -47,10 +46,10 @@ public class MemberService {
     }
 
     @Transactional
-    public boolean unFollow(FollowRequestDto followRequestDto) {
+    public boolean unFollow(Long memberId) {
         Follow follow = followRepository.findByFromMemberIdAndToMemberId(
                                 SecurityUtil.getCurrentMemberId(),
-                                followRequestDto.getId()
+                                memberId
                         )
                         .orElseThrow(() -> new RuntimeException("팔로우 중이지 않습니다."))
                         .unfollow();

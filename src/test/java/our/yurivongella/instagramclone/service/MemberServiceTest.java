@@ -96,13 +96,8 @@ class MemberServiceTest {
         @DisplayName("팔로우 성공")
         @Test
         public void successFollow() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.follow(followRequestDto);
+            memberService.follow(targetId);
 
             // then
             List<Follow> follows = followRepository.findByToMemberId(targetId);
@@ -125,18 +120,13 @@ class MemberServiceTest {
         @DisplayName("이미 팔로우 중임")
         @Test
         public void alreadyFollow() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.follow(followRequestDto);
+            memberService.follow(targetId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.follow(followRequestDto)
+                    () -> memberService.follow(targetId)
             );
         }
     }
@@ -157,23 +147,14 @@ class MemberServiceTest {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 언팔로우 테스트를 위해 미리 팔로우 처리
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
-            memberService.follow(followRequestDto);
+            memberService.follow(targetId);
         }
 
         @DisplayName("언팔로우 성공")
         @Test
         public void successUnFollow() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.unFollow(followRequestDto);
+            memberService.unFollow(targetId);
 
             // then
             List<Follow> follows = followRepository.findByToMemberId(targetId);
@@ -183,18 +164,13 @@ class MemberServiceTest {
         @DisplayName("팔로우 중이지 않아서 실패")
         @Test
         public void notFollowingTarget() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.unFollow(followRequestDto);
+            memberService.unFollow(targetId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.unFollow(followRequestDto)
+                    () -> memberService.unFollow(targetId)
             );
         }
     }
