@@ -12,6 +12,7 @@ import com.sun.istack.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
@@ -23,6 +24,7 @@ import our.yurivongella.instagramclone.domain.post.PostLike;
 @Entity
 @NoArgsConstructor
 @Table(name = "member")
+@ToString(of = {"displayId","email"})
 public class Member extends BaseEntity {
 
     @Id
@@ -63,10 +65,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<CommentLike> commentLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toMember")
+    @OneToMany(mappedBy = "fromMember")
     private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromMember")
+    @OneToMany(mappedBy = "toMember")
     private List<Follow> followers = new ArrayList<>();
 
     @Builder
