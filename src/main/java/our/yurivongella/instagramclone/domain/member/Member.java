@@ -63,10 +63,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<CommentLike> commentLikes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toMember")
+    @OneToMany(mappedBy = "fromMember")
     private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromMember")
+    @OneToMany(mappedBy = "toMember")
     private List<Follow> followers = new ArrayList<>();
 
     @Builder

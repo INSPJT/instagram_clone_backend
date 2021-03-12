@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
+import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
@@ -221,13 +222,18 @@ class MemberServiceTest {
         @DisplayName("내 팔로워 가져오기")
         @Test
         public void getFollowersTest() {
-            assertThat(memberService.getFollowers().size()).isEqualTo(1);
+            List<MemberResponseDto> followers = memberService.getFollowers();
+            assertThat(followers.get(0).getDisplayId()).isEqualTo(targetDisplayId);
+            assertThat(followers.size()).isEqualTo(1);
         }
 
         @DisplayName("내 팔로우 중인 대상들 가져오기")
         @Test
         public void getFollowingTest() {
-            assertThat(memberService.getFollowings().size()).isEqualTo(2);
+            List<MemberResponseDto> followings = memberService.getFollowings();
+            assertThat(followings.get(0).getDisplayId()).isEqualTo(targetDisplayId);
+            assertThat(followings.get(1).getDisplayId()).isEqualTo(targetDisplayId + 3);
+            assertThat(followings.size()).isEqualTo(2);
         }
     }
 }
