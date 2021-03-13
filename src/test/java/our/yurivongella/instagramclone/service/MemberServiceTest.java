@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
+import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
@@ -95,13 +96,8 @@ class MemberServiceTest {
         @DisplayName("팔로우 성공")
         @Test
         public void successFollow() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.follow(followRequestDto);
+            memberService.follow(targetId);
 
             // then
             List<Follow> follows = followRepository.findByToMemberId(targetId);
@@ -124,18 +120,13 @@ class MemberServiceTest {
         @DisplayName("이미 팔로우 중임")
         @Test
         public void alreadyFollow() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.follow(followRequestDto);
+            memberService.follow(targetId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.follow(followRequestDto)
+                    () -> memberService.follow(targetId)
             );
         }
     }
@@ -156,23 +147,14 @@ class MemberServiceTest {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 언팔로우 테스트를 위해 미리 팔로우 처리
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
-            memberService.follow(followRequestDto);
+            memberService.follow(targetId);
         }
 
         @DisplayName("언팔로우 성공")
         @Test
         public void successUnFollow() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.unFollow(followRequestDto);
+            memberService.unFollow(targetId);
 
             // then
             List<Follow> follows = followRepository.findByToMemberId(targetId);
@@ -182,18 +164,13 @@ class MemberServiceTest {
         @DisplayName("팔로우 중이지 않아서 실패")
         @Test
         public void notFollowingTarget() {
-            // given
-            FollowRequestDto followRequestDto = FollowRequestDto.builder()
-                    .id(targetId)
-                    .build();
-
             // when
-            memberService.unFollow(followRequestDto);
+            memberService.unFollow(targetId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.unFollow(followRequestDto)
+                    () -> memberService.unFollow(targetId)
             );
         }
     }
@@ -221,13 +198,18 @@ class MemberServiceTest {
         @DisplayName("내 팔로워 가져오기")
         @Test
         public void getFollowersTest() {
-            assertThat(memberService.getFollowers().size()).isEqualTo(1);
+            List<MemberResponseDto> followers = memberService.getFollowers();
+            assertThat(followers.get(0).getDisplayId()).isEqualTo(targetDisplayId);
+            assertThat(followers.size()).isEqualTo(1);
         }
 
         @DisplayName("내 팔로우 중인 대상들 가져오기")
         @Test
         public void getFollowingTest() {
-            assertThat(memberService.getFollowings().size()).isEqualTo(2);
+            List<MemberResponseDto> followings = memberService.getFollowings();
+            assertThat(followings.get(0).getDisplayId()).isEqualTo(targetDisplayId);
+            assertThat(followings.get(1).getDisplayId()).isEqualTo(targetDisplayId + 3);
+            assertThat(followings.size()).isEqualTo(2);
         }
     }
 }
