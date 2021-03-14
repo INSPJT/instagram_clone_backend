@@ -5,11 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,14 +96,14 @@ public class PostService {
      * @implNote : 아래는 Feed용 Service...........
      */
 
-    public List<PostReadResponseDto> getFeed(Pageable pageable) {
+    public List<PostReadResponseDto> getFeed(Long offset, Pageable pageable) {
         /** 20개를 때려박고
          *  5개씩 달라고 하면 4번 다른 종류가 나와야돼 대신 최신순으로
          */
         Member member = getCurrentMember();
         log.info("-------------------------pageQuery를 요청한 Member = {}", member);
 
-        Slice<Post> feedSlice = postRepository.findFeedByUserId(member.getId(), pageable);
+        Slice<Post> feedSlice = postRepository.findTop5ByUserId(member.getId(), offset, pageable);
 
         return feedSlice
                 .stream()
