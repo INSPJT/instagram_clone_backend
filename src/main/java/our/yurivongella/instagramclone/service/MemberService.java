@@ -3,8 +3,6 @@ package our.yurivongella.instagramclone.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +12,10 @@ import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.util.SecurityUtil;
+
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -30,19 +31,15 @@ public class MemberService {
 
         Member currentMember = getCurrentMember();
         Member targetMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("팔로우 대상이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        try {
-            Follow follow = Follow.builder()
-                    .fromMember(currentMember)
-                    .toMember(targetMember)
-                    .build();
+        Follow follow = Follow.builder()
+                .fromMember(currentMember)
+                .toMember(targetMember)
+                .build();
 
-            followRepository.save(follow);
-            return true;
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("이미 팔로우 중 입니다.");
-        }
+        followRepository.save(follow);
+        return true;
     }
 
     @Transactional
@@ -51,7 +48,7 @@ public class MemberService {
                                 SecurityUtil.getCurrentMemberId(),
                                 memberId
                         )
-                        .orElseThrow(() -> new RuntimeException("팔로우 중이지 않습니다."))
+                        .orElseThrow(() -> new CustomException(NOT_FOLLOW))
                         .unfollow();
 
         followRepository.delete(follow);
@@ -79,7 +76,7 @@ public class MemberService {
      */
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(() -> new UsernameNotFoundException("현재 계정 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
     }
 }
 
