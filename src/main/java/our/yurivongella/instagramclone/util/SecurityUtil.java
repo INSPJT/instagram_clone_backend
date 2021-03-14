@@ -2,6 +2,9 @@ package our.yurivongella.instagramclone.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import our.yurivongella.instagramclone.exception.CustomException;
+
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 public class SecurityUtil {
 
@@ -13,7 +16,7 @@ public class SecurityUtil {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null) {
-            throw new RuntimeException("Security Context 에 인증 정보가 없습니다.");
+            throw new CustomException(UNAUTHORIZED_MEMBER);
         }
 
         return Long.parseLong(authentication.getName());

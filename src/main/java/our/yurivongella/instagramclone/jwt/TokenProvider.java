@@ -13,12 +13,16 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @Slf4j
 @Component
@@ -71,7 +75,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new CustomException(INVALID_AUTH_TOKEN);
         }
 
         // 클레임에서 권한 정보 가져오기

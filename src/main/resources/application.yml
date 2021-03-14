@@ -16,6 +16,13 @@ spring:
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=
 
+server:
+  error:
+    include-exception: false      # Response 에 Exception 을 표시할지
+    include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
+    include-stacktrace: on_param  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
+    whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
+
 ---
 
 spring:
