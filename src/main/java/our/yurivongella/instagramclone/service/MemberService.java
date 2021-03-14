@@ -3,20 +3,21 @@ package our.yurivongella.instagramclone.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.util.SecurityUtil;
+
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,34 +27,32 @@ public class MemberService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public boolean follow(FollowRequestDto followRequestDto) {
+    public boolean follow(Long memberId) {
+        if (SecurityUtil.getCurrentMemberId().equals(memberId))  {
+            throw new CustomException(CANNOT_FOLLOW_MYSELF);
+        }
+
         Member currentMember = getCurrentMember();
-        Member targetMember = memberRepository.findById(followRequestDto.getId())
-                                              .orElseThrow(() -> new RuntimeException("팔로우 대상이 존재하지 않습니다."));
-        log.info(currentMember.getDisplayId() + "가 " + targetMember.getDisplayId() + "를 팔로우 합니다.");
-        if (currentMember.equals(targetMember)) {
-            throw new RuntimeException("자기 자신은 팔로우 할 수 없습니다.");
-        }
+        Member targetMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        try {
-            Follow follow = Follow.builder()
-                                  .fromMember(currentMember)
-                                  .toMember(targetMember)
-                                  .build();
+        Follow follow = Follow.builder()
+                .fromMember(currentMember)
+                .toMember(targetMember)
+                .build();
 
-            followRepository.save(follow);
-            return true;
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("이미 팔로우 중 입니다.");
-        }
+        followRepository.save(follow);
+        return true;
     }
 
     @Transactional
-    public boolean unFollow(FollowRequestDto followRequestDto) {
+    public boolean unFollow(Long memberId) {
         Follow follow = followRepository.findByFromMemberIdAndToMemberId(
-                SecurityUtil.getCurrentMemberId(),
-                followRequestDto.getId()
-        ).orElseThrow(() -> new RuntimeException("팔로우 중이지 않습니다.")).unfollow();
+                                SecurityUtil.getCurrentMemberId(),
+                                memberId
+                        )
+                        .orElseThrow(() -> new CustomException(NOT_FOLLOW))
+                        .unfollow();
 
         followRepository.delete(follow);
         return true;
@@ -93,7 +92,7 @@ public class MemberService {
      */
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                               .orElseThrow(() -> new UsernameNotFoundException("현재 계정 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
     }
 }
 
