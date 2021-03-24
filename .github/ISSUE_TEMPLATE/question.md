@@ -1,7 +1,7 @@
 ---
 name: Question
 about: Ask us what you are curious about.
-title: ''
+title: question
 labels: question
 assignees: AndoneKwon, bjh7013, DolphaGo, goodGid, heonilp, ParkJiwoon, syureu
 
