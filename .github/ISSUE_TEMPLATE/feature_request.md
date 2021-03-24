@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
+title: Feature request
 labels: enhancement
 assignees: goodGid, ParkJiwoon, syureu, DolphaGo, heonilp, AndoneKwon, bjh7013
 
