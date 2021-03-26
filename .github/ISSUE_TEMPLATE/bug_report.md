@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: Bug
+title: 
 labels: bug
 assignees: AndoneKwon, bjh7013, DolphaGo, goodGid, heonilp, ParkJiwoon, syureu
 
