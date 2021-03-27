@@ -37,13 +37,13 @@ public class PostLike extends BaseEntity {
         this.member = member;
         this.post = post;
         post.getPostLikes().add(this);
-        post.like();
+        post.plusLikeCount();
         return this;
     }
 
     public void unlike() {
         post.getPostLikes().remove(this);
-        post.unlike();
+        post.minusLikeCount();
     }
 
 }

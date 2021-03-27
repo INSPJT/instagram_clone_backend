@@ -69,11 +69,11 @@ public class Post extends BaseEntity {
         return this;
     }
 
-    public void like() {
+    public void plusLikeCount() {
         this.likeCount += 1;
     }
 
-    public void unlike() {
+    public void minusLikeCount() {
         if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
         this.likeCount -= 1;
     }
