@@ -56,8 +56,7 @@ public class PostService {
     @Transactional
     public PostReadResponseDto read(Long postId) {
         Member member = getCurrentMember();
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         post.viewCountUp();
         return PostReadResponseDto.of(post, member);
     }
@@ -120,23 +119,22 @@ public class PostService {
         return new PostLike().like(member, post);
     }
 
-    public List<PostReadResponseDto> getPostList(Long memberId) {
-        Member member = getMember(memberId);
+    public List<PostReadResponseDto> getPostList(String displayId) {
+        Member member = getMemberByDisplayId(displayId);
 
         return member.getPosts().stream()
                 .map(post -> PostReadResponseDto.of(post, member))
                 .collect(Collectors.toList());
     }
 
-
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
                 .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
+    private Member getMemberByDisplayId(String displayId) {
+        return memberRepository.findByDisplayId(displayId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     /**

@@ -60,6 +60,7 @@ public class Post extends BaseEntity {
     public Post(String content) {
         this.content = content;
         this.likeCount = 0L;
+        this.views = 0L;
     }
 
     public Post addMember(Member member) {

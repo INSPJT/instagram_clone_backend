@@ -11,25 +11,31 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @SpringBootTest
 public class PostServiceTest {
+
+    @Autowired
+    private EntityManager em;
 
     @Autowired
     private PostService postService;
@@ -104,7 +110,7 @@ public class PostServiceTest {
         // reqeust mock get
         PostReadResponseDto postResponseDto = postService.read(postId);
 
-        assertThat(postResponseDto.getAuthor().getDisplayId()).isEqualTo(memberId);
+        assertThat(postResponseDto.getAuthor().getDisplayId()).isEqualTo(displayId);
         assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());
 
         for (int i = 0; i < postCreateRequestDto.getMediaUrls().size(); ++i) {
@@ -133,9 +139,8 @@ public class PostServiceTest {
     public void getMembersPostList() {
         postService.create(postCreateRequestDto);
 
-        List<PostReadResponseDto> postlist = postService.getPostList(SecurityUtil.getCurrentMemberId());
-
-        assertThat(postlist.get(0).getAuthor().getDisplayId()).isEqualTo(SecurityUtil.getCurrentMemberId());
+        List<PostReadResponseDto> postlist = postService.getPostList(displayId);
+        assertThat(postlist.get(0).getAuthor().getDisplayId()).isEqualTo(displayId);
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")
@@ -160,8 +165,68 @@ public class PostServiceTest {
     @DisplayName("좋아요 테스트")
     @Test
     @Transactional
-    public void likeTest(){
+    public void likeTest() {
+        Long postId = postService.create(postCreateRequestDto);
+        ProcessStatus processStatus = postService.likePost(postId);
+        assertEquals(ProcessStatus.SUCCESS, processStatus);
+
+        Post post = postRepository.findById(postId).get();
+        assertEquals(1L, post.getLikeCount());
+        assertEquals(memberId, post.getPostLikes().get(0).getMember().getId());
+        assertEquals(displayId, post.getPostLikes().get(0).getMember().getDisplayId());
+    }
+
+    @DisplayName("좋아요 중복 테스트")
+    @Test
+    @Transactional
+    public void like_duple_Test() {
+        Long postId = postService.create(postCreateRequestDto);
+        ProcessStatus processStatus = postService.likePost(postId);
+        assertEquals(ProcessStatus.SUCCESS, processStatus);
+
+        Post post = postRepository.findById(postId).get();
+        assertEquals(1L, post.getLikeCount());
+        assertEquals(memberId, post.getPostLikes().get(0).getMember().getId());
+        assertEquals(displayId, post.getPostLikes().get(0).getMember().getDisplayId());
+
+        CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.likePost(postId));
+        assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode());
+    }
+
+    @Transactional
+    public Long likePost() {
         Long postId = postService.create(postCreateRequestDto);
         postService.likePost(postId);
+        Post post = postRepository.findById(postId).get();
+        assertEquals(1L, post.getLikeCount());
+        em.flush();
+        em.clear();
+        return postId;
     }
+
+    @DisplayName("좋아요 취소 테스트")
+    @Test
+    @Transactional
+    public void unlike_Test() {
+        Long postId = likePost();
+        ProcessStatus processStatus = postService.unlikePost(postId);
+        Post post = postRepository.findById(postId).get();
+        assertEquals(ProcessStatus.SUCCESS, processStatus);
+        assertEquals(0L, post.getLikeCount());
+    }
+
+    @DisplayName("좋아요 취소 중복 테스트")
+    @Test
+    @Transactional
+    public void unlike_duple_Test() {
+        Long postId = likePost();
+        ProcessStatus processStatus = postService.unlikePost(postId);
+        Post post = postRepository.findById(postId).get();
+        assertEquals(ProcessStatus.SUCCESS, processStatus);
+        assertEquals(0L, post.getLikeCount());
+
+        CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.unlikePost(postId));
+        assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode());
+    }
+
 }

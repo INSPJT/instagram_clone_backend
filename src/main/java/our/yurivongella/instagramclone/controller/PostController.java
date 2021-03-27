@@ -42,9 +42,9 @@ public class PostController {
     }
 
     @ApiOperation("특정 사용자의 게시글 리스트 조회")
-    @GetMapping("/members/{memberId}/posts")
-    public ResponseEntity<?> readPostList(@PathVariable Long memberId) {
-        return ResponseEntity.ok(postService.getPostList(memberId));
+    @GetMapping("/members/{displayId}/posts")
+    public ResponseEntity<?> readPostList(@PathVariable String displayId) {
+        return ResponseEntity.ok(postService.getPostList(displayId));
     }
 
     @ApiOperation("포스트 좋아요")
