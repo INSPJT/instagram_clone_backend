@@ -74,3 +74,31 @@ spring:
 #        show_sql: true
 
 ---
+
+spring:
+  config:
+    activate:
+      on-profile: mysql-rds
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://yuribon.cihrlagdbfuq.ap-northeast-2.rds.amazonaws.com:3306/insta?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username: yuribon
+    password: yuribon21
+#    initialization-mode: always
+#    schema:
+#      - classpath*:/db-schema.sql
+#    data:
+#      - classpath*:/data-rds.sql
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+#        format_sql: true
+#        show_sql: true
+
+---
