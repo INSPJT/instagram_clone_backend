@@ -1,14 +1,9 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -70,18 +65,18 @@ public class PostReadResponseDto {
 
     public static PostReadResponseDto of(Post post, Member member) {
         return PostReadResponseDto.builder()
-                                  .id(post.getId())
-                                  .author(MemberDto.of(post.getMember(), member))
-                                  .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
-                                  .content(post.getContent())
-                                  .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
-                                  .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
-                                  .likeCount(post.getPostLikes().size())
-                                  .commentCount(post.getComments().size())
-                                  .viewCount(post.getViews())
-                                  .createdAt(from(post.getCreatedDate()))
-                                  .modifiedAt(from(post.getModifiedDate()))
-                                  .build();
+                .id(post.getId())
+                .author(MemberDto.of(post.getMember(), member))
+                .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
+                .content(post.getContent())
+                .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
+                .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
+                .likeCount(post.getPostLikes().size())
+                .commentCount(post.getComments().size())
+                .viewCount(post.getViews())
+                .createdAt(from(post.getCreatedDate()))
+                .modifiedAt(from(post.getModifiedDate()))
+                .build();
     }
 
     private static String from(LocalDateTime time) {

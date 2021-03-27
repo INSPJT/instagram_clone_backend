@@ -16,13 +16,13 @@ public class CommentResponseDto {
     private MemberDto author;
     private Boolean isLike;
     @JsonProperty("likeLength")
-    private Integer likeCount;
+    private Long likeCount;
     //Long replyLength;
     private LocalDateTime created;
     private String content;
 
     @Builder
-    public CommentResponseDto(Long id, MemberDto author, Boolean isLike, Integer likeCount, LocalDateTime created, String content) {
+    public CommentResponseDto(Long id, MemberDto author, Boolean isLike, Long likeCount, LocalDateTime created, String content) {
         this.id = id;
         this.author = author;
         this.isLike = isLike;
@@ -36,7 +36,7 @@ public class CommentResponseDto {
                 .id(comment.getId())
                 .author(MemberDto.of(comment.getMember(), member))
                 .isLike(member.getCommentLikes().stream().anyMatch(v -> v.getComment().getId().equals(comment.getId())))
-                .likeCount(comment.getCommentLikes().size())
+                .likeCount(comment.getLikeCount())
                 .created(comment.getCreatedDate())
                 .content(comment.getContent())
                 .build();

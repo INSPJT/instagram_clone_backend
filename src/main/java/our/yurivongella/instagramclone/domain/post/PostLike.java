@@ -13,7 +13,11 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
+import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @Getter
 @Entity
@@ -33,5 +37,17 @@ public class PostLike extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public PostLike like(Member member, Post post) {
+        this.member = member;
+        this.post = post;
+        post.getPostLikes().add(this);
+        post.like();
+        return this;
+    }
+
+    public void unlike() {
+        post.getPostLikes().remove(this);
+        post.unlike();
+    }
 
 }

@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @NoArgsConstructor
 @Getter
@@ -39,10 +41,12 @@ public class CommentLike extends BaseEntity {
         this.member = member;
         this.comment = comment;
         comment.getCommentLikes().add(this);
+        comment.like();
         return this;
     }
 
     public void unlike() {
         comment.getCommentLikes().remove(this);
+        comment.unlike();
     }
 }

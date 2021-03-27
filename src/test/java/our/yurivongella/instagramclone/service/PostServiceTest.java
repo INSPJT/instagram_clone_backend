@@ -22,8 +22,10 @@ import our.yurivongella.instagramclone.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @Transactional
 @SpringBootTest
@@ -41,7 +43,7 @@ public class PostServiceTest {
     @Autowired
     private AuthService authService;
 
-    private Long userId;
+    private Long memberId;
     private static PostCreateRequestDto postCreateRequestDto;
 
     private final String displayId = "test";
@@ -60,10 +62,10 @@ public class PostServiceTest {
 
         // 가입
         authService.signup(signupRequestDto);
-        userId = memberRepository.findByEmail(email).get().getId();
+        memberId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userId, "", Collections.emptyList());
+                new UsernamePasswordAuthenticationToken(memberId, "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -85,10 +87,10 @@ public class PostServiceTest {
         // request mock Post
         postService.create(postCreateRequestDto);
 
-        List<Post> list = postRepository.findAllByMemberId(userId);
+        List<Post> list = postRepository.findAllByMemberId(memberId);
 
         assertThat(list.size()).isEqualTo(1);
-        assertThat(list.get(0).getMember().getId()).isEqualTo(userId);
+        assertThat(list.get(0).getMember().getId()).isEqualTo(memberId);
         assertThat(list.get(0).getContent()).isEqualTo(postCreateRequestDto.getContent());
         assertThat(list.get(0).getMediaUrls().size()).isEqualTo(3);
     }
@@ -102,7 +104,7 @@ public class PostServiceTest {
         // reqeust mock get
         PostReadResponseDto postResponseDto = postService.read(postId);
 
-        assertThat(postResponseDto.getAuthor().getId()).isEqualTo(userId);
+        assertThat(postResponseDto.getAuthor().getDisplayId()).isEqualTo(memberId);
         assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());
 
         for (int i = 0; i < postCreateRequestDto.getMediaUrls().size(); ++i) {
@@ -128,12 +130,12 @@ public class PostServiceTest {
 
     @DisplayName("특정 유저 게시물 리스트 불러오기")
     @Test
-    public void getUsersPostList() {
+    public void getMembersPostList() {
         postService.create(postCreateRequestDto);
 
         List<PostReadResponseDto> postlist = postService.getPostList(SecurityUtil.getCurrentMemberId());
 
-        assertThat(postlist.get(0).getAuthor().getId()).isEqualTo(SecurityUtil.getCurrentMemberId());
+        assertThat(postlist.get(0).getAuthor().getDisplayId()).isEqualTo(SecurityUtil.getCurrentMemberId());
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")
@@ -153,5 +155,13 @@ public class PostServiceTest {
         // then
         assertThat(feeds.size()).isEqualTo(pageSize);
         feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
+    }
+
+    @DisplayName("좋아요 테스트")
+    @Test
+    @Transactional
+    public void likeTest(){
+        Long postId = postService.create(postCreateRequestDto);
+        postService.likePost(postId);
     }
 }
