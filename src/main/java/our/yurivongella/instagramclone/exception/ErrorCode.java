@@ -26,6 +26,7 @@ public enum ErrorCode {
     NOT_FOLLOW(NOT_FOUND, "팔로우 중이지 않습니다"),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트가 존재하지 않습니다."),
     ALREADY_UNLIKE(NOT_FOUND, "더 이상 좋아요를 취소할 수 없습니다"),
+    COMMENT_NOT_FOUND(NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),

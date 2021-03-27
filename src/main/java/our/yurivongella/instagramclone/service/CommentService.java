@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sun.istack.NotNull;
+
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +41,7 @@ public class CommentService {
     public List<CommentResponseDto> getComments(Long postId) {
         Member member = getCurrentMember();
 
-        return postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."))
+        return postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND))
                              .getComments()
                              .stream()
                              .map(c -> CommentResponseDto.of(c, member))
@@ -60,7 +62,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ProcessStatus deleteComment(Long commentId) throws Exception {
+    public ProcessStatus deleteComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
 
@@ -70,16 +72,16 @@ public class CommentService {
         }
 
         try {
-            commentRepository.deleteById(commentId);
+            commentRepository.delete(comment);
         } catch (Exception e) {
-            log.error("삭제 도중 문제가 발생했습니다 = {}", e.getMessage());
-            return ProcessStatus.FAIL;
+            log.error("삭제 도중 문제가 발생했습니다");
+            throw e;
         }
         return ProcessStatus.SUCCESS;
     }
 
     @Transactional
-    public ProcessStatus likeComment(Long commentId) throws Exception {
+    public ProcessStatus likeComment(@NotNull Long commentId) throws Exception {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
         try {
@@ -102,7 +104,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ProcessStatus unlikeComment(Long commentId) throws Exception {
+    public ProcessStatus unlikeComment(@NotNull Long commentId) throws Exception {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
         CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, member.getId()).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
@@ -122,8 +124,9 @@ public class CommentService {
                                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
-    private Comment getCurrentComment(Long commentId) throws NotFoundException {
+    private Comment getCurrentComment(Long commentId) {
+        System.out.println("commentId:" + commentId);
         return commentRepository.findById(commentId)
-                                .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+                                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 }

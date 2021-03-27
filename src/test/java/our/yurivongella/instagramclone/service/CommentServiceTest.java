@@ -6,21 +6,15 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.event.annotation.AfterTestMethod;
 import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
@@ -38,7 +32,6 @@ import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 @SpringBootTest
 class CommentServiceTest {
@@ -91,23 +84,59 @@ class CommentServiceTest {
         assertNotNull(save);
     }
 
-    @Test
-    @DisplayName("댓글 달기")
-    public void create_comment() {
-        CommentCreateDto commentCreateDto = new CommentCreateDto("test");
-        CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
+    @Nested
+    @DisplayName("댓글이 존재하지 않을 때의 테스트")
+    class CommentTest1 {
 
-        assertEquals("test", comment.getContent());
-        assertEquals("testName", comment.getAuthor().getDisplayId());
-        assertEquals(0, comment.getLikeCount());
-        assertFalse(comment.getIsLike());
+        private Long notExistCommendId = 123456L;
+
+        @Test
+        @DisplayName("댓글 달기")
+        public void create_comment() {
+            CommentCreateDto commentCreateDto = new CommentCreateDto("test");
+            CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
+
+            assertEquals("test", comment.getContent());
+            assertEquals("testName", comment.getAuthor().getDisplayId());
+            assertEquals(0, comment.getLikeCount());
+            assertFalse(comment.getIsLike());
+        }
+
+        @DisplayName("존재하지 않는 댓글 삭제")
+        @Test
+        public void delete_comment1() {
+            CustomException customException = assertThrows(CustomException.class, () -> commentService.deleteComment(notExistCommendId));
+            assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("댓글 불러오기")
+        public void getComment_test() {
+            List<CommentResponseDto> comments = commentService.getComments(postId);
+            assertEquals(0, comments.size());
+        }
+
+        @DisplayName("존재하지 않는 댓글 좋아요")
+        @Test
+        public void like() throws Exception {
+            CustomException customException = assertThrows(CustomException.class, () -> commentService.likeComment(notExistCommendId));
+            assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
+        }
+
+        @DisplayName("존재하지 않는 댓글 좋아요 취소")
+        @Test
+        public void unlike() throws Exception {
+            CustomException customException = assertThrows(CustomException.class, () -> commentService.unlikeComment(notExistCommendId));
+            assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
+
+        }
     }
 
     @Nested
-    @DisplayName("댓글 테스트")
-    class CommentTest {
+    @DisplayName("댓글이 존재할 때의 테스트")
+    class CommentTest2 {
         @BeforeEach
-        public void prepare_data() {// 댓글 삭제/좋아요 취소 테스트를 위해 포스트 1건, 댓글 1건을 미리 준비합니다.
+        public void prepare_data() {// 댓글 불러오기, 삭제/좋아요 취소 테스트를 위해 댓글 1건을 미리 준비합니다.
             CommentCreateDto commentCreateDto = new CommentCreateDto("test");
             Post save = postRepository.findById(postId).get();
             CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
@@ -184,6 +213,34 @@ class CommentServiceTest {
 
             CustomException customException = assertThrows(CustomException.class, () -> commentService.unlikeComment(commentId));
             assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode()); // 중복 처리
+        }
+    }
+
+    @Nested
+    @DisplayName("null 체크")
+    class nullComment_test {
+        @DisplayName("commentId = null로 들어오는 comment 삭제")
+        @Test
+        public void delete_comment1() {
+            Exception exception = assertThrows(Exception.class, () -> commentService.deleteComment(commentId));
+            assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
+            assertEquals("The given id must not be null!", exception.getCause().getMessage());
+        }
+
+        @DisplayName("commentId = null로 들어오는 comment 좋아요")
+        @Test
+        public void like() {
+            Exception exception = assertThrows(Exception.class, () -> commentService.likeComment(commentId));
+            assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
+            assertEquals("The given id must not be null!", exception.getCause().getMessage());
+        }
+
+        @DisplayName("commentId = null로 들어오는 comment 좋아요 취소")
+        @Test
+        public void unlike() {
+            Exception exception = assertThrows(Exception.class, () -> commentService.unlikeComment(commentId));
+            assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
+            assertEquals("The given id must not be null!", exception.getCause().getMessage());
         }
     }
 
