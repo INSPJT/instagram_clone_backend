@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.controller.dto;
 
 import com.sun.istack.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +27,11 @@ public class MemberResponseDto {
 
     public static MemberResponseDto of(Member member) {
         return MemberResponseDto.builder()
-                .id(member.getId())
-                .displayId(member.getDisplayId())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .profileImageUrl(member.getProfileImageUrl())
-                .build();
+                                .id(member.getId())
+                                .displayId(member.getDisplayId())
+                                .email(member.getEmail())
+                                .nickname(member.getNickname())
+                                .profileImageUrl(member.getProfileImageUrl())
+                                .build();
     }
 }

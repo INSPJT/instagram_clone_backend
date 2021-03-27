@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
+import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -84,7 +85,7 @@ public class PostServiceTest {
         // request mock Post
         postService.create(postCreateRequestDto);
 
-        List<Post> list = postRepository.findAll();
+        List<Post> list = postRepository.findAllByMemberId(userId);
 
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(userId);
@@ -133,5 +134,24 @@ public class PostServiceTest {
         List<PostReadResponseDto> postlist = postService.getPostList(SecurityUtil.getCurrentMemberId());
 
         assertThat(postlist.get(0).getAuthor().getId()).isEqualTo(SecurityUtil.getCurrentMemberId());
+    }
+
+    @DisplayName("특정 유저의 게시글 피드 가져오기")
+    @Test
+    public void getFeeds() {
+        // given
+        Member member = memberRepository.findByEmail("woody@test.net").get();
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Long lastPostId = 66L;
+        int pageSize = 5;
+
+        // when
+        List<PostReadResponseDto> feeds = postService.getFeeds(lastPostId);
+
+        // then
+        assertThat(feeds.size()).isEqualTo(pageSize);
+        feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
     }
 }
