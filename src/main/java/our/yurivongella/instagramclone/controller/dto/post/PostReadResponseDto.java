@@ -24,20 +24,25 @@ import our.yurivongella.instagramclone.domain.post.Post;
 public class PostReadResponseDto {
     private Long id;
     private MemberDto author;
+
     @JsonProperty("images")
     private List<String> mediaUrls;
+
     @JsonProperty("body")
     private String content;
     private String createdAt;
     private String modifiedAt;
     private Boolean isLike;
+
     @JsonProperty("likeUser")
     private MemberDto usersWhoLike;
+
     @JsonProperty("likeLength")
-    private Long likeCount;
+    private Integer likeCount;
     private List<CommentResponseDto> commentPreview;
+
     @JsonProperty("commentLength")
-    private Long commentCount;
+    private Integer commentCount;
     private Long viewCount;
     //Boolean bookMark;
 
@@ -48,7 +53,7 @@ public class PostReadResponseDto {
 
     @Builder
     public PostReadResponseDto(Long id, MemberDto author, List<String> mediaUrls, String content, String createdAt, String modifiedAt, Boolean isLike,
-                               MemberDto usersWhoLike, Long likeCount, List<CommentResponseDto> commentPreview, Long commentCount, Long viewCount) {
+                               MemberDto usersWhoLike, Integer likeCount, List<CommentResponseDto> commentPreview, Integer commentCount, Long viewCount) {
         this.id = id;
         this.author = author;
         this.mediaUrls = mediaUrls;
@@ -71,8 +76,8 @@ public class PostReadResponseDto {
                                   .content(post.getContent())
                                   .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
                                   .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
-                                  .likeCount((long) post.getPostLikes().size())
-                                  .commentCount((long) post.getComments().size())
+                                  .likeCount(post.getPostLikes().size())
+                                  .commentCount(post.getComments().size())
                                   .viewCount(post.getViews())
                                   .createdAt(from(post.getCreatedDate()))
                                   .modifiedAt(from(post.getModifiedDate()))
