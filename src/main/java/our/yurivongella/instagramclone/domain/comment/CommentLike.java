@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @NoArgsConstructor
 @Getter

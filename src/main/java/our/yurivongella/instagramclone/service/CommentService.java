@@ -40,10 +40,10 @@ public class CommentService {
         Member member = getCurrentMember();
 
         return postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."))
-                .getComments()
-                .stream()
-                .map(c -> CommentResponseDto.of(c, member))
-                .collect(Collectors.toList());
+                             .getComments()
+                             .stream()
+                             .map(c -> CommentResponseDto.of(c, member))
+                             .collect(Collectors.toList());
     }
 
     @Transactional
@@ -51,7 +51,7 @@ public class CommentService {
         Member member = getCurrentMember();
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
+                                  .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
 
         Comment comment = new Comment();
         comment.create(member, post, commentCreateDto.getContent());
@@ -119,11 +119,11 @@ public class CommentService {
 
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
+                               .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
     private Comment getCurrentComment(Long commentId) throws NotFoundException {
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+                                .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
     }
 }

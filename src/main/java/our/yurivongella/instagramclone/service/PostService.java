@@ -64,7 +64,7 @@ public class PostService {
     @Transactional
     public ProcessStatus delete(@NotNull Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
+                                  .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
 
         if (!post.getMember().getId().equals(SecurityUtil.getCurrentMemberId())) {
             log.error("유저가 일치하지 않습니다.");
@@ -83,7 +83,7 @@ public class PostService {
     @Transactional
     public ProcessStatus likePost(@NotNull Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
+                                  .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
 
         try {
             Member member = getCurrentMember();
@@ -123,18 +123,18 @@ public class PostService {
         Member member = getMemberByDisplayId(displayId);
 
         return member.getPosts().stream()
-                .map(post -> PostReadResponseDto.of(post, member))
-                .collect(Collectors.toList());
+                     .map(post -> PostReadResponseDto.of(post, member))
+                     .collect(Collectors.toList());
     }
 
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
+                               .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
     private Member getMemberByDisplayId(String displayId) {
         return memberRepository.findByDisplayId(displayId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                               .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     /**
@@ -147,14 +147,14 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by("id").descending());
 
         return postRepository.findAllByJoinFollow(getCurrentMember().getId(), lastPostId, pageRequest)
-                .stream()
-                .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
-                        commentRepository.findTop3ByPostOrderByIdDesc(post)
-                                .stream()
-                                .map(comment -> CommentResponseDto.of(comment, currentMember))
-                                .collect(Collectors.toList())
-                        )
-                )
-                .collect(Collectors.toList());
+                             .stream()
+                             .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
+                                     commentRepository.findTop3ByPostOrderByIdDesc(post)
+                                                      .stream()
+                                                      .map(comment -> CommentResponseDto.of(comment, currentMember))
+                                                      .collect(Collectors.toList())
+                                  )
+                             )
+                             .collect(Collectors.toList());
     }
 }

@@ -2,8 +2,10 @@ package our.yurivongella.instagramclone.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
@@ -49,13 +51,13 @@ public class PostController {
 
     @ApiOperation("포스트 좋아요")
     @PutMapping("/posts/{postId}/like")
-    public ResponseEntity<?> likePost(@PathVariable("postId") Long postId){
+    public ResponseEntity<?> likePost(@PathVariable("postId") Long postId) {
         return ResponseEntity.ok(postService.likePost(postId));
     }
 
     @ApiOperation("포스트 좋아요 취소")
     @DeleteMapping("/posts/{postId}/like")
-    public ResponseEntity<?> unLikePost(@PathVariable("postId") Long postId){
+    public ResponseEntity<?> unLikePost(@PathVariable("postId") Long postId) {
         return ResponseEntity.ok(postService.unlikePost(postId));
     }
 }

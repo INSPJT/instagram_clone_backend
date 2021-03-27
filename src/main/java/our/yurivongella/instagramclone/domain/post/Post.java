@@ -17,7 +17,7 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
+
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -74,7 +74,7 @@ public class Post extends BaseEntity {
     }
 
     public void unlike() {
-        if (this.likeCount <= 0) throw new CustomException(ErrorCode.INVALID_STATUS);
+        if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
         this.likeCount -= 1;
     }
 

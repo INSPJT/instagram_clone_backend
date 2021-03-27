@@ -58,10 +58,10 @@ spring:
       on-profile: mysql
 
   datasource:
-      url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
-      username: yuri
-      password: 1234
-      driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username: yuri
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect

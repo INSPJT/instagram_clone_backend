@@ -65,18 +65,18 @@ public class PostReadResponseDto {
 
     public static PostReadResponseDto of(Post post, Member member) {
         return PostReadResponseDto.builder()
-                .id(post.getId())
-                .author(MemberDto.of(post.getMember(), member))
-                .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
-                .content(post.getContent())
-                .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
-                .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
-                .likeCount(post.getPostLikes().size())
-                .commentCount(post.getComments().size())
-                .viewCount(post.getViews())
-                .createdAt(from(post.getCreatedDate()))
-                .modifiedAt(from(post.getModifiedDate()))
-                .build();
+                                  .id(post.getId())
+                                  .author(MemberDto.of(post.getMember(), member))
+                                  .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
+                                  .content(post.getContent())
+                                  .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
+                                  .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
+                                  .likeCount(post.getPostLikes().size())
+                                  .commentCount(post.getComments().size())
+                                  .viewCount(post.getViews())
+                                  .createdAt(from(post.getCreatedDate()))
+                                  .modifiedAt(from(post.getModifiedDate()))
+                                  .build();
     }
 
     private static String from(LocalDateTime time) {

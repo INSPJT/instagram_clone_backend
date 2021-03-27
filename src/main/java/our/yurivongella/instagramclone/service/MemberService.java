@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
@@ -36,9 +38,9 @@ public class MemberService {
         }
 
         Follow follow = Follow.builder()
-                .fromMember(currentMember)
-                .toMember(targetMember)
-                .build();
+                              .fromMember(currentMember)
+                              .toMember(targetMember)
+                              .build();
 
         followRepository.save(follow);
         return true;
@@ -51,8 +53,8 @@ public class MemberService {
                 SecurityUtil.getCurrentMemberId(),
                 targetMember.getId()
         )
-                .orElseThrow(() -> new CustomException(NOT_FOLLOW))
-                .unfollow();
+                                        .orElseThrow(() -> new CustomException(NOT_FOLLOW))
+                                        .unfollow();
 
         followRepository.delete(follow);
         return true;
@@ -64,13 +66,13 @@ public class MemberService {
         log.info("현재 자신의 follower를 알고 싶은 유저 = {}", currentMember.getDisplayId());
 
         return currentMember.getFollowers().stream()
-                .map(f -> {
-                    Member fromMember = f.getFromMember();
-                    log.info("{}를 팔로우 하는 유저 = {}", currentMember.getDisplayId(), fromMember.getDisplayId());
-                    return fromMember;
-                })
-                .map(MemberResponseDto::of)
-                .collect(Collectors.toList());
+                            .map(f -> {
+                                Member fromMember = f.getFromMember();
+                                log.info("{}를 팔로우 하는 유저 = {}", currentMember.getDisplayId(), fromMember.getDisplayId());
+                                return fromMember;
+                            })
+                            .map(MemberResponseDto::of)
+                            .collect(Collectors.toList());
     }
 
     @Transactional
@@ -78,13 +80,13 @@ public class MemberService {
         Member currentMember = getCurrentMember();
         log.info("현재 자신이 following 하고 있는 사람들을 알고 싶은 유저 = {}", currentMember.getDisplayId());
         return currentMember.getFollowings().stream()
-                .map(f -> {
-                    Member toMember = f.getToMember();
-                    log.info("{}가 {}를 팔로잉 하고 있습니다.", currentMember.getDisplayId(), toMember.getDisplayId());
-                    return toMember;
-                })
-                .map(MemberResponseDto::of)
-                .collect(Collectors.toList());
+                            .map(f -> {
+                                Member toMember = f.getToMember();
+                                log.info("{}가 {}를 팔로잉 하고 있습니다.", currentMember.getDisplayId(), toMember.getDisplayId());
+                                return toMember;
+                            })
+                            .map(MemberResponseDto::of)
+                            .collect(Collectors.toList());
     }
 
     /**
@@ -92,7 +94,7 @@ public class MemberService {
      */
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+                               .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
     }
 }
 

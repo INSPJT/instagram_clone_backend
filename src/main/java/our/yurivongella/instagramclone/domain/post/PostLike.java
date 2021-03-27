@@ -13,11 +13,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @Getter
 @Entity

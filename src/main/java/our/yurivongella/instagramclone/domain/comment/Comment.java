@@ -65,7 +65,7 @@ public class Comment extends BaseEntity {
     }
 
     public void unlike() {
-        if (this.likeCount <= 0) throw new CustomException(ErrorCode.INVALID_STATUS);
+        if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
         this.likeCount -= 1;
     }
 }

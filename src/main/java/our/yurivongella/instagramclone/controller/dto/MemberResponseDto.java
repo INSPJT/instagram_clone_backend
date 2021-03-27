@@ -20,9 +20,9 @@ public class MemberResponseDto {
 
     public static MemberResponseDto of(Member member) {
         return MemberResponseDto.builder()
-                .displayId(member.getDisplayId())
-                .nickname(member.getNickname())
-                .profileImageUrl(member.getProfileImageUrl())
-                .build();
+                                .displayId(member.getDisplayId())
+                                .nickname(member.getNickname())
+                                .profileImageUrl(member.getProfileImageUrl())
+                                .build();
     }
 }

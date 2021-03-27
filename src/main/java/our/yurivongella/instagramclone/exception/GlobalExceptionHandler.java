@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.exception;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class})
+    @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class })
     protected ResponseEntity<ErrorResponse> handleDataException() {
         log.error("handleDataException throw Exception : {}", DUPLICATE_RESOURCE);
         return ErrorResponse.toResponseEntity(DUPLICATE_RESOURCE);
