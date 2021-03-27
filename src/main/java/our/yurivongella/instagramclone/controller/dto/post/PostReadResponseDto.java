@@ -41,6 +41,11 @@ public class PostReadResponseDto {
     private Long viewCount;
     //Boolean bookMark;
 
+    public PostReadResponseDto setCommentPreview(List<CommentResponseDto> commentPreview) {
+        this.commentPreview = commentPreview;
+        return this;
+    }
+
     @Builder
     public PostReadResponseDto(Long id, MemberDto author, List<String> mediaUrls, String content, String createdAt, String modifiedAt, Boolean isLike,
                                MemberDto usersWhoLike, Long likeCount, List<CommentResponseDto> commentPreview, Long commentCount, Long viewCount) {
@@ -65,9 +70,8 @@ public class PostReadResponseDto {
                                   .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
                                   .content(post.getContent())
                                   .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
-                                  .usersWhoLike(post.getPostLikes().isEmpty() ? null : post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).get())
+                                  .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
                                   .likeCount((long) post.getPostLikes().size())
-                                  .commentPreview(post.getComments().stream().limit(3).map(v -> CommentResponseDto.of(v, member)).collect(Collectors.toList()))
                                   .commentCount((long) post.getComments().size())
                                   .viewCount(post.getViews())
                                   .createdAt(from(post.getCreatedDate()))

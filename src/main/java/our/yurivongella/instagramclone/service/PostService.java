@@ -1,12 +1,10 @@
 package our.yurivongella.instagramclone.service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +13,10 @@ import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
+import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.MediaUrl;
@@ -30,9 +30,12 @@ import our.yurivongella.instagramclone.util.SecurityUtil;
 @RequiredArgsConstructor
 @Service
 public class PostService {
+    private static final int pageSize = 5;
+
     private final PostRepository postRepository;
     private final MediaUrlRepository mediaUrlRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Long create(PostCreateRequestDto postCreateRequestDto) {
@@ -93,23 +96,26 @@ public class PostService {
     }
 
     /**
-     * @implNote : 아래는 Feed용 Service...........
+     * Instagram Feeds
+     *
+     * @param lastPostId    Offset for infinite scroll
+     * @param pageSize      Response collection size
      */
+    @Transactional(readOnly = true)
+    public List<PostReadResponseDto> getFeeds(Long lastPostId) {
+        Member currentMember = getCurrentMember();
 
-    public List<PostReadResponseDto> getFeed(Long offset, Pageable pageable) {
-        /** 20개를 때려박고
-         *  5개씩 달라고 하면 4번 다른 종류가 나와야돼 대신 최신순으로
-         */
-        Member member = getCurrentMember();
-        log.info("-------------------------pageQuery를 요청한 Member = {}", member);
+        PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by("id").descending());
 
-        Slice<Post> feedSlice = postRepository.findTop5ByUserId(member.getId(), offset, pageable);
-
-        return feedSlice
+        return postRepository.findAllByJoinFollow(getCurrentMember().getId(), lastPostId, pageRequest)
                 .stream()
-                .filter(ObjectUtils::isNotEmpty)
-                .map(post -> PostReadResponseDto.of(post, member))
+                .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
+                        commentRepository.findTop3ByPostOrderByIdDesc(post)
+                                .stream()
+                                .map(comment -> CommentResponseDto.of(comment, currentMember))
+                                .collect(Collectors.toList())
+                        )
+                )
                 .collect(Collectors.toList());
     }
-
 }
