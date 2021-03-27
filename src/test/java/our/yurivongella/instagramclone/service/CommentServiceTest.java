@@ -6,14 +6,21 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.MethodOrderer.MethodName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.event.annotation.AfterTestMethod;
 import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
@@ -31,6 +38,7 @@ import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 @SpringBootTest
 class CommentServiceTest {
@@ -53,7 +61,7 @@ class CommentServiceTest {
     private Long commentId;
 
     @BeforeEach
-    public void signupBeforeTest() {
+    public void prepare_member_and_post() {
         String displayId = "testName";
         String nickname = "testNick";
         String email = "test@naver.com";
@@ -81,16 +89,11 @@ class CommentServiceTest {
         Post save = postRepository.save(post);
         postId = save.getId();
         assertNotNull(save);
-
-        CommentCreateDto commentCreateDto = new CommentCreateDto("test");
-        CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
-        commentId = save.getComments().get(0).getId();
-        assertNotNull(comment);
     }
 
     @Test
     @DisplayName("댓글 달기")
-    public void create_comment() throws Exception {
+    public void create_comment() {
         CommentCreateDto commentCreateDto = new CommentCreateDto("test");
         CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
 
@@ -100,75 +103,88 @@ class CommentServiceTest {
         assertFalse(comment.getIsLike());
     }
 
-    @DisplayName("본인이 본인 댓글 삭제")
-    @Test
-    public void delete_comment1() throws Exception {
-        ProcessStatus processStatus = commentService.deleteComment(commentId);
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        assertEquals(Optional.empty(), comment);
-        assertEquals(ProcessStatus.SUCCESS, processStatus);
-    }
+    @Nested
+    @DisplayName("댓글 테스트")
+    class CommentTest {
+        @BeforeEach
+        public void prepare_data() {// 댓글 삭제/좋아요 취소 테스트를 위해 포스트 1건, 댓글 1건을 미리 준비합니다.
+            CommentCreateDto commentCreateDto = new CommentCreateDto("test");
+            Post save = postRepository.findById(postId).get();
+            CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
+            commentId = save.getComments().get(0).getId();
+            assertNotNull(comment);
+        }
 
-    @DisplayName("타인이 타인 댓글 삭제")
-    @Test
-    public void delete_comment2() throws Exception {
-        String displayId = "other";
-        String nickname = "other";
-        String email = "other@naver.com";
-        String password = "other";
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .displayId(displayId)
-                                                            .nickname(nickname)
-                                                            .email(email)
-                                                            .password(password)
-                                                            .build();
+        @DisplayName("본인이 본인 댓글 삭제")
+        @Test
+        public void delete_comment1() throws Exception {
+            ProcessStatus processStatus = commentService.deleteComment(commentId);
+            Optional<Comment> comment = commentRepository.findById(commentId);
+            assertEquals(Optional.empty(), comment);
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+        }
 
-        // 가입
-        authService.signup(signupRequestDto);
-        Long otherId = memberRepository.findByEmail(email).get().getId();
+        @DisplayName("타인이 타인 댓글 삭제")
+        @Test
+        public void delete_comment2() throws Exception {
+            String displayId = "other";
+            String nickname = "other";
+            String email = "other@naver.com";
+            String password = "other";
+            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+                                                                .displayId(displayId)
+                                                                .nickname(nickname)
+                                                                .email(email)
+                                                                .password(password)
+                                                                .build();
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(otherId, "", Collections.emptyList());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        assertEquals(ProcessStatus.FAIL, commentService.deleteComment(commentId));
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        assertTrue(comment.isPresent());
-    }
+            // 가입
+            authService.signup(signupRequestDto);
+            Long otherId = memberRepository.findByEmail(email).get().getId();
 
-    @Test
-    @DisplayName("댓글 불러오기")
-    public void getComment_test() throws Exception {
-        List<CommentResponseDto> comments = commentService.getComments(postId);
-        assertEquals("test", comments.get(0).getContent());
-        assertEquals(1, comments.size());
-    }
+            Authentication authentication = new UsernamePasswordAuthenticationToken(otherId, "", Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            assertEquals(ProcessStatus.FAIL, commentService.deleteComment(commentId));
+            Optional<Comment> comment = commentRepository.findById(commentId);
+            assertTrue(comment.isPresent());
+        }
 
-    @DisplayName("댓글 좋아요")
-    @Test
-    public void like() throws Exception {
-        ProcessStatus processStatus = commentService.likeComment(commentId);
-        Comment comment = commentRepository.findById(commentId).orElseThrow();
-        assertEquals(ProcessStatus.SUCCESS, processStatus);
-        assertEquals(1, comment.getCommentLikes().size());
+        @Test
+        @DisplayName("댓글 불러오기")
+        public void getComment_test() throws Exception {
+            List<CommentResponseDto> comments = commentService.getComments(postId);
+            assertEquals("test", comments.get(0).getContent());
+            assertEquals(1, comments.size());
+        }
 
-        CustomException customException = assertThrows(CustomException.class, () -> commentService.likeComment(commentId));
-        assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode()); // 중복 처리
-    }
+        @DisplayName("댓글 좋아요")
+        @Test
+        public void like() throws Exception {
+            ProcessStatus processStatus = commentService.likeComment(commentId);
+            Comment comment = commentRepository.findById(commentId).orElseThrow();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(1, comment.getCommentLikes().size());
 
-    @DisplayName("댓글 좋아요 취소")
-    @Test
-    public void unlike() throws Exception {
-        ProcessStatus processStatus = commentService.likeComment(commentId);
-        Comment comment = commentRepository.findById(commentId).orElseThrow();
-        assertEquals(ProcessStatus.SUCCESS, processStatus);
-        assertEquals(1, comment.getCommentLikes().size());
+            CustomException customException = assertThrows(CustomException.class, () -> commentService.likeComment(commentId));
+            assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode()); // 중복 처리
+        }
 
-        processStatus = commentService.unlikeComment(commentId);
-        comment = commentRepository.findById(commentId).orElseThrow();
-        assertEquals(ProcessStatus.SUCCESS, processStatus);
-        assertEquals(0, comment.getCommentLikes().size());
+        @DisplayName("댓글 좋아요 취소")
+        @Test
+        public void unlike() throws Exception {
+            ProcessStatus processStatus = commentService.likeComment(commentId);
+            Comment comment = commentRepository.findById(commentId).orElseThrow();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(1, comment.getCommentLikes().size());
 
-        CustomException customException = assertThrows(CustomException.class, () -> commentService.unlikeComment(commentId));
-        assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode()); // 중복 처리
+            processStatus = commentService.unlikeComment(commentId);
+            comment = commentRepository.findById(commentId).orElseThrow();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(0, comment.getCommentLikes().size());
+
+            CustomException customException = assertThrows(CustomException.class, () -> commentService.unlikeComment(commentId));
+            assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode()); // 중복 처리
+        }
     }
 
 }
