@@ -39,12 +39,12 @@ public class CommentLike extends BaseEntity {
         this.member = member;
         this.comment = comment;
         comment.getCommentLikes().add(this);
-        comment.like();
+        comment.plusLikeCount();
         return this;
     }
 
     public void unlike() {
         comment.getCommentLikes().remove(this);
-        comment.unlike();
+        comment.minusLikeCount();
     }
 }
