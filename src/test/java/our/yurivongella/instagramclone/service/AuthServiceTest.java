@@ -177,7 +177,7 @@ public class AuthServiceTest {
             assertThat(accessIsLongerThanRefresh).isTrue();
             assertThat(reissue.getAccessToken()).isInstanceOf(String.class);
             assertThat(reissue.getRefreshToken()).isInstanceOf(String.class);
-            assertThat(reissue.getGrantType()).isEqualTo("bearer");
+            assertThat(reissue.getGrantType()).isEqualTo("Bearer");
             assertThat(reissue.getAccessTokenExpiresIn()).isInstanceOf(Long.class);
         }
 
