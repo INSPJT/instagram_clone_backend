@@ -3,6 +3,7 @@ package our.yurivongella.instagramclone.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +21,6 @@ import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -193,40 +193,42 @@ public class PostServiceTest {
         assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode());
     }
 
-    @Transactional
-    public Long likePost() {
-        Long postId = postService.create(postCreateRequestDto);
-        postService.likePost(postId);
-        Post post = postRepository.findById(postId).get();
-        assertEquals(1L, post.getLikeCount());
-        em.flush();
-        em.clear();
-        return postId;
-    }
 
-    @DisplayName("좋아요 취소 테스트")
-    @Test
-    @Transactional
-    public void unlike_Test() {
-        Long postId = likePost();
-        ProcessStatus processStatus = postService.unlikePost(postId);
-        Post post = postRepository.findById(postId).get();
-        assertEquals(ProcessStatus.SUCCESS, processStatus);
-        assertEquals(0L, post.getLikeCount());
-    }
+    @DisplayName("취소 테스트")
+    @Nested
+    class WithdrawalClass{
+        private Long postId;
 
-    @DisplayName("좋아요 취소 중복 테스트")
-    @Test
-    @Transactional
-    public void unlike_duple_Test() {
-        Long postId = likePost();
-        ProcessStatus processStatus = postService.unlikePost(postId);
-        Post post = postRepository.findById(postId).get();
-        assertEquals(ProcessStatus.SUCCESS, processStatus);
-        assertEquals(0L, post.getLikeCount());
+        @BeforeEach
+        public void likePost() {
+            postId = postService.create(postCreateRequestDto);
+            postService.likePost(postId);
+            Post post = postRepository.findById(postId).get();
+            assertEquals(1L, post.getLikeCount());
+            em.flush();
+            em.clear();
+        }
 
-        CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.unlikePost(postId));
-        assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode());
+        @DisplayName("좋아요 취소 테스트")
+        @Test
+        public void unlike_Test() {
+            ProcessStatus processStatus = postService.unlikePost(postId);
+            Post post = postRepository.findById(postId).get();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(0L, post.getLikeCount());
+        }
+
+        @DisplayName("좋아요 취소 중복 테스트")
+        @Test
+        public void unlike_duple_Test() {
+            ProcessStatus processStatus = postService.unlikePost(postId);
+            Post post = postRepository.findById(postId).get();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(0L, post.getLikeCount());
+
+            CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.unlikePost(postId));
+            assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode());
+        }
     }
 
 }
