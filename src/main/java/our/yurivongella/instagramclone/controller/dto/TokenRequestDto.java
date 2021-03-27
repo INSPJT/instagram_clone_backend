@@ -1,5 +1,6 @@
 package our.yurivongella.instagramclone.controller.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowRequestDto {
-    private Long id;
+public class TokenRequestDto {
+
+    @NotNull
+    private String accessToken;
+
+    @NotNull
+    private String refreshToken;
 }

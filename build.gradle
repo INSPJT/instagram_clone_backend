@@ -1,38 +1,103 @@
 plugins {
-	id 'org.springframework.boot' version '2.4.3'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.4.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'jacoco'
 }
 
 group = 'our.yurivongella'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        xml.enabled true
+        csv.enabled false
+    }
+}
+
+
+jacocoTestCoverageVerification {
+//    def Qdomains = []
+//
+//    for (qPattern in "*.QA".."*.QZ") {
+//        Qdomains.add(qPattern + "*")
+//    }
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'METHOD'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.0
+            }
+
+            excludes = []
+        }
+    }
+}
+
+
 repositories {
-	mavenCentral()
+    jcenter()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'io.springfox:springfox-swagger2:2.6.1'
+    implementation 'io.springfox:springfox-swagger-ui:2.6.1'
+    implementation 'org.apache.commons:commons-lang3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.3'
 
-	implementation 'io.springfox:springfox-swagger2:2.6.1'
-	implementation 'io.springfox:springfox-swagger-ui:2.6.1'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacoco.exec")
+    }
+    finalizedBy 'jacocoTestReport'
+}
+
+task testCoverage(type: Test) {
+    group 'verification'
+    description 'Runs the unit tests with coverage'
+
+    dependsOn(':test',
+            ':jacocoTestReport',
+            ':jacocoTestCoverageVerification')
+
+    tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+    tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+bootJar{
+    enabled = true
 }
