@@ -1,11 +1,8 @@
 package our.yurivongella.instagramclone.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -29,6 +26,10 @@ import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -103,8 +104,8 @@ class CommentServiceTest {
     @Test
     public void delete_comment1() throws Exception {
         ProcessStatus processStatus = commentService.deleteComment(commentId);
-        List<Comment> all = commentRepository.findAll();
-        assertEquals(0, all.size());
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        assertEquals(Optional.empty(), comment);
         assertEquals(ProcessStatus.SUCCESS, processStatus);
     }
 
@@ -126,13 +127,11 @@ class CommentServiceTest {
         authService.signup(signupRequestDto);
         Long otherId = memberRepository.findByEmail(email).get().getId();
 
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(otherId, "", Collections.emptyList());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(otherId, "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         assertEquals(ProcessStatus.FAIL, commentService.deleteComment(commentId));
-
-        List<Comment> all = commentRepository.findAll();
-        assertEquals(1, all.size());
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        assertTrue(comment.isPresent());
     }
 
     @Test
@@ -151,27 +150,25 @@ class CommentServiceTest {
         assertEquals(ProcessStatus.SUCCESS, processStatus);
         assertEquals(1, comment.getCommentLikes().size());
 
-        processStatus = commentService.likeComment(commentId); // 한번 더 하면
-        assertEquals(ProcessStatus.FAIL, processStatus); // 실패
-        assertEquals(1, comment.getCommentLikes().size()); // 좋아요는 그대로
+        CustomException customException = assertThrows(CustomException.class, () -> commentService.likeComment(commentId));
+        assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode()); // 중복 처리
     }
 
     @DisplayName("댓글 좋아요 취소")
     @Test
     public void unlike() throws Exception {
-        ProcessStatus processStatus = commentService.likeComment(commentId); //일단 좋아하고
+        ProcessStatus processStatus = commentService.likeComment(commentId);
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         assertEquals(ProcessStatus.SUCCESS, processStatus);
         assertEquals(1, comment.getCommentLikes().size());
 
-        processStatus = commentService.unlikeComment(commentId); // 좋아요 취소
+        processStatus = commentService.unlikeComment(commentId);
         comment = commentRepository.findById(commentId).orElseThrow();
         assertEquals(ProcessStatus.SUCCESS, processStatus);
         assertEquals(0, comment.getCommentLikes().size());
 
-        processStatus = commentService.unlikeComment(commentId); // 한번 더 해도
-        assertEquals(ProcessStatus.FAIL, processStatus); // 실패
-        assertEquals(0, comment.getCommentLikes().size()); // 좋아요 그대로
+        CustomException customException = assertThrows(CustomException.class, () -> commentService.unlikeComment(commentId));
+        assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode()); // 중복 처리
     }
 
 }

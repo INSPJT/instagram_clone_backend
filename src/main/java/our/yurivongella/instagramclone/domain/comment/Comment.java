@@ -54,17 +54,18 @@ public class Comment extends BaseEntity {
         this.member = member;
         this.post = post;
         this.content = content;
+        this.likeCount = 0L;
         member.getComments().add(this);
         post.getComments().add(this);
         return this;
     }
 
-    public void like(){
-        this.likeCount+=1;
+    public void like() {
+        this.likeCount += 1;
     }
 
-    public void unlike(){
-        if(this.likeCount<=0) throw new CustomException(ErrorCode.INVALID_STATUS);
-        this.likeCount-=1;
+    public void unlike() {
+        if (this.likeCount <= 0) throw new CustomException(ErrorCode.INVALID_STATUS);
+        this.likeCount -= 1;
     }
 }
