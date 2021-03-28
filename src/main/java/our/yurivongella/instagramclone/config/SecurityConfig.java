@@ -29,12 +29,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    // h2-console 과 swagger 관련 API 들은 전부 패스
+    // Pass
+    // h2-console / Swagger / HealthIndicator
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
            .antMatchers(
-                   "/h2-console/**", "/favicon.ico"
+                   "/h2-console/**", "/favicon.ico", "/health/**"
            )
            .antMatchers(
                    "/v2/api-docs", "/configuration/ui",
