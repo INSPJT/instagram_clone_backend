@@ -2,6 +2,7 @@ package our.yurivongella.instagramclone.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.*;
@@ -23,11 +24,16 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     NOT_FOLLOW(NOT_FOUND, "팔로우 중이지 않습니다"),
+    POST_NOT_FOUND(NOT_FOUND, "해당 포스트가 존재하지 않습니다."),
+    ALREADY_UNLIKE(NOT_FOUND, "더 이상 좋아요를 취소할 수 없습니다"),
+    COMMENT_NOT_FOUND(NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
+    ALREADY_LIKE(CONFLICT, "더 이상 좋아요를 할 수 없습니다"),
 
-    ;
+    /* 서버 내 데이터 오류 */
+    INVALID_STATUS(INTERNAL_SERVER_ERROR, "서버 내 데이터에 오류가 있습니다");
 
     private final HttpStatus httpStatus;
     private final String detail;

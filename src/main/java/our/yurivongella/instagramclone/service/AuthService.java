@@ -1,12 +1,14 @@
 package our.yurivongella.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
@@ -29,11 +31,11 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
-@Transactional
-public String signup(SignupRequestDto signupRequestDto) {
-    Member member = signupRequestDto.toMember(passwordEncoder);
-    return memberRepository.save(member).getEmail();
-}
+    @Transactional
+    public String signup(SignupRequestDto signupRequestDto) {
+        Member member = signupRequestDto.toMember(passwordEncoder);
+        return memberRepository.save(member).getEmail();
+    }
 
     @Transactional
     public TokenDto signin(SigninRequestDto signinRequestDto) {
@@ -49,9 +51,9 @@ public String signup(SignupRequestDto signupRequestDto) {
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(tokenDto.getRefreshToken())
-                .build();
+                                                .key(authentication.getName())
+                                                .value(tokenDto.getRefreshToken())
+                                                .build();
 
         refreshTokenRepository.save(refreshToken);
 
@@ -71,7 +73,7 @@ public String signup(SignupRequestDto signupRequestDto) {
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new CustomException(REFRESH_TOKEN_NOT_FOUND));
+                                                          .orElseThrow(() -> new CustomException(REFRESH_TOKEN_NOT_FOUND));
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
