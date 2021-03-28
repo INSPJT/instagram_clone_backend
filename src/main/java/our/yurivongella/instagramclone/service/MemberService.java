@@ -1,13 +1,16 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
@@ -27,32 +30,31 @@ public class MemberService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public boolean follow(Long memberId) {
-        if (SecurityUtil.getCurrentMemberId().equals(memberId))  {
+    public boolean follow(String displayId) {
+        Member currentMember = getCurrentMember();
+        Member targetMember = memberRepository.findByDisplayId(displayId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (SecurityUtil.getCurrentMemberId().equals(targetMember.getId())) {
             throw new CustomException(CANNOT_FOLLOW_MYSELF);
         }
 
-        Member currentMember = getCurrentMember();
-        Member targetMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
         Follow follow = Follow.builder()
-                .fromMember(currentMember)
-                .toMember(targetMember)
-                .build();
+                              .fromMember(currentMember)
+                              .toMember(targetMember)
+                              .build();
 
         followRepository.save(follow);
         return true;
     }
 
     @Transactional
-    public boolean unFollow(Long memberId) {
+    public boolean unFollow(String displayId) {
+        Member targetMember = memberRepository.findByDisplayId(displayId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         Follow follow = followRepository.findByFromMemberIdAndToMemberId(
-                                SecurityUtil.getCurrentMemberId(),
-                                memberId
-                        )
-                        .orElseThrow(() -> new CustomException(NOT_FOLLOW))
-                        .unfollow();
+                SecurityUtil.getCurrentMemberId(),
+                targetMember.getId()
+        )
+                                        .orElseThrow(() -> new CustomException(NOT_FOLLOW))
+                                        .unfollow();
 
         followRepository.delete(follow);
         return true;
@@ -92,7 +94,7 @@ public class MemberService {
      */
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+                               .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
     }
 }
 

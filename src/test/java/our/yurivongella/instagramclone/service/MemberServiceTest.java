@@ -97,7 +97,7 @@ class MemberServiceTest {
         @Test
         public void successFollow() {
             // when
-            memberService.follow(targetId);
+            memberService.follow(targetDisplayId);
 
             // then
             List<Follow> follows = followRepository.findByToMemberId(targetId);
@@ -121,12 +121,12 @@ class MemberServiceTest {
         @Test
         public void alreadyFollow() {
             // when
-            memberService.follow(targetId);
+            memberService.follow(targetDisplayId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.follow(targetId)
+                    () -> memberService.follow(targetDisplayId)
             );
         }
     }
@@ -147,14 +147,14 @@ class MemberServiceTest {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 언팔로우 테스트를 위해 미리 팔로우 처리
-            memberService.follow(targetId);
+            memberService.follow(targetDisplayId);
         }
 
         @DisplayName("언팔로우 성공")
         @Test
         public void successUnFollow() {
             // when
-            memberService.unFollow(targetId);
+            memberService.unFollow(targetDisplayId);
 
             // then
             List<Follow> follows = followRepository.findByToMemberId(targetId);
@@ -165,12 +165,12 @@ class MemberServiceTest {
         @Test
         public void notFollowingTarget() {
             // when
-            memberService.unFollow(targetId);
+            memberService.unFollow(targetDisplayId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.unFollow(targetId)
+                    () -> memberService.unFollow(targetDisplayId)
             );
         }
     }

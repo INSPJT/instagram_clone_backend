@@ -1,14 +1,9 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

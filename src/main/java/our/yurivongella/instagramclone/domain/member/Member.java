@@ -24,7 +24,7 @@ import our.yurivongella.instagramclone.domain.post.PostLike;
 @Entity
 @NoArgsConstructor
 @Table(name = "member")
-@ToString(of = {"displayId","email"})
+@ToString(of = { "displayId", "email" })
 public class Member extends BaseEntity {
 
     @Id
@@ -91,14 +91,14 @@ public class Member extends BaseEntity {
 
     public boolean isFollowingTo(Member other) {
         return followings.stream()
-                .map(Follow::getToMember)
-                .anyMatch(toMember -> toMember.equals(other));
+                         .map(Follow::getToMember)
+                         .anyMatch(toMember -> toMember.equals(other));
     }
 
     public boolean isFollowedBy(Member other) {
         return followers.stream()
-                .map(Follow::getFromMember)
-                .anyMatch(fromMember -> fromMember.equals(other));
+                        .map(Follow::getFromMember)
+                        .anyMatch(fromMember -> fromMember.equals(other));
     }
 
 }

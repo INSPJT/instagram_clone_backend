@@ -3,11 +3,11 @@ package our.yurivongella.instagramclone.controller;
 import java.util.List;
 
 import io.swagger.annotations.ApiOperation;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
-import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.service.MemberService;
 
@@ -18,16 +18,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @ApiOperation("상대방 팔로우")
-    @PutMapping("/follow/{memberId}")
-    public ResponseEntity<String> follow(@PathVariable Long memberId) {
-        boolean success = memberService.follow(memberId);
+    @PutMapping("/follow/{displayId}")
+    public ResponseEntity<String> follow(@PathVariable String displayId) {
+        boolean success = memberService.follow(displayId);
         return ResponseEntity.ok("팔로우 결과: " + success);
     }
 
     @ApiOperation("상대방 언팔로우")
-    @DeleteMapping("/follow/{memberId}")
-    public ResponseEntity<String> unfollow(@PathVariable Long memberId) {
-        boolean success = memberService.unFollow(memberId);
+    @DeleteMapping("/follow/{displayId}")
+    public ResponseEntity<String> unfollow(@PathVariable String displayId) {
+        boolean success = memberService.unFollow(displayId);
         return ResponseEntity.ok("언팔로우 결과: " + success);
     }
 

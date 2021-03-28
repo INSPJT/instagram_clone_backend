@@ -20,15 +20,15 @@ public class PostCreateRequestDto {
 
     public Post toPost(Member member) {
         return Post.builder()
-                .content(content)
-                .build()
-                .addMember(member);
+                   .content(content)
+                   .build()
+                   .addMember(member);
     }
 
     public List<MediaUrl> getMediaUrls(Post post) {
         return mediaUrls.stream().map(url -> MediaUrl.builder()
-                .url(url)
-                .post(post)
-                .build()).collect(Collectors.toList());
+                                                     .url(url)
+                                                     .post(post)
+                                                     .build()).collect(Collectors.toList());
     }
 }
