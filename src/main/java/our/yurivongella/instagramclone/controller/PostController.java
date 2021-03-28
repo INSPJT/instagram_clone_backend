@@ -51,13 +51,13 @@ public class PostController {
 
     @ApiOperation("포스트 좋아요")
     @PutMapping("/posts/{postId}/like")
-    public ResponseEntity<?> likePost(@PathVariable("postId") Long postId) {
+    public ResponseEntity<?> likePost(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.likePost(postId));
     }
 
     @ApiOperation("포스트 좋아요 취소")
     @DeleteMapping("/posts/{postId}/like")
-    public ResponseEntity<?> unLikePost(@PathVariable("postId") Long postId) {
+    public ResponseEntity<?> unLikePost(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.unlikePost(postId));
     }
 }
