@@ -34,12 +34,16 @@ public class Follow extends BaseEntity {
     public Follow(Member fromMember, Member toMember) {
         this.fromMember = fromMember;
         this.toMember = toMember;
+        fromMember.plusFollowingCount();
         fromMember.getFollowings().add(this);
+        toMember.plusFollowerCount();
         toMember.getFollowers().add(this);
     }
 
     public Follow unfollow() {
+        this.fromMember.minusFollowingCount();
         this.fromMember.getFollowings().remove(this);
+        this.toMember.minusFollowerCount();
         this.toMember.getFollowers().remove(this);
         return this;
     }

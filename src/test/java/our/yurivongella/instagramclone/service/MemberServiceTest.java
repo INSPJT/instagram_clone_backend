@@ -15,6 +15,7 @@ import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -109,12 +110,14 @@ class MemberServiceTest {
             assertThat(targetMember.getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(targetMember.getEmail()).isEqualTo(targetEmail);
             assertThat(targetMember.getFollowers().size()).isEqualTo(1);
+            assertThat(targetMember.getFollowerCount()).isEqualTo(1);
 
             Member myMember = follows.get(0).getFromMember();
             assertThat(myMember.getNickname()).isEqualTo(myNickname);
             assertThat(myMember.getDisplayId()).isEqualTo(myDisplayId);
             assertThat(myMember.getEmail()).isEqualTo(myEmail);
             assertThat(myMember.getFollowings().size()).isEqualTo(1);
+            assertThat(myMember.getFollowingCount()).isEqualTo(1);
         }
 
         @DisplayName("이미 팔로우 중임")
@@ -153,10 +156,18 @@ class MemberServiceTest {
         @DisplayName("언팔로우 성공")
         @Test
         public void successUnFollow() {
+            // given
+            Member myMember = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+            Member targetMember = memberRepository.findById(targetId).get();
+            assertThat(myMember.getFollowingCount()).isEqualTo(1);
+            assertThat(targetMember.getFollowerCount()).isEqualTo(1);
+
             // when
             memberService.unFollow(targetDisplayId);
 
             // then
+            assertThat(myMember.getFollowingCount()).isEqualTo(0);
+            assertThat(targetMember.getFollowerCount()).isEqualTo(0);
             List<Follow> follows = followRepository.findByToMemberId(targetId);
             assertThat(follows.size()).isEqualTo(0);
         }

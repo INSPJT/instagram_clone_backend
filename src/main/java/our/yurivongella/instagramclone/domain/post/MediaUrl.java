@@ -58,4 +58,8 @@ public class MediaUrl extends BaseEntity {
     private enum MediaUrlType {
         IMAGE, VIDEO
     }
+
+    public String getTypeString() {
+        return mediaUrlType.name();
+    }
 }

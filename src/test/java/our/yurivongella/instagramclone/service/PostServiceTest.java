@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -97,6 +98,7 @@ public class PostServiceTest {
 
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(memberId);
+        assertThat(list.get(0).getMember().getPostCount()).isEqualTo(1);
         assertThat(list.get(0).getContent()).isEqualTo(postCreateRequestDto.getContent());
         assertThat(list.get(0).getMediaUrls().size()).isEqualTo(3);
     }
@@ -124,23 +126,20 @@ public class PostServiceTest {
     @DisplayName("게시물 삭제")
     @Test
     public void deleteOnePost() {
+        // given
         Long postId = postService.create(postCreateRequestDto);
+        Post post = postRepository.findById(postId).get();
+        assertThat(post.getMember().getPostCount()).isEqualTo(1);
 
+        // when
         postService.delete(postId);
 
+        // then
+        assertThat(post.getMember().getPostCount()).isEqualTo(0);
         Assertions.assertThrows(
                 RuntimeException.class,
                 () -> postService.read(postId)
         );
-    }
-
-    @DisplayName("특정 유저 게시물 리스트 불러오기")
-    @Test
-    public void getMembersPostList() {
-        postService.create(postCreateRequestDto);
-
-        List<PostReadResponseDto> postlist = postService.getPostList(displayId);
-        assertThat(postlist.get(0).getAuthor().getDisplayId()).isEqualTo(displayId);
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")

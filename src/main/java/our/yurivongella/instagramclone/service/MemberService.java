@@ -1,7 +1,6 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,10 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
+import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -30,7 +28,7 @@ public class MemberService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public boolean follow(String displayId) {
+    public ProcessStatus follow(String displayId) {
         Member currentMember = getCurrentMember();
         Member targetMember = memberRepository.findByDisplayId(displayId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         if (SecurityUtil.getCurrentMemberId().equals(targetMember.getId())) {
@@ -43,21 +41,18 @@ public class MemberService {
                               .build();
 
         followRepository.save(follow);
-        return true;
+        return ProcessStatus.SUCCESS;
     }
 
     @Transactional
-    public boolean unFollow(String displayId) {
+    public ProcessStatus unFollow(String displayId) {
         Member targetMember = memberRepository.findByDisplayId(displayId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        Follow follow = followRepository.findByFromMemberIdAndToMemberId(
-                SecurityUtil.getCurrentMemberId(),
-                targetMember.getId()
-        )
+        Follow follow = followRepository.findByFromMemberIdAndToMemberId(SecurityUtil.getCurrentMemberId(), targetMember.getId())
                                         .orElseThrow(() -> new CustomException(NOT_FOLLOW))
                                         .unfollow();
 
         followRepository.delete(follow);
-        return true;
+        return ProcessStatus.SUCCESS;
     }
 
     @Transactional
@@ -65,6 +60,7 @@ public class MemberService {
         Member currentMember = getCurrentMember();
         log.info("현재 자신의 follower를 알고 싶은 유저 = {}", currentMember.getDisplayId());
 
+        // TODO: 페이지네이션으로 개션 필요
         return currentMember.getFollowers().stream()
                             .map(f -> {
                                 Member fromMember = f.getFromMember();
@@ -79,6 +75,8 @@ public class MemberService {
     public List<MemberResponseDto> getFollowings() {
         Member currentMember = getCurrentMember();
         log.info("현재 자신이 following 하고 있는 사람들을 알고 싶은 유저 = {}", currentMember.getDisplayId());
+
+        // TODO: 페이지네이션으로 개션 필요
         return currentMember.getFollowings().stream()
                             .map(f -> {
                                 Member toMember = f.getToMember();

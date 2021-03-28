@@ -100,6 +100,9 @@ class CommentServiceTest {
             assertEquals("testName", comment.getAuthor().getDisplayId());
             assertEquals(0, comment.getLikeCount());
             assertFalse(comment.getIsLike());
+
+            Comment savedComment = commentRepository.findById(comment.getId()).get();
+            assertEquals(1, savedComment.getPost().getCommentCount());
         }
 
         @DisplayName("존재하지 않는 댓글 삭제")
@@ -147,10 +150,14 @@ class CommentServiceTest {
         @DisplayName("본인이 본인 댓글 삭제")
         @Test
         public void delete_comment1() throws Exception {
+            Comment deletedComment = commentRepository.findById(commentId).get();
+            assertEquals(1, deletedComment.getPost().getCommentCount());
+
             ProcessStatus processStatus = commentService.deleteComment(commentId);
             Optional<Comment> comment = commentRepository.findById(commentId);
             assertEquals(Optional.empty(), comment);
             assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(0, deletedComment.getPost().getCommentCount());
         }
 
         @DisplayName("타인이 타인 댓글 삭제")

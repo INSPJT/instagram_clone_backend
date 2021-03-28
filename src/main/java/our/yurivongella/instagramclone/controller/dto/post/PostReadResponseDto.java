@@ -1,7 +1,5 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +11,7 @@ import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.post.MediaUrl;
 import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.util.DateTimeUtil;
 
 @Getter
 @NoArgsConstructor
@@ -74,12 +73,8 @@ public class PostReadResponseDto {
                                   .likeCount(post.getPostLikes().size())
                                   .commentCount(post.getComments().size())
                                   .viewCount(post.getViews())
-                                  .createdAt(from(post.getCreatedDate()))
-                                  .modifiedAt(from(post.getModifiedDate()))
+                                  .createdAt(DateTimeUtil.from(post.getCreatedDate()))
+                                  .modifiedAt(DateTimeUtil.from(post.getModifiedDate()))
                                   .build();
-    }
-
-    private static String from(LocalDateTime time) {
-        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }

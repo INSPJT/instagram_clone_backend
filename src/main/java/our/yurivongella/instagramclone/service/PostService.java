@@ -16,8 +16,6 @@ import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
@@ -42,6 +40,7 @@ public class PostService {
     @Transactional
     public Long create(PostCreateRequestDto postCreateRequestDto) {
         Member member = getCurrentMember();
+
         try {
             Post post = postRepository.save(postCreateRequestDto.toPost(member));
             List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateRequestDto.getMediaUrls(post));
@@ -70,13 +69,15 @@ public class PostService {
             log.error("유저가 일치하지 않습니다.");
             return ProcessStatus.FAIL;
         }
-        log.info("게시물을 삭제 합니다.");
+
         try {
             postRepository.delete(post);
+            post.getMember().minusPostCount();
             return ProcessStatus.SUCCESS;
         } catch (Exception e) {
             log.error("삭제 도중 문제가 발생했습니다. = {}", e.getMessage());
         }
+
         return ProcessStatus.FAIL;
     }
 
@@ -117,14 +118,6 @@ public class PostService {
             throw new CustomException(ErrorCode.ALREADY_LIKE);
         });
         return new PostLike().like(member, post);
-    }
-
-    public List<PostReadResponseDto> getPostList(String displayId) {
-        Member member = getMemberByDisplayId(displayId);
-
-        return member.getPosts().stream()
-                     .map(post -> PostReadResponseDto.of(post, member))
-                     .collect(Collectors.toList());
     }
 
     private Member getCurrentMember() {
