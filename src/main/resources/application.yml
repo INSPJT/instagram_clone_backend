@@ -83,8 +83,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://yuribon.cihrlagdbfuq.ap-northeast-2.rds.amazonaws.com:3306/insta?serverTimezone=UTC&autoReconnection=true&useSSL=false
-    username: yuribon
-    password: yuribon21
+    username:
+    password:
 #    initialization-mode: always
 #    schema:
 #      - classpath*:/db-schema.sql
