@@ -53,7 +53,8 @@ jobs:
         run: |
           docker ps -q --filter "name=insta" | grep -q . && docker stop insta && docker rm -fv insta
           docker run -d -p 8080:8080 --name insta --restart always ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
-          
+
+
   cleanup:
     needs: [ build, deploy ]
     name: Clean up docker images
