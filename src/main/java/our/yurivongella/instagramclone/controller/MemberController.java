@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
+import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.service.MemberService;
 
 @RequiredArgsConstructor
@@ -19,16 +20,14 @@ public class MemberController {
 
     @ApiOperation("상대방 팔로우")
     @PutMapping("/follow/{displayId}")
-    public ResponseEntity<String> follow(@PathVariable String displayId) {
-        boolean success = memberService.follow(displayId);
-        return ResponseEntity.ok("팔로우 결과: " + success);
+    public ResponseEntity<ProcessStatus> follow(@PathVariable String displayId) {
+        return ResponseEntity.ok(memberService.follow(displayId));
     }
 
     @ApiOperation("상대방 언팔로우")
     @DeleteMapping("/follow/{displayId}")
-    public ResponseEntity<String> unfollow(@PathVariable String displayId) {
-        boolean success = memberService.unFollow(displayId);
-        return ResponseEntity.ok("언팔로우 결과: " + success);
+    public ResponseEntity<ProcessStatus> unfollow(@PathVariable String displayId) {
+        return ResponseEntity.ok(memberService.unFollow(displayId));
     }
 
     @ApiOperation("나를 팔로우 하는 Followers 조회")
