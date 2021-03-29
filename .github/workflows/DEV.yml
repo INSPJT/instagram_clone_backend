@@ -1,15 +1,15 @@
-name: DEV CI
+name: CI/CD
 
 on:
   push:
-    branches: [ feature/ci-cd ]
+    branches: [ master ]
 env:
   DOCKER_IMAGE: ghcr.io/inspjt/instagram_clone_backend
   VERSION: ${{ github.sha }}
 
 jobs:
   build:
-    name: Build
+    name: DockerBuild
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
@@ -53,12 +53,3 @@ jobs:
         run: |
           docker ps -q --filter "name=insta" | grep -q . && docker stop insta && docker rm -fv insta
           docker run -d -p 8080:8080 --name insta --restart always ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
-
-  cleanup:
-    needs: [ build, deploy ]
-    name: Clean up docker images
-    runs-on: [ self-hosted, development ]
-    steps:
-      -   name: Clean up docker images
-          run:
-            docker rmi $(docker images --filter "before=${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}" --filter=reference="${{ env.DOCKER_IMAGE }}:*" -q)
