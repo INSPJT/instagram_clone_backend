@@ -57,6 +57,7 @@ public class Comment extends BaseEntity {
         this.likeCount = 0L;
         member.getComments().add(this);
         post.getComments().add(this);
+        post.plusCommentCount();
         return this;
     }
 

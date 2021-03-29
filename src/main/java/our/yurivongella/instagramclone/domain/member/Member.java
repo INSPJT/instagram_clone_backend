@@ -19,6 +19,10 @@ import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostLike;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
+
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @Getter
 @Entity
@@ -48,6 +52,18 @@ public class Member extends BaseEntity {
 
     @Nullable
     private String profileImageUrl;
+
+    @Nullable
+    private String introduction;
+
+    @Column(name = "member_post_count", columnDefinition = "long default 0")
+    private Long postCount;
+
+    @Column(name = "member_following_count", columnDefinition = "long default 0")
+    private Long followingCount;
+
+    @Column(name = "member_follower_count", columnDefinition = "long default 0")
+    private Long followerCount;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -79,6 +95,9 @@ public class Member extends BaseEntity {
         this.password = password;
         this.profileImageUrl = profileImageUrl;
         this.authority = Authority.ROLE_USER;
+        this.postCount = 0L;
+        this.followingCount = 0L;
+        this.followerCount = 0L;
     }
 
     public enum Authority {
@@ -86,7 +105,7 @@ public class Member extends BaseEntity {
     }
 
     public boolean equals(Member other) {
-        return Objects.equals(id, other.getId()) || Objects.equals(email, other.getEmail());
+        return Objects.equals(id, other.getId());
     }
 
     public boolean isFollowingTo(Member other) {
@@ -101,4 +120,30 @@ public class Member extends BaseEntity {
                         .anyMatch(fromMember -> fromMember.equals(other));
     }
 
+    public void plusFollowingCount() {
+        this.followingCount += 1;
+    }
+
+    public void minusFollowingCount() {
+        if (this.followingCount <= 0) { throw new CustomException(INVALID_STATUS); }
+        this.followingCount -= 1;
+    }
+
+    public void plusFollowerCount() {
+        this.followerCount += 1;
+    }
+
+    public void minusFollowerCount() {
+        if (this.followerCount <= 0) { throw new CustomException(INVALID_STATUS); }
+        this.followerCount -= 1;
+    }
+
+    public void plusPostCount() {
+        this.postCount += 1;
+    }
+
+    public void minusPostCount() {
+        if (this.postCount <= 0) { throw new CustomException(INVALID_STATUS); }
+        this.postCount -= 1;
+    }
 }
