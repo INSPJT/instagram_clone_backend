@@ -51,8 +51,8 @@ jobs:
           password: ${{ secrets.CR_PAT }}
       - name: Docker run
         run: |
-          docker ps -q --filter "name=cat" | grep -q . && docker stop cat && docker rm -fv cat
-          docker run -d -p 8080:8080 --name cicd --restart always ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+          docker ps -q --filter "name=insta" | grep -q . && docker stop insta && docker rm -fv insta
+          docker run -d -p 8080:8080 --name insta --restart always ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
           
   cleanup:
     needs: [ build, deploy ]
