@@ -32,8 +32,6 @@ class MemberResponseDtoTest {
 
         assertThat(memberResponseDto.getDisplayId()).isEqualTo(displayId);
         assertThat(memberResponseDto.getNickname()).isEqualTo(nickname);
-        assertThat(memberResponseDto.getEmail()).isEqualTo(email);
         assertThat(memberResponseDto.getProfileImageUrl()).isEqualTo(profileImageUrl);
-        assertThat(memberResponseDto.getId()).isNull();
     }
 }

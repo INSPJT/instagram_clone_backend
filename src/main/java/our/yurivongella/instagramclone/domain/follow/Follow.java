@@ -13,7 +13,7 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @NoArgsConstructor
 @Table(
         name = "follow",
-        uniqueConstraints = {@UniqueConstraint(columnNames = { "from_member_id", "to_member_id" })}
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "from_member_id", "to_member_id" }) }
 )
 public class Follow extends BaseEntity {
 

@@ -2,6 +2,7 @@ package our.yurivongella.instagramclone.exception;
 
 import lombok.Builder;
 import lombok.Getter;
+
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -19,11 +20,11 @@ public class ErrorResponse {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
                 .body(ErrorResponse.builder()
-                        .status(errorCode.getHttpStatus().value())
-                        .error(errorCode.getHttpStatus().name())
-                        .code(errorCode.name())
-                        .message(errorCode.getDetail())
-                        .build()
+                                   .status(errorCode.getHttpStatus().value())
+                                   .error(errorCode.getHttpStatus().name())
+                                   .code(errorCode.name())
+                                   .message(errorCode.getDetail())
+                                   .build()
                 );
     }
 }

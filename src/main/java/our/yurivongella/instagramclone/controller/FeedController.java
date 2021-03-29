@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.controller;
 
 import io.swagger.annotations.ApiOperation;
+
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

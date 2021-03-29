@@ -8,14 +8,12 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @Getter
 @NoArgsConstructor
 public class MemberDto {
-    Long id;
     String displayId;
     String profileImageUrl;
     Boolean isFollowedByMe;
 
     @Builder
-    public MemberDto(Long id, String displayId, String profileImageUrl, Boolean isFollowedByMe) {
-        this.id = id;
+    public MemberDto(String displayId, String profileImageUrl, Boolean isFollowedByMe) {
         this.displayId = displayId;
         this.profileImageUrl = profileImageUrl;
         this.isFollowedByMe = isFollowedByMe;
@@ -23,7 +21,6 @@ public class MemberDto {
 
     public static MemberDto of(Member other, Member currentMember) {
         return builder()
-                .id(other.getId())
                 .displayId(other.getDisplayId())
                 .profileImageUrl(other.getProfileImageUrl())
                 .isFollowedByMe(other.isFollowedBy(currentMember))

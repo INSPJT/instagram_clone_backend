@@ -41,3 +41,5 @@ INSERT INTO POST (post_id, created_date, modified_date, content, member_id, view
 INSERT INTO POST (post_id, created_date, modified_date, content, member_id, views) VALUES (100, '2021-03-15 00:01:23.278192', '2021-03-15 00:01:23.278192', 'post content', 3, 0);
 INSERT INTO POST (post_id, created_date, modified_date, content, member_id, views) VALUES (150, '2021-03-15 00:01:23.278192', '2021-03-15 00:01:23.278192', 'post content', 1, 0);
 
+
+INSERT INTO comment (created_date, modified_date, content, member_id, post_id) VALUES ('2021-03-15 00:01:23.278192','2021-03-15 00:01:23.278192','testComment',1,1);
