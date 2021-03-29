@@ -2,9 +2,9 @@ name: DEV CI
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ feature/ci-cd ]
 env:
-  DOCKER_IMAGE: ghcr.io/INSPJT/instagram_clone_backend
+  DOCKER_IMAGE: ghcr.io/inspjt/instagram_clone_backend
   VERSION: ${{ github.sha }}
 
 jobs:
