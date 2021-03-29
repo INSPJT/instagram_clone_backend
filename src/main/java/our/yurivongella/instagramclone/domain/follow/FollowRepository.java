@@ -4,13 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import our.yurivongella.instagramclone.domain.member.Member;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-    List<Follow> findByFromMemberId(Long id);
-
-    List<Follow> findByToMemberId(Long id);
-
-    Optional<Follow> findByFromMemberIdAndToMemberId(Long fromMemberId, Long toMemberId);
-
-    boolean existsByFromMemberIdAndToMemberId(Long fromMemberId, Long toMemberId);
+    List<Follow> findByToMember(Member member);
+    Optional<Follow> findByFromMemberAndToMember(Member fromMember, Member toMember);
 }

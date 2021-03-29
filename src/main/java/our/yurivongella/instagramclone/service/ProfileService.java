@@ -1,7 +1,6 @@
 package our.yurivongella.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -11,17 +10,20 @@ import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.domain.post.PostLike;
 import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
-@Slf4j
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
@@ -32,24 +34,20 @@ public class ProfileService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
 
-    @Transactional(readOnly = true)
     public ProfileDto getMyProfile() {
         return ProfileDto.of(getCurrentMember());
     }
 
-    @Transactional(readOnly = true)
     public ProfileDto getProfile(String displayId) {
         Member member = getMemberByDisplayId(displayId);
-
         ProfileDto profileDto = ProfileDto.of(member);
 
-        followRepository.findByFromMemberIdAndToMemberId(SecurityUtil.getCurrentMemberId(), member.getId())
+        followRepository.findByFromMemberAndToMember(getCurrentMember(), member)
                         .ifPresent(ignored -> profileDto.getMemberDto().setFollowTrue());
 
         return profileDto;
     }
 
-    @Transactional(readOnly = true)
     public List<ProfilePostDto> getMyPosts(Long lastPostId) {
         if (lastPostId == null) {
             lastPostId = Long.MAX_VALUE;
@@ -61,20 +59,26 @@ public class ProfileService {
                              .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<ProfilePostDto> getPosts(String displayId, Long lastPostId) {
         if (lastPostId == null) {
             lastPostId = Long.MAX_VALUE;
         }
 
-        return postRepository.findByMemberAndIdLessThan(getMemberByDisplayId(displayId), lastPostId, pageRequest)
-                .stream()
-                .map(ProfilePostDto::of)
-                .peek(profilePostDto ->
-                        postLikeRepository.findByPostIdAndMemberId(profilePostDto.getPostId(), SecurityUtil.getCurrentMemberId())
-                                          .ifPresent(ignored -> profilePostDto.setLikeTrue())
-                )
-                .collect(Collectors.toList());
+        List<Post> posts = postRepository.findByMemberAndIdLessThan(getMemberByDisplayId(displayId), lastPostId, pageRequest);
+        Set<Long> likedPostIds = postLikeRepository.findByMemberAndPostIn(getCurrentMember(), posts)
+                                                   .stream()
+                                                   .map(PostLike::getPost)
+                                                   .map(Post::getId)
+                                                   .collect(Collectors.toSet());
+
+        return posts.stream()
+                    .map(ProfilePostDto::of)
+                    .peek(dto -> {
+                        if (likedPostIds.contains(dto.getPostId())) {
+                            dto.setLikeTrue();
+                        }
+                    })
+                    .collect(Collectors.toList());
     }
 
     /**

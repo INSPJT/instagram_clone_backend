@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import our.yurivongella.instagramclone.domain.member.Member;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findAllByMemberId(Long memberId);
+    List<Post> findAllByMember(Member member);
 
     @Query(value = "SELECT p" +
                    " FROM Post p" +

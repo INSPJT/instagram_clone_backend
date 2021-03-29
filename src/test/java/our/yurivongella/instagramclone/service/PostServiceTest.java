@@ -26,7 +26,6 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,8 +92,9 @@ public class PostServiceTest {
     public void createPost() {
         // request mock Post
         postService.create(postCreateRequestDto);
+        Member member = memberRepository.findById(memberId).get();
 
-        List<Post> list = postRepository.findAllByMemberId(memberId);
+        List<Post> list = postRepository.findAllByMember(member);
 
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(memberId);

@@ -47,7 +47,7 @@ public class MemberService {
     @Transactional
     public ProcessStatus unFollow(String displayId) {
         Member targetMember = memberRepository.findByDisplayId(displayId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        Follow follow = followRepository.findByFromMemberIdAndToMemberId(SecurityUtil.getCurrentMemberId(), targetMember.getId())
+        Follow follow = followRepository.findByFromMemberAndToMember(getCurrentMember(), targetMember)
                                         .orElseThrow(() -> new CustomException(NOT_FOLLOW))
                                         .unfollow();
 

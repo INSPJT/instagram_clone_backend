@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
@@ -99,9 +98,10 @@ class MemberServiceTest {
         public void successFollow() {
             // when
             memberService.follow(targetDisplayId);
+            Member member = memberRepository.findById(targetId).get();
 
             // then
-            List<Follow> follows = followRepository.findByToMemberId(targetId);
+            List<Follow> follows = followRepository.findByToMember(member);
 
             assertThat(follows.size()).isEqualTo(1);
 
@@ -168,7 +168,7 @@ class MemberServiceTest {
             // then
             assertThat(myMember.getFollowingCount()).isEqualTo(0);
             assertThat(targetMember.getFollowerCount()).isEqualTo(0);
-            List<Follow> follows = followRepository.findByToMemberId(targetId);
+            List<Follow> follows = followRepository.findByToMember(targetMember);
             assertThat(follows.size()).isEqualTo(0);
         }
 
