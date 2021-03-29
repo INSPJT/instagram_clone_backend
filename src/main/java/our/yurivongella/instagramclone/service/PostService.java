@@ -101,7 +101,7 @@ public class PostService {
     public ProcessStatus unlikePost(Long postId) {
         Member member = getCurrentMember();
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, member.getId()).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
+        PostLike postLike = postLikeRepository.findByMemberAndPost(member, post).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
         try {
             postLike.unlike();
             postLikeRepository.delete(postLike);
@@ -113,7 +113,7 @@ public class PostService {
     }
 
     protected PostLike createPostLike(Member member, Post post) {
-        postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId()).ifPresent(postLike -> {
+        postLikeRepository.findByMemberAndPost(member, post).ifPresent(postLike -> {
             log.error("[글번호 : {}] {}가 포스트를 이미 좋아요를 하고 있습니다.", postLike.getId(), member.getDisplayId());
             throw new CustomException(ErrorCode.ALREADY_LIKE);
         });
