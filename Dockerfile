@@ -8,7 +8,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew clean bootJar
 
 FROM openjdk:11-jdk-slim
-COPY --from=builder build/libs/*.jar app.jar
+COPY --from=builder build/libs/*.jar insta.jar
 
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/insta.jar"]
