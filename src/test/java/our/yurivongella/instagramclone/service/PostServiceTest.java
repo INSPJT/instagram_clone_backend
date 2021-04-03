@@ -161,6 +161,23 @@ public class PostServiceTest {
         feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
     }
 
+    @DisplayName("특정 유저의 게시글 피드 가져오기")
+    @Test
+    public void getFeedsNoLastPostId() {
+        // given
+        Member member = memberRepository.findByEmail("woody@test.net").get();
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        int pageSize = 5;
+
+        // when
+        List<PostReadResponseDto> feeds = postService.getFeeds(null);
+
+        // then
+        assertThat(feeds.size()).isEqualTo(pageSize);
+    }
+
     @DisplayName("좋아요 테스트")
     @Test
     @Transactional
