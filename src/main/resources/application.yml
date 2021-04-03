@@ -1,6 +1,8 @@
 logging:
   level:
-    our.yurivongella.instagramclone: debug
+    our.yurivongella.instagramclone: INFO
+  file:
+    name: /var/log/insta-log.txt
 
 spring:
   profiles:
