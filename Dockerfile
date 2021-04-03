@@ -13,4 +13,3 @@ VOLUME ["/var/log"]
 
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app.jar"]
-
