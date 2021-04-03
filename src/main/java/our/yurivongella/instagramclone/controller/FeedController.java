@@ -23,7 +23,7 @@ public class FeedController {
 
     @ApiOperation("lastPostId 보다 작은 5 개의 인스타그램 피드 조회")
     @GetMapping("/feeds")
-    public ResponseEntity<List<PostReadResponseDto>> getFeeds(@RequestParam Long lastPostId) {
+    public ResponseEntity<List<PostReadResponseDto>> getFeeds(@RequestParam(required = false) Long lastPostId) {
         return ResponseEntity.ok(postService.getFeeds(lastPostId));
     }
 }
