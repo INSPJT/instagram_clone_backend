@@ -125,16 +125,15 @@ public class PostService {
                                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
-    private Member getMemberByDisplayId(String displayId) {
-        return memberRepository.findByDisplayId(displayId)
-                               .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-    }
-
     /**
      * Instagram Feeds
      */
     @Transactional(readOnly = true)
     public List<PostReadResponseDto> getFeeds(Long lastPostId) {
+        if (lastPostId == null) {
+            lastPostId = Long.MAX_VALUE;
+        }
+
         Member currentMember = getCurrentMember();
 
         PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by("id").descending());
