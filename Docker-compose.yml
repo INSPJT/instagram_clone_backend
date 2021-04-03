@@ -1,0 +1,20 @@
+version: "3"
+services:
+  instagram_db:
+    container_name: instagram_db
+    image: mysql
+    environment:
+      MYSQL_DATABASE: instagram
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - 3306:3306
+
+  instagram_be:
+    build: .
+    ports:
+      - 8080:8080
+    links:
+      - instagram_db
+    depends_on:
+      - instagram_db

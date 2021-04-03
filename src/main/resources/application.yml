@@ -1,4 +1,37 @@
+logging:
+  level:
+    our.yurivongella.instagramclone: INFO
+  file:
+    name: /var/log/insta-log.txt
+
 spring:
+  profiles:
+    active: h2
+  h2:
+    console:
+      settings:
+        web-allow-others: true
+
+# HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
+# Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
+# $ echo 'spring-boot-security-jwt-inspjt-instgram-clone-backend-spring-boot-security-jwt' | base64
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=
+
+server:
+  error:
+    include-exception: false      # Response 에 Exception 을 표시할지
+    include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
+    include-stacktrace: on_param  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
+    whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: h2
+
   h2:
     console:
       enabled: true
@@ -17,8 +50,29 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+        default_batch_fetch_size: 1000
 
+---
 
-logging:
-  level:
-    our.yurivongella.instagramclone: debug
+spring:
+  config:
+    activate:
+      on-profile: mysql
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username: yuri
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+#        format_sql: true
+#        show_sql: true
+
+---
