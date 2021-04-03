@@ -16,8 +16,6 @@ import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
@@ -42,6 +40,7 @@ public class PostService {
     @Transactional
     public Long create(PostCreateRequestDto postCreateRequestDto) {
         Member member = getCurrentMember();
+
         try {
             Post post = postRepository.save(postCreateRequestDto.toPost(member));
             List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateRequestDto.getMediaUrls(post));
@@ -70,13 +69,15 @@ public class PostService {
             log.error("유저가 일치하지 않습니다.");
             return ProcessStatus.FAIL;
         }
-        log.info("게시물을 삭제 합니다.");
+
         try {
             postRepository.delete(post);
+            post.getMember().minusPostCount();
             return ProcessStatus.SUCCESS;
         } catch (Exception e) {
             log.error("삭제 도중 문제가 발생했습니다. = {}", e.getMessage());
         }
+
         return ProcessStatus.FAIL;
     }
 
@@ -100,7 +101,7 @@ public class PostService {
     public ProcessStatus unlikePost(Long postId) {
         Member member = getCurrentMember();
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, member.getId()).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
+        PostLike postLike = postLikeRepository.findByMemberAndPost(member, post).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
         try {
             postLike.unlike();
             postLikeRepository.delete(postLike);
@@ -112,19 +113,11 @@ public class PostService {
     }
 
     protected PostLike createPostLike(Member member, Post post) {
-        postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId()).ifPresent(postLike -> {
+        postLikeRepository.findByMemberAndPost(member, post).ifPresent(postLike -> {
             log.error("[글번호 : {}] {}가 포스트를 이미 좋아요를 하고 있습니다.", postLike.getId(), member.getDisplayId());
             throw new CustomException(ErrorCode.ALREADY_LIKE);
         });
         return new PostLike().like(member, post);
-    }
-
-    public List<PostReadResponseDto> getPostList(String displayId) {
-        Member member = getMemberByDisplayId(displayId);
-
-        return member.getPosts().stream()
-                     .map(post -> PostReadResponseDto.of(post, member))
-                     .collect(Collectors.toList());
     }
 
     private Member getCurrentMember() {
@@ -132,16 +125,15 @@ public class PostService {
                                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
-    private Member getMemberByDisplayId(String displayId) {
-        return memberRepository.findByDisplayId(displayId)
-                               .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-    }
-
     /**
      * Instagram Feeds
      */
     @Transactional(readOnly = true)
     public List<PostReadResponseDto> getFeeds(Long lastPostId) {
+        if (lastPostId == null) {
+            lastPostId = Long.MAX_VALUE;
+        }
+
         Member currentMember = getCurrentMember();
 
         PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by("id").descending());

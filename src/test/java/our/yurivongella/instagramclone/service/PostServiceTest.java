@@ -92,11 +92,13 @@ public class PostServiceTest {
     public void createPost() {
         // request mock Post
         postService.create(postCreateRequestDto);
+        Member member = memberRepository.findById(memberId).get();
 
-        List<Post> list = postRepository.findAllByMemberId(memberId);
+        List<Post> list = postRepository.findAllByMember(member);
 
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(memberId);
+        assertThat(list.get(0).getMember().getPostCount()).isEqualTo(1);
         assertThat(list.get(0).getContent()).isEqualTo(postCreateRequestDto.getContent());
         assertThat(list.get(0).getMediaUrls().size()).isEqualTo(3);
     }
@@ -124,23 +126,20 @@ public class PostServiceTest {
     @DisplayName("게시물 삭제")
     @Test
     public void deleteOnePost() {
+        // given
         Long postId = postService.create(postCreateRequestDto);
+        Post post = postRepository.findById(postId).get();
+        assertThat(post.getMember().getPostCount()).isEqualTo(1);
 
+        // when
         postService.delete(postId);
 
+        // then
+        assertThat(post.getMember().getPostCount()).isEqualTo(0);
         Assertions.assertThrows(
                 RuntimeException.class,
                 () -> postService.read(postId)
         );
-    }
-
-    @DisplayName("특정 유저 게시물 리스트 불러오기")
-    @Test
-    public void getMembersPostList() {
-        postService.create(postCreateRequestDto);
-
-        List<PostReadResponseDto> postlist = postService.getPostList(displayId);
-        assertThat(postlist.get(0).getAuthor().getDisplayId()).isEqualTo(displayId);
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")
@@ -160,6 +159,23 @@ public class PostServiceTest {
         // then
         assertThat(feeds.size()).isEqualTo(pageSize);
         feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
+    }
+
+    @DisplayName("특정 유저의 게시글 피드 가져오기")
+    @Test
+    public void getFeedsNoLastPostId() {
+        // given
+        Member member = memberRepository.findByEmail("woody@test.net").get();
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        int pageSize = 5;
+
+        // when
+        List<PostReadResponseDto> feeds = postService.getFeeds(null);
+
+        // then
+        assertThat(feeds.size()).isEqualTo(pageSize);
     }
 
     @DisplayName("좋아요 테스트")

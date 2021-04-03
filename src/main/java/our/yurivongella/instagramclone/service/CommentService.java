@@ -73,6 +73,7 @@ public class CommentService {
 
         try {
             commentRepository.delete(comment);
+            comment.getPost().minusCommentCount();
         } catch (Exception e) {
             log.error("삭제 도중 문제가 발생했습니다");
             throw e;

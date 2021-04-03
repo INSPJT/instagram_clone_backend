@@ -43,12 +43,6 @@ public class PostController {
         return ResponseEntity.ok(processStatus.getMessage());
     }
 
-    @ApiOperation("특정 사용자의 게시글 리스트 조회")
-    @GetMapping("/members/{displayId}/posts")
-    public ResponseEntity<?> readPostList(@PathVariable String displayId) {
-        return ResponseEntity.ok(postService.getPostList(displayId));
-    }
-
     @ApiOperation("포스트 좋아요")
     @PutMapping("/posts/{postId}/like")
     public ResponseEntity<?> likePost(@PathVariable Long postId) {
