@@ -27,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -94,10 +95,7 @@ public class AuthService {
     }
 
     public boolean validate(String displayId, String email) {
-        if (StringUtils.isEmpty(displayId)) {
-            return checkEmail(email);
-        }
-        return checkDisplayId(displayId);
+        return StringUtils.isEmpty(displayId) ? checkEmail(email) : checkDisplayId(displayId);
     }
 
     private boolean checkDisplayId(String displayId) {
