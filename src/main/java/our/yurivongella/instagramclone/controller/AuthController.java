@@ -5,15 +5,22 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.sun.istack.Nullable;
 
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.service.AuthService;
 
 @RestController
@@ -40,5 +47,14 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+    }
+
+    @ApiOperation("중복 체크")
+    @PutMapping("/check")
+    public ResponseEntity<Boolean> check(@RequestParam(value = "displayId", required = false) String displayId, @RequestParam(value = "email", required = false) String email) {
+        if ((displayId == null && email == null) || (displayId != null && email != null)) {
+            throw new CustomException(ErrorCode.INVALID_DUP_CHK_REQUEST);
+        }
+        return ResponseEntity.ok(authService.validate(displayId, email));
     }
 }
