@@ -61,8 +61,8 @@ public class AuthController {
 
     private int checkParameters(String displayId, String email) {
         int count = 0;
-        count += StringUtils.isBlank(displayId) ? 1 : 0;
-        count += StringUtils.isBlank(email) ? 1 : 0;
+        count += !StringUtils.isBlank(displayId) ? 1 : 0;
+        count += !StringUtils.isBlank(email) ? 1 : 0;
         return count;
     }
 }
