@@ -18,6 +18,15 @@ spring:
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=
 
+cloud:
+  aws:
+    s3:
+      bucket: yurivongella
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
 server:
   error:
     include-exception: false      # Response 에 Exception 을 표시할지
