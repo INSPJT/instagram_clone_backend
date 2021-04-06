@@ -17,14 +17,16 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @NoArgsConstructor
 public class S3Service {
     private AmazonS3 s3Client;
-    @Value("${classpath:/resource/aws.yml/aws.credentials.accessKey}")
+    @Value("${aws.credentials.accessKey}")
     private String accessKey;
-    @Value("${classpath:/resource/aws.yml/aws.credentials.secretKey}")
+    @Value("${aws.credentials.secretKey}")
     private String secretKey;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -42,6 +44,7 @@ public class S3Service {
 
     public String upload(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
+        log.info("fileName = {}", fileName);
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                                    .withCannedAcl(CannedAccessControlList.PublicRead)); // 외부에 공개할 이미지이므로, 해당 파일에 public read 권한을 추가

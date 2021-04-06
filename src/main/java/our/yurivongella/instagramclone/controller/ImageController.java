@@ -22,6 +22,7 @@ public class ImageController {
     @PostMapping("/images")
     public ResponseEntity<String> execWrite(MultipartFile file) throws IOException {
         String imgPath = s3Service.upload(file);
+        log.info("imagePath = {}", imgPath);
         return ResponseEntity.ok(imgPath);
     }
 }

@@ -1,19 +1,12 @@
-logging:
-  level:
-    our.yurivongella.instagramclone: INFO
-  file:
-    name: /var/log/insta-log.txt
-
 spring:
   profiles:
     active: h2
-  devtools:
-    add-properties: false
 
-  h2:
-    console:
-      settings:
-        web-allow-others: true
+logging:
+  level:
+    our.yurivongella.instagramclone: DEBUG
+  file:
+    name: /var/log/insta-log.txt
 
 # HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
 # Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
@@ -27,7 +20,7 @@ cloud:
       bucket: yurivongella
     region:
       static: ap-northeast-2
-    stack:
+    stack:ㅈ
       auto: false
 
 server:
@@ -38,15 +31,14 @@ server:
     whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
 
 ---
-
 spring:
-  config:
-    activate:
-      on-profile: h2
+  profiles: h2
 
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true
 
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
@@ -57,7 +49,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -65,11 +57,8 @@ spring:
         default_batch_fetch_size: 1000
 
 ---
-
 spring:
-  config:
-    activate:
-      on-profile: mysql
+  profiles: mysql
 
   datasource:
     url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
@@ -80,7 +69,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         default_batch_fetch_size: 1000
