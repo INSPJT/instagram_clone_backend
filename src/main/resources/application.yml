@@ -20,7 +20,7 @@ cloud:
       bucket: yurivongella
     region:
       static: ap-northeast-2
-    stack:ㅈ
+    stack:
       auto: false
 
 server:
