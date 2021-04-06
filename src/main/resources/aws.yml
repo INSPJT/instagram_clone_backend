@@ -1,0 +1,5 @@
+# git에 Key가 노출되지 않도록 유의할 것
+aws:
+  credentials:
+    accessKey: { Access Key }
+    secretKey: { Secret Key }
