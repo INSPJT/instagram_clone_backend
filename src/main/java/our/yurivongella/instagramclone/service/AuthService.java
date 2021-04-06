@@ -95,7 +95,7 @@ public class AuthService {
     }
 
     public boolean validate(String displayId, String email) {
-        return StringUtils.isEmpty(displayId) ? checkEmail(email) : checkDisplayId(displayId);
+        return StringUtils.isBlank(displayId) ? checkEmail(email) : checkDisplayId(displayId);
     }
 
     private boolean checkDisplayId(String displayId) {

@@ -3,6 +3,7 @@ package our.yurivongella.instagramclone.controller;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
@@ -20,6 +22,7 @@ import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.service.AuthService;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -49,9 +52,17 @@ public class AuthController {
     @ApiOperation("중복 체크")
     @PutMapping("/check")
     public ResponseEntity<Boolean> check(@RequestParam(value = "displayId", required = false) String displayId, @RequestParam(value = "email", required = false) String email) {
-        if ((displayId == null && email == null) || (displayId != null && email != null)) {
+        int count = checkParameters(displayId, email);
+        if (count != 1) {
             throw new CustomException(ErrorCode.INVALID_DUP_CHK_REQUEST);
         }
         return ResponseEntity.ok(authService.validate(displayId, email));
+    }
+
+    private int checkParameters(String displayId, String email) {
+        int count = 0;
+        count += StringUtils.isBlank(displayId) ? 1 : 0;
+        count += StringUtils.isBlank(email) ? 1 : 0;
+        return count;
     }
 }
