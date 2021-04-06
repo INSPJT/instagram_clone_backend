@@ -22,9 +22,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class S3Service {
     private AmazonS3 s3Client;
-    @Value("${aws.credentials.accessKey}")
+    @Value("${classpath:/resource/aws.yml/aws.credentials.accessKey}")
     private String accessKey;
-    @Value("${aws.credentials.secretKey}")
+    @Value("${classpath:/resource/aws.yml/aws.credentials.secretKey}")
     private String secretKey;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
