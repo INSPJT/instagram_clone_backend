@@ -51,6 +51,43 @@ jacocoTestCoverageVerification {
     }
 }
 
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        xml.enabled true
+        csv.enabled false
+    }
+}
+
+
+jacocoTestCoverageVerification {
+//    def Qdomains = []
+//
+//    for (qPattern in "*.QA".."*.QZ") {
+//        Qdomains.add(qPattern + "*")
+//    }
+
+    violationRules {
+        rule {
+            enabled = true
+            element = 'METHOD'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.0
+            }
+
+            excludes = []
+        }
+    }
+}
+
+
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/libs-milestone' }
@@ -76,6 +113,9 @@ dependencies {
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 }
 
 dependencyManagement {

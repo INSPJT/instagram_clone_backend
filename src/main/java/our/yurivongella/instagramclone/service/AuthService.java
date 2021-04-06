@@ -22,8 +22,11 @@ import our.yurivongella.instagramclone.jwt.TokenProvider;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -88,5 +91,21 @@ public class AuthService {
 
         // 토큰 발급
         return tokenDto;
+    }
+
+    public boolean validate(String target) {
+        return target.contains("@") ? checkEmail(target) : checkDisplayId(target);
+    }
+
+    private boolean checkDisplayId(String displayId) {
+        Optional<Member> member = memberRepository.findByDisplayId(displayId);
+        if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
+        return true;
+    }
+
+    private boolean checkEmail(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
+        return true;
     }
 }
