@@ -239,28 +239,28 @@ public class AuthServiceTest {
         @DisplayName("검사 요청을 한 이메일이 DB에 존재하지 않을 때")
         @Test
         public void check_email_success() {
-            boolean validate = authService.validate(null, "adamdoha@naver.com");
+            boolean validate = authService.validate("adamdoha@naver.com");
             Assertions.assertTrue(validate);
         }
 
         @DisplayName("검사 요청을 한 이메일이 DB에 이미 존재할 때")
         @Test
         public void check_email_fail() {
-            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate(null, "authService1@test.net"));
+            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("authService1@test.net"));
             assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
         }
 
         @DisplayName("검사 요청을 한 displayId가 DB에 존재하지 않을 때")
         @Test
         public void check_displayId_success() {
-            boolean validate = authService.validate("adamdoha", null);
+            boolean validate = authService.validate("adamdoha");
             Assertions.assertTrue(validate);
         }
 
         @DisplayName("검사 요청을 한 displayId가 DB에 이미 존재할 때")
         @Test
         public void check_displayId_fail() {
-            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("test", null));
+            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("test"));
             assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
         }
     }

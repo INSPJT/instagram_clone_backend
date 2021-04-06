@@ -94,8 +94,8 @@ public class AuthService {
         return tokenDto;
     }
 
-    public boolean validate(String displayId, String email) {
-        return StringUtils.isBlank(displayId) ? checkEmail(email) : checkDisplayId(displayId);
+    public boolean validate(String target) {
+        return target.contains("@") ? checkEmail(target) : checkDisplayId(target);
     }
 
     private boolean checkDisplayId(String displayId) {

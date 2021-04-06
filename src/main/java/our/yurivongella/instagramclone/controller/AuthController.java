@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sun.istack.NotNull;
+
 import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
@@ -51,18 +53,7 @@ public class AuthController {
 
     @ApiOperation("중복 체크")
     @PutMapping("/check")
-    public ResponseEntity<Boolean> check(@RequestParam(value = "displayId", required = false) String displayId, @RequestParam(value = "email", required = false) String email) {
-        int count = checkParameters(displayId, email);
-        if (count != 1) {
-            throw new CustomException(ErrorCode.INVALID_DUP_CHK_REQUEST);
-        }
-        return ResponseEntity.ok(authService.validate(displayId, email));
-    }
-
-    private int checkParameters(String displayId, String email) {
-        int count = 0;
-        count += !StringUtils.isBlank(displayId) ? 1 : 0;
-        count += !StringUtils.isBlank(email) ? 1 : 0;
-        return count;
+    public ResponseEntity<Boolean> check(@RequestParam(value = "target") @NotNull String target) {
+        return ResponseEntity.ok(authService.validate(target));
     }
 }
