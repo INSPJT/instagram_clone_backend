@@ -15,7 +15,6 @@ import our.yurivongella.instagramclone.service.S3Service;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/test")
 public class ImageController {
     private final S3Service s3Service;
 
