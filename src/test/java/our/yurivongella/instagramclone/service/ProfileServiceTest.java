@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileMemberDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
+import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -42,6 +43,17 @@ class ProfileServiceTest {
                 new UsernamePasswordAuthenticationToken(myMemberId, "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
+    @DisplayName("내 정보 간단하게 조회")
+    @Test
+    void getMySimpleProfileTest() {
+        SimpleProfileDto myProfile = profileService.getMySimpleProfile();
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+
+        assertThat(myProfile.getDisplayId()).isEqualTo(member.getDisplayId());
+        assertThat(myProfile.getProfileImageUrl()).isNull();
+    }
+
 
     @DisplayName("내 정보 조회")
     @Test

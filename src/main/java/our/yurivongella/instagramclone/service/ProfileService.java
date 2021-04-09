@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
+import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
@@ -33,6 +34,10 @@ public class ProfileService {
     private final FollowRepository followRepository;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
+
+    public SimpleProfileDto getMySimpleProfile() {
+        return SimpleProfileDto.of(getCurrentMember());
+    }
 
     public ProfileDto getMyProfile() {
         return ProfileDto.of(getCurrentMember());
