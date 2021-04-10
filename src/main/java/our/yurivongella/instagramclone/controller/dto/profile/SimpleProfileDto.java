@@ -16,8 +16,8 @@ public class SimpleProfileDto {
 
     public static SimpleProfileDto of(Member member) {
         return SimpleProfileDto.builder()
-                .displayId(member.getDisplayId())
-                .profileImageUrl(member.getProfileImageUrl())
-                .build();
+                               .displayId(member.getDisplayId())
+                               .profileImageUrl(member.getProfileImageUrl())
+                               .build();
     }
 }
