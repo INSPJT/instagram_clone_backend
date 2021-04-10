@@ -42,12 +42,20 @@ public class S3Service {
                                         .build();
     }
 
-    public String upload(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename();
+    public String upload(MultipartFile file, Long memberId) throws IOException {
+        String fileName = createFileName(FolderName.MEMBER, memberId, file.getOriginalFilename());
         log.info("fileName = {}", fileName);
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                                    .withCannedAcl(CannedAccessControlList.PublicRead)); // 외부에 공개할 이미지이므로, 해당 파일에 public read 권한을 추가
         return s3Client.getUrl(bucket, fileName).toString();
     }
+
+    private String createFileName(FolderName type, Long id, String originalFilename) {
+        return type.name() + "/" + id + "/" + originalFilename;
+    }
+}
+
+enum FolderName {
+    MEMBER
 }
