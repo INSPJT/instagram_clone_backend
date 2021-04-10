@@ -46,9 +46,6 @@ class CommentServiceTest {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    private EntityManager em;
-
     private Long userId;
     private Long postId;
     private Long commentId;

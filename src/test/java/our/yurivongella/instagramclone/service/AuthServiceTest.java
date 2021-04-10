@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
@@ -163,8 +164,8 @@ public class AuthServiceTest {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
                                                              .accessToken(tokenDto.getAccessToken())
-                    .refreshToken(tokenDto.getRefreshToken())
-                    .build();
+                                                             .refreshToken(tokenDto.getRefreshToken())
+                                                             .build();
 
             // when
             TokenDto reissue = authService.reissue(tokenRequestDto);
@@ -185,8 +186,8 @@ public class AuthServiceTest {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
                                                              .accessToken(tokenDto.getAccessToken())
-                    .refreshToken(tokenDto.getAccessToken())
-                    .build();
+                                                             .refreshToken(tokenDto.getAccessToken())
+                                                             .build();
 
             // when
             Assertions.assertThrows(
@@ -201,8 +202,8 @@ public class AuthServiceTest {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
                                                              .accessToken(tokenDto.getRefreshToken())
-                    .refreshToken(tokenDto.getRefreshToken())
-                    .build();
+                                                             .refreshToken(tokenDto.getRefreshToken())
+                                                             .build();
 
             // when
             Assertions.assertThrows(
@@ -217,8 +218,8 @@ public class AuthServiceTest {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
                                                              .accessToken(tokenDto.getRefreshToken())
-                    .refreshToken(tokenDto.getAccessToken())
-                    .build();
+                                                             .refreshToken(tokenDto.getAccessToken())
+                                                             .build();
 
             // when
             Assertions.assertThrows(
