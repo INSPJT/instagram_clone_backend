@@ -27,10 +27,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
-    public Long getCurrentMemberId(){
-        return getCurrentMember().getId();
-    }
-
     @Transactional
     public ProcessStatus follow(String displayId) {
         Member currentMember = getCurrentMember();

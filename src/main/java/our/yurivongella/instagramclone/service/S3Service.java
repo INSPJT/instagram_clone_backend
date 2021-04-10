@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 @Slf4j
 @Service
@@ -28,10 +29,13 @@ public class S3Service {
     private AmazonS3 s3Client;
     @Value("${aws.credentials.accessKey}")
     private String accessKey;
+
     @Value("${aws.credentials.secretKey}")
     private String secretKey;
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
     @Value("${cloud.aws.region.static}")
     private String region;
 
@@ -44,19 +48,18 @@ public class S3Service {
                                         .build();
     }
 
-    public String upload(MultipartFile file, Long memberId) throws IOException {
+    public String upload(MultipartFile file) throws IOException {
         long now = (new Date()).getTime();
         String filenameWithTime = now + "-" + file.getOriginalFilename();
-        String fileName = createFileName(FolderName.MEMBER, memberId, filenameWithTime);
-        log.info("fileName = {}", fileName);
+        String fileName = createFileName(FolderName.MEMBER, filenameWithTime);
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                                    .withCannedAcl(CannedAccessControlList.PublicRead)); // 외부에 공개할 이미지이므로, 해당 파일에 public read 권한을 추가
         return s3Client.getUrl(bucket, fileName).toString();
     }
 
-    private String createFileName(FolderName type, Long id, String originalFilename) {
-        return type.name() + "/" + id + "/" + originalFilename;
+    private String createFileName(FolderName type, String originalFilename) {
+        return type.name() + "/" + SecurityUtil.getCurrentMemberId() + "/" + originalFilename;
     }
 }
 
