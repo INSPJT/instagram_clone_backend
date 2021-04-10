@@ -1,6 +1,8 @@
 package our.yurivongella.instagramclone.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
@@ -43,7 +45,9 @@ public class S3Service {
     }
 
     public String upload(MultipartFile file, Long memberId) throws IOException {
-        String fileName = createFileName(FolderName.MEMBER, memberId, file.getOriginalFilename());
+        long now = (new Date()).getTime();
+        String filenameWithTime = now + "-" + file.getOriginalFilename();
+        String fileName = createFileName(FolderName.MEMBER, memberId, filenameWithTime);
         log.info("fileName = {}", fileName);
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
