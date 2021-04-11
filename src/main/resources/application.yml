@@ -77,11 +77,8 @@ spring:
 #        show_sql: true
 
 ---
-
 spring:
-  config:
-    activate:
-      on-profile: mysql-rds
+  profiles: mysql-rds
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

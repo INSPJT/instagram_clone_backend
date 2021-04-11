@@ -23,7 +23,7 @@ import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class MemberService {
+public class FollowService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 

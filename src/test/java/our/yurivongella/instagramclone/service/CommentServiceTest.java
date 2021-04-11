@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,12 +48,13 @@ class CommentServiceTest {
     private Long postId;
     private Long commentId;
 
+    String displayId = "testName";
+    String nickname = "testNick";
+    String email = "test@naver.com";
+    String password = "testPassword";
+
     @BeforeEach
     public void prepare_member_and_post() {
-        String displayId = "testName";
-        String nickname = "testNick";
-        String email = "test@naver.com";
-        String password = "testPassword";
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
                                                             .displayId(displayId)
                                                             .nickname(nickname)

@@ -24,13 +24,13 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("회원 테스트")
 @Transactional
 @SpringBootTest
-class MemberServiceTest {
+class FollowServiceTest {
 
     @Autowired
     private AuthService authService;
 
     @Autowired
-    private MemberService memberService;
+    private FollowService followService;
 
     @Autowired
     private FollowRepository followRepository;
@@ -97,7 +97,7 @@ class MemberServiceTest {
         @Test
         public void successFollow() {
             // when
-            memberService.follow(targetDisplayId);
+            followService.follow(targetDisplayId);
             Member member = memberRepository.findById(targetId).get();
 
             // then
@@ -124,12 +124,12 @@ class MemberServiceTest {
         @Test
         public void alreadyFollow() {
             // when
-            memberService.follow(targetDisplayId);
+            followService.follow(targetDisplayId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.follow(targetDisplayId)
+                    () -> followService.follow(targetDisplayId)
             );
         }
     }
@@ -150,7 +150,7 @@ class MemberServiceTest {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 언팔로우 테스트를 위해 미리 팔로우 처리
-            memberService.follow(targetDisplayId);
+            followService.follow(targetDisplayId);
         }
 
         @DisplayName("언팔로우 성공")
@@ -163,7 +163,7 @@ class MemberServiceTest {
             assertThat(targetMember.getFollowerCount()).isEqualTo(1);
 
             // when
-            memberService.unFollow(targetDisplayId);
+            followService.unFollow(targetDisplayId);
 
             // then
             assertThat(myMember.getFollowingCount()).isEqualTo(0);
@@ -176,12 +176,12 @@ class MemberServiceTest {
         @Test
         public void notFollowingTarget() {
             // when
-            memberService.unFollow(targetDisplayId);
+            followService.unFollow(targetDisplayId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.unFollow(targetDisplayId)
+                    () -> followService.unFollow(targetDisplayId)
             );
         }
     }
@@ -209,7 +209,7 @@ class MemberServiceTest {
         @DisplayName("내 팔로워 가져오기")
         @Test
         public void getFollowersTest() {
-            List<MemberResponseDto> followers = memberService.getFollowers();
+            List<MemberResponseDto> followers = followService.getFollowers();
             assertThat(followers.get(0).getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(followers.size()).isEqualTo(1);
         }
@@ -217,7 +217,7 @@ class MemberServiceTest {
         @DisplayName("내 팔로우 중인 대상들 가져오기")
         @Test
         public void getFollowingTest() {
-            List<MemberResponseDto> followings = memberService.getFollowings();
+            List<MemberResponseDto> followings = followService.getFollowings();
             assertThat(followings.get(0).getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(followings.get(1).getDisplayId()).isEqualTo(targetDisplayId + 3);
             assertThat(followings.size()).isEqualTo(2);

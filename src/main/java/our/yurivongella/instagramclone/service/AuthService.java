@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
@@ -18,12 +19,15 @@ import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshToken;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshTokenRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -37,6 +41,11 @@ public class AuthService {
     @Transactional
     public String signup(SignupRequestDto signupRequestDto) {
         Member member = signupRequestDto.toMember(passwordEncoder);
+        Optional<Member> optMember = memberRepository.findByEmail(signupRequestDto.getEmail());
+        if (optMember.isPresent()) {
+            log.error("이미 존재하는 유저입니다.");
+            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
+        }
         return memberRepository.save(member).getEmail();
     }
 
@@ -107,5 +116,17 @@ public class AuthService {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
         return true;
+    }
+
+    @Transactional
+    public void deactivate() {
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+        member.deactivate();
+    }
+
+    @Transactional
+    protected void delete() {
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+        memberRepository.delete(member);
     }
 }
