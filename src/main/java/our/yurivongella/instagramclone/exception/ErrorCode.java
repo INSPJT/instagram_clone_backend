@@ -32,6 +32,8 @@ public enum ErrorCode {
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
     ALREADY_LIKE(CONFLICT, "더 이상 좋아요를 할 수 없습니다"),
+    ALREADY_DEACTIVATED(CONFLICT, "이미 비활성화 상태입니다."),
+    ALREADY_ACTIVATED(CONFLICT, "이미 활성화 상태입니다."),
 
     /* 서버 내 데이터 오류 */
     INVALID_STATUS(INTERNAL_SERVER_ERROR, "서버 내 데이터에 오류가 있습니다");

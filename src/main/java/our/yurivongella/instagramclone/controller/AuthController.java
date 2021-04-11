@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,9 +57,10 @@ public class AuthController {
         return ResponseEntity.ok(authService.validate(target));
     }
 
-    @ApiOperation("회원 비활성화")
-    @DeleteMapping("/deactivate")
-    public ResponseEntity<ProcessStatus> deactivate(){
-        return ResponseEntity.ok(authService.deactivate());
+    @ApiOperation("회원 상태 변경")
+    @PutMapping("/activate")
+    public ResponseEntity<ProcessStatus> activate(@RequestParam("state") boolean state){
+        ProcessStatus result = state ? authService.activate() : authService.deactivate();
+        return ResponseEntity.ok(result);
     }
 }
