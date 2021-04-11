@@ -51,42 +51,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-jacoco {
-    toolVersion = "0.8.5"
-}
-
-jacocoTestReport {
-    reports {
-        html.enabled true
-        xml.enabled true
-        csv.enabled false
-    }
-}
-
-
-jacocoTestCoverageVerification {
-//    def Qdomains = []
-//
-//    for (qPattern in "*.QA".."*.QZ") {
-//        Qdomains.add(qPattern + "*")
-//    }
-
-    violationRules {
-        rule {
-            enabled = true
-            element = 'METHOD'
-
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.0
-            }
-
-            excludes = []
-        }
-    }
-}
-
 
 repositories {
     mavenCentral()
