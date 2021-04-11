@@ -56,10 +56,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.validate(target));
     }
 
-    @ApiOperation("회원 탈퇴")
-    @DeleteMapping("/withdraw")
-    public ResponseEntity<ProcessStatus> withdraw(){
-        authService.deactivate();
-        return ResponseEntity.ok(ProcessStatus.SUCCESS);
+    @ApiOperation("회원 비활성화")
+    @DeleteMapping("/deactivate")
+    public ResponseEntity<ProcessStatus> deactivate(){
+        return ResponseEntity.ok(authService.deactivate());
     }
 }

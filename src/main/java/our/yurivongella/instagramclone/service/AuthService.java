@@ -14,6 +14,7 @@ import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
+import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshToken;
@@ -119,9 +120,10 @@ public class AuthService {
     }
 
     @Transactional
-    public void deactivate() {
+    public ProcessStatus deactivate() {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
         member.deactivate();
+        return ProcessStatus.SUCCESS;
     }
 
     @Transactional
