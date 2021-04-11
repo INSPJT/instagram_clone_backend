@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
+import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
 import our.yurivongella.instagramclone.service.ProfileService;
 
 import java.util.List;
@@ -17,6 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
+
+    @ApiOperation("내 Display Id, Profile Image Url 만 조회")
+    @GetMapping("/member")
+    public ResponseEntity<SimpleProfileDto> getMySimpleProfile() {
+        return ResponseEntity.ok(profileService.getMySimpleProfile());
+    }
 
     @ApiOperation("내 프로필 조회")
     @GetMapping("/member/profiles")

@@ -71,8 +71,11 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.3'
+
     implementation 'org.springframework.cloud:spring-cloud-starter-aws'
     implementation 'com.amazonaws:aws-java-sdk-s3'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
