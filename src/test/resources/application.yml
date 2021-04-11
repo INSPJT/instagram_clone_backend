@@ -1,3 +1,17 @@
+aws:
+  credentials:
+    accessKey: testkey
+    secretKey: testkey
+
+cloud:
+  aws:
+    s3:
+      bucket: yurivongella
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
 spring:
   h2:
     console:

@@ -89,10 +89,6 @@ spring:
     username:
     password:
 #    initialization-mode: always
-#    schema:
-#      - classpath*:/db-schema.sql
-#    data:
-#      - classpath*:/data-rds.sql
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
