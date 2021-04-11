@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
 class CommentRepositoryTest {
 
     @Autowired private MemberRepository memberRepository;
