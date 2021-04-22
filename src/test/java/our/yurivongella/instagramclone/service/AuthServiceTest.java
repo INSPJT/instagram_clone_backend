@@ -6,16 +6,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("가입/로그인 테스트")
 @SpringBootTest
@@ -40,11 +45,11 @@ public class AuthServiceTest {
     public void signupBeforeTest() {
         // given
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                .displayId(displayId)
-                .nickname(nickname)
-                .email(email)
-                .password(password)
-                .build();
+                                                            .displayId(displayId)
+                                                            .nickname(nickname)
+                                                            .email(email)
+                                                            .password(password)
+                                                            .build();
 
         // when
         authService.signup(signupRequestDto);
@@ -72,11 +77,11 @@ public class AuthServiceTest {
         @Test
         public void failSignup() {
             SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                    .displayId("test2")
-                    .nickname("testNickname2")
-                    .email(email)
-                    .password("1q2w3e4r5t")
-                    .build();
+                                                                .displayId("test2")
+                                                                .nickname("testNickname2")
+                                                                .email(email)
+                                                                .password("1q2w3e4r5t")
+                                                                .build();
 
             Assertions.assertThrows(
                     RuntimeException.class,
@@ -84,7 +89,6 @@ public class AuthServiceTest {
             );
         }
     }
-
 
     @DisplayName("로그인")
     @Nested
@@ -95,9 +99,9 @@ public class AuthServiceTest {
         public void successLogin() {
             // given
             SigninRequestDto signinRequestDto = SigninRequestDto.builder()
-                    .email(email)
-                    .password(password)
-                    .build();
+                                                                .email(email)
+                                                                .password(password)
+                                                                .build();
 
             // when
             TokenDto tokenDto = authService.signin(signinRequestDto);
@@ -114,9 +118,9 @@ public class AuthServiceTest {
         public void mismatchEmail() {
             // given
             SigninRequestDto signinRequestDto = SigninRequestDto.builder()
-                    .email("mismatch" + email)
-                    .password(password)
-                    .build();
+                                                                .email("mismatch" + email)
+                                                                .password(password)
+                                                                .build();
 
             // when
             Assertions.assertThrows(
@@ -130,9 +134,9 @@ public class AuthServiceTest {
         public void mismatchPassword() {
             // given
             SigninRequestDto signinRequestDto = SigninRequestDto.builder()
-                    .email(email)
-                    .password(password + "adfsdf")
-                    .build();
+                                                                .email(email)
+                                                                .password(password + "adfsdf")
+                                                                .build();
 
             // when
             Assertions.assertThrows(
@@ -152,21 +156,20 @@ public class AuthServiceTest {
         public void signinBeforeTest() {
             tokenDto = authService.signin(
                     SigninRequestDto.builder()
-                            .email(email)
-                            .password(password)
-                            .build()
+                                    .email(email)
+                                    .password(password)
+                                    .build()
             );
         }
-
 
         @DisplayName("Access + Refresh 요청해서 성공")
         @Test
         public void accessRefresh() {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                    .accessToken(tokenDto.getAccessToken())
-                    .refreshToken(tokenDto.getRefreshToken())
-                    .build();
+                                                             .accessToken(tokenDto.getAccessToken())
+                                                             .refreshToken(tokenDto.getRefreshToken())
+                                                             .build();
 
             // when
             TokenDto reissue = authService.reissue(tokenRequestDto);
@@ -177,7 +180,7 @@ public class AuthServiceTest {
             assertThat(accessIsLongerThanRefresh).isTrue();
             assertThat(reissue.getAccessToken()).isInstanceOf(String.class);
             assertThat(reissue.getRefreshToken()).isInstanceOf(String.class);
-            assertThat(reissue.getGrantType()).isEqualTo("bearer");
+            assertThat(reissue.getGrantType()).isEqualTo("Bearer");
             assertThat(reissue.getAccessTokenExpiresIn()).isInstanceOf(Long.class);
         }
 
@@ -186,9 +189,9 @@ public class AuthServiceTest {
         public void accessAccess() {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                    .accessToken(tokenDto.getAccessToken())
-                    .refreshToken(tokenDto.getAccessToken())
-                    .build();
+                                                             .accessToken(tokenDto.getAccessToken())
+                                                             .refreshToken(tokenDto.getAccessToken())
+                                                             .build();
 
             // when
             Assertions.assertThrows(
@@ -202,9 +205,9 @@ public class AuthServiceTest {
         public void refreshRefresh() {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                    .accessToken(tokenDto.getRefreshToken())
-                    .refreshToken(tokenDto.getRefreshToken())
-                    .build();
+                                                             .accessToken(tokenDto.getRefreshToken())
+                                                             .refreshToken(tokenDto.getRefreshToken())
+                                                             .build();
 
             // when
             Assertions.assertThrows(
@@ -218,15 +221,47 @@ public class AuthServiceTest {
         public void refreshAccess() {
             // given
             TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                    .accessToken(tokenDto.getRefreshToken())
-                    .refreshToken(tokenDto.getAccessToken())
-                    .build();
+                                                             .accessToken(tokenDto.getRefreshToken())
+                                                             .refreshToken(tokenDto.getAccessToken())
+                                                             .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
                     () -> authService.reissue(tokenRequestDto)
             );
+        }
+    }
+
+    @DisplayName("중복 검사")
+    @Nested
+    class ValidateResource {
+        @DisplayName("검사 요청을 한 이메일이 DB에 존재하지 않을 때")
+        @Test
+        public void check_email_success() {
+            boolean validate = authService.validate("adamdoha@naver.com");
+            Assertions.assertTrue(validate);
+        }
+
+        @DisplayName("검사 요청을 한 이메일이 DB에 이미 존재할 때")
+        @Test
+        public void check_email_fail() {
+            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("authService1@test.net"));
+            assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
+        }
+
+        @DisplayName("검사 요청을 한 displayId가 DB에 존재하지 않을 때")
+        @Test
+        public void check_displayId_success() {
+            boolean validate = authService.validate("adamdoha");
+            Assertions.assertTrue(validate);
+        }
+
+        @DisplayName("검사 요청을 한 displayId가 DB에 이미 존재할 때")
+        @Test
+        public void check_displayId_fail() {
+            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("test"));
+            assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
         }
     }
 }

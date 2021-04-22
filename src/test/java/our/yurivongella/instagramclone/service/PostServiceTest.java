@@ -3,6 +3,7 @@ package our.yurivongella.instagramclone.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,22 +12,30 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
+import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
-import our.yurivongella.instagramclone.util.SecurityUtil;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @SpringBootTest
 public class PostServiceTest {
+
+    @Autowired
+    private EntityManager em;
 
     @Autowired
     private PostService postService;
@@ -40,7 +49,7 @@ public class PostServiceTest {
     @Autowired
     private AuthService authService;
 
-    private Long userId;
+    private Long memberId;
     private static PostCreateRequestDto postCreateRequestDto;
 
     private final String displayId = "test";
@@ -59,10 +68,10 @@ public class PostServiceTest {
 
         // 가입
         authService.signup(signupRequestDto);
-        userId = memberRepository.findByEmail(email).get().getId();
+        memberId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userId, "", Collections.emptyList());
+                new UsernamePasswordAuthenticationToken(memberId, "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -83,11 +92,13 @@ public class PostServiceTest {
     public void createPost() {
         // request mock Post
         postService.create(postCreateRequestDto);
+        Member member = memberRepository.findById(memberId).get();
 
-        List<Post> list = postRepository.findAll();
+        List<Post> list = postRepository.findAllByMember(member);
 
         assertThat(list.size()).isEqualTo(1);
-        assertThat(list.get(0).getMember().getId()).isEqualTo(userId);
+        assertThat(list.get(0).getMember().getId()).isEqualTo(memberId);
+        assertThat(list.get(0).getMember().getPostCount()).isEqualTo(1);
         assertThat(list.get(0).getContent()).isEqualTo(postCreateRequestDto.getContent());
         assertThat(list.get(0).getMediaUrls().size()).isEqualTo(3);
     }
@@ -101,7 +112,7 @@ public class PostServiceTest {
         // reqeust mock get
         PostReadResponseDto postResponseDto = postService.read(postId);
 
-        assertThat(postResponseDto.getAuthor().getId()).isEqualTo(userId);
+        assertThat(postResponseDto.getAuthor().getDisplayId()).isEqualTo(displayId);
         assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());
 
         for (int i = 0; i < postCreateRequestDto.getMediaUrls().size(); ++i) {
@@ -115,23 +126,125 @@ public class PostServiceTest {
     @DisplayName("게시물 삭제")
     @Test
     public void deleteOnePost() {
+        // given
         Long postId = postService.create(postCreateRequestDto);
+        Post post = postRepository.findById(postId).get();
+        assertThat(post.getMember().getPostCount()).isEqualTo(1);
 
+        // when
         postService.delete(postId);
 
+        // then
+        assertThat(post.getMember().getPostCount()).isEqualTo(0);
         Assertions.assertThrows(
                 RuntimeException.class,
                 () -> postService.read(postId)
         );
     }
 
-    @DisplayName("특정 유저 게시물 리스트 불러오기")
+    @DisplayName("특정 유저의 게시글 피드 가져오기")
     @Test
-    public void getUsersPostList() {
-        postService.create(postCreateRequestDto);
+    public void getFeeds() {
+        // given
+        Member member = memberRepository.findByEmail("woody@test.net").get();
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Long lastPostId = 66L;
+        int pageSize = 5;
 
-        List<PostReadResponseDto> postlist = postService.getPostList(SecurityUtil.getCurrentMemberId());
+        // when
+        List<PostReadResponseDto> feeds = postService.getFeeds(lastPostId);
 
-        assertThat(postlist.get(0).getAuthor().getId()).isEqualTo(SecurityUtil.getCurrentMemberId());
+        // then
+        assertThat(feeds.size()).isEqualTo(pageSize);
+        feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
     }
+
+    @DisplayName("특정 유저의 게시글 피드 가져오기")
+    @Test
+    public void getFeedsNoLastPostId() {
+        // given
+        Member member = memberRepository.findByEmail("woody@test.net").get();
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        int pageSize = 5;
+
+        // when
+        List<PostReadResponseDto> feeds = postService.getFeeds(null);
+
+        // then
+        assertThat(feeds.size()).isEqualTo(pageSize);
+    }
+
+    @DisplayName("좋아요 테스트")
+    @Test
+    @Transactional
+    public void likeTest() {
+        Long postId = postService.create(postCreateRequestDto);
+        ProcessStatus processStatus = postService.likePost(postId);
+        assertEquals(ProcessStatus.SUCCESS, processStatus);
+
+        Post post = postRepository.findById(postId).get();
+        assertEquals(1L, post.getLikeCount());
+        assertEquals(memberId, post.getPostLikes().get(0).getMember().getId());
+        assertEquals(displayId, post.getPostLikes().get(0).getMember().getDisplayId());
+    }
+
+    @DisplayName("좋아요 중복 테스트")
+    @Test
+    @Transactional
+    public void like_duple_Test() {
+        Long postId = postService.create(postCreateRequestDto);
+        ProcessStatus processStatus = postService.likePost(postId);
+        assertEquals(ProcessStatus.SUCCESS, processStatus);
+
+        Post post = postRepository.findById(postId).get();
+        assertEquals(1L, post.getLikeCount());
+        assertEquals(memberId, post.getPostLikes().get(0).getMember().getId());
+        assertEquals(displayId, post.getPostLikes().get(0).getMember().getDisplayId());
+
+        CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.likePost(postId));
+        assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode());
+    }
+
+
+    @DisplayName("취소 테스트")
+    @Nested
+    class WithdrawalClass{
+        private Long postId;
+
+        @BeforeEach
+        public void likePost() {
+            postId = postService.create(postCreateRequestDto);
+            postService.likePost(postId);
+            Post post = postRepository.findById(postId).get();
+            assertEquals(1L, post.getLikeCount());
+            em.flush();
+            em.clear();
+        }
+
+        @DisplayName("좋아요 취소 테스트")
+        @Test
+        public void unlike_Test() {
+            ProcessStatus processStatus = postService.unlikePost(postId);
+            Post post = postRepository.findById(postId).get();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(0L, post.getLikeCount());
+        }
+
+        @DisplayName("좋아요 취소 중복 테스트")
+        @Test
+        public void unlike_duple_Test() {
+            ProcessStatus processStatus = postService.unlikePost(postId);
+            Post post = postRepository.findById(postId).get();
+            assertEquals(ProcessStatus.SUCCESS, processStatus);
+            assertEquals(0L, post.getLikeCount());
+
+            CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.unlikePost(postId));
+            assertEquals(ErrorCode.ALREADY_UNLIKE, customException.getErrorCode());
+        }
+    }
+
 }

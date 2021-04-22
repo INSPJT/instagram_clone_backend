@@ -2,8 +2,10 @@ package our.yurivongella.instagramclone.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
@@ -41,9 +43,15 @@ public class PostController {
         return ResponseEntity.ok(processStatus.getMessage());
     }
 
-    @ApiOperation("특정 사용자의 게시글 리스트 조회")
-    @GetMapping("/members/{memberId}/posts")
-    public ResponseEntity<?> readPostList(@PathVariable Long memberId) {
-        return ResponseEntity.ok(postService.getPostList(memberId));
+    @ApiOperation("포스트 좋아요")
+    @PutMapping("/posts/{postId}/like")
+    public ResponseEntity<?> likePost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.likePost(postId));
+    }
+
+    @ApiOperation("포스트 좋아요 취소")
+    @DeleteMapping("/posts/{postId}/like")
+    public ResponseEntity<?> unLikePost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.unlikePost(postId));
     }
 }

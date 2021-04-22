@@ -33,5 +33,17 @@ public class PostLike extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public PostLike like(Member member, Post post) {
+        this.member = member;
+        this.post = post;
+        post.getPostLikes().add(this);
+        post.plusLikeCount();
+        return this;
+    }
+
+    public void unlike() {
+        post.getPostLikes().remove(this);
+        post.minusLikeCount();
+    }
 
 }

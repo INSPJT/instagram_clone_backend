@@ -1,6 +1,8 @@
 logging:
   level:
-    our.yurivongella.instagramclone: debug
+    our.yurivongella.instagramclone: INFO
+  file:
+    name: /var/log/insta-log.txt
 
 spring:
   profiles:
@@ -48,6 +50,7 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+        default_batch_fetch_size: 1000
 
 ---
 
@@ -57,17 +60,46 @@ spring:
       on-profile: mysql
 
   datasource:
-      url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
-      username: yuri
-      password: 1234
-      driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username: yuri
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
-#    properties:
-#      hibernate:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+#        format_sql: true
+#        show_sql: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: mysql-rds
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://yuribon.cihrlagdbfuq.ap-northeast-2.rds.amazonaws.com:3306/insta?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username:
+    password:
+#    initialization-mode: always
+#    schema:
+#      - classpath*:/db-schema.sql
+#    data:
+#      - classpath*:/data-rds.sql
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
 #        format_sql: true
 #        show_sql: true
 

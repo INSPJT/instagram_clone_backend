@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.config;
 
 import springfox.documentation.service.Parameter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,11 +30,11 @@ public class SwaggerConfig {
     public Docket api() {
         ParameterBuilder parameterBuilder = new ParameterBuilder();
         parameterBuilder.name("Authorization") //헤더 이름
-                .description("Access Tocken") //설명
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build();
+                        .description("Access Tocken") //설명
+                        .modelRef(new ModelRef("string"))
+                        .parameterType("header")
+                        .required(false)
+                        .build();
 
         List<Parameter> parameters = new ArrayList<>();
         parameters.add(parameterBuilder.build());

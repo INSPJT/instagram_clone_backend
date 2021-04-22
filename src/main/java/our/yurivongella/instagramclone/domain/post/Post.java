@@ -17,10 +17,12 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
+
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @Getter
 @NoArgsConstructor
@@ -39,7 +41,14 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "text")
     private String content;
 
+    @Column(name = "views", columnDefinition = "long default 0")
     private Long views;
+
+    @Column(name = "post_like_count", columnDefinition = "long default 0")
+    private Long likeCount;
+
+    @Column(name = "post_comment_count", columnDefinition = "long default 0")
+    private Long commentCount;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<MediaUrl> mediaUrls = new ArrayList<>();
@@ -53,11 +62,37 @@ public class Post extends BaseEntity {
     @Builder
     public Post(String content) {
         this.content = content;
+        this.likeCount = 0L;
+        this.views = 0L;
+        this.commentCount = 0L;
     }
 
     public Post addMember(Member member) {
         this.member = member;
         member.getPosts().add(this);
+        member.plusPostCount();
         return this;
+    }
+
+    public void plusLikeCount() {
+        this.likeCount += 1;
+    }
+
+    public void minusLikeCount() {
+        if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
+        this.likeCount -= 1;
+    }
+
+    public void plusCommentCount() {
+        this.commentCount += 1;
+    }
+
+    public void minusCommentCount() {
+        if (this.commentCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
+        this.commentCount -= 1;
+    }
+
+    public void viewCountUp() {
+        this.views += 1;
     }
 }

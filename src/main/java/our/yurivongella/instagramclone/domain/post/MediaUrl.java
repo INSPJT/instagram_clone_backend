@@ -51,11 +51,15 @@ public class MediaUrl extends BaseEntity {
         this.url = url;
         this.post = post;
         this.mediaUrlType = extensions.stream().anyMatch(url::endsWith)
-                ? MediaUrlType.IMAGE
-                : MediaUrlType.VIDEO;
+                            ? MediaUrlType.IMAGE
+                            : MediaUrlType.VIDEO;
     }
 
     private enum MediaUrlType {
         IMAGE, VIDEO
+    }
+
+    public String getTypeString() {
+        return mediaUrlType.name();
     }
 }

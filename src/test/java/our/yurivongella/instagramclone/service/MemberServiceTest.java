@@ -8,13 +8,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.FollowRequestDto;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -97,10 +97,11 @@ class MemberServiceTest {
         @Test
         public void successFollow() {
             // when
-            memberService.follow(targetId);
+            memberService.follow(targetDisplayId);
+            Member member = memberRepository.findById(targetId).get();
 
             // then
-            List<Follow> follows = followRepository.findByToMemberId(targetId);
+            List<Follow> follows = followRepository.findByToMember(member);
 
             assertThat(follows.size()).isEqualTo(1);
 
@@ -109,24 +110,26 @@ class MemberServiceTest {
             assertThat(targetMember.getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(targetMember.getEmail()).isEqualTo(targetEmail);
             assertThat(targetMember.getFollowers().size()).isEqualTo(1);
+            assertThat(targetMember.getFollowerCount()).isEqualTo(1);
 
             Member myMember = follows.get(0).getFromMember();
             assertThat(myMember.getNickname()).isEqualTo(myNickname);
             assertThat(myMember.getDisplayId()).isEqualTo(myDisplayId);
             assertThat(myMember.getEmail()).isEqualTo(myEmail);
             assertThat(myMember.getFollowings().size()).isEqualTo(1);
+            assertThat(myMember.getFollowingCount()).isEqualTo(1);
         }
 
         @DisplayName("이미 팔로우 중임")
         @Test
         public void alreadyFollow() {
             // when
-            memberService.follow(targetId);
+            memberService.follow(targetDisplayId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.follow(targetId)
+                    () -> memberService.follow(targetDisplayId)
             );
         }
     }
@@ -147,17 +150,25 @@ class MemberServiceTest {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 언팔로우 테스트를 위해 미리 팔로우 처리
-            memberService.follow(targetId);
+            memberService.follow(targetDisplayId);
         }
 
         @DisplayName("언팔로우 성공")
         @Test
         public void successUnFollow() {
+            // given
+            Member myMember = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+            Member targetMember = memberRepository.findById(targetId).get();
+            assertThat(myMember.getFollowingCount()).isEqualTo(1);
+            assertThat(targetMember.getFollowerCount()).isEqualTo(1);
+
             // when
-            memberService.unFollow(targetId);
+            memberService.unFollow(targetDisplayId);
 
             // then
-            List<Follow> follows = followRepository.findByToMemberId(targetId);
+            assertThat(myMember.getFollowingCount()).isEqualTo(0);
+            assertThat(targetMember.getFollowerCount()).isEqualTo(0);
+            List<Follow> follows = followRepository.findByToMember(targetMember);
             assertThat(follows.size()).isEqualTo(0);
         }
 
@@ -165,12 +176,12 @@ class MemberServiceTest {
         @Test
         public void notFollowingTarget() {
             // when
-            memberService.unFollow(targetId);
+            memberService.unFollow(targetDisplayId);
 
             // then
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> memberService.unFollow(targetId)
+                    () -> memberService.unFollow(targetDisplayId)
             );
         }
     }

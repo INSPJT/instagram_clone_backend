@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @Table(name = "comment")
 @Getter
@@ -45,12 +47,26 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private Set<CommentLike> commentLikes = new HashSet<>();
 
+    @Column(name = "comment_like_count", columnDefinition = "long default 0")
+    private Long likeCount;
+
     public Comment create(Member member, Post post, String content) {
         this.member = member;
         this.post = post;
         this.content = content;
+        this.likeCount = 0L;
         member.getComments().add(this);
         post.getComments().add(this);
+        post.plusCommentCount();
         return this;
+    }
+
+    public void plusLikeCount() {
+        this.likeCount += 1;
+    }
+
+    public void minusLikeCount() {
+        if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
+        this.likeCount -= 1;
     }
 }
