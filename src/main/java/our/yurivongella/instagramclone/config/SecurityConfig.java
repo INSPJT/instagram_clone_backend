@@ -44,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html", "/webjars/**", "/swagger/**"
                 )
                 .antMatchers(
+                        // HandShake / Subscribe / ClientRequest
                         "/ws/handshake/**", "/ws/subscribe/**", "/ws/request/**"
                 );
     }
