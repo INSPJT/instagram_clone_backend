@@ -47,12 +47,9 @@ jacocoTestCoverageVerification {
             }
 
             excludes = [
-                    '*.*Dto',
-                    '*.Jwt',
-                    '*.TokenProvider',
-                    '*.S3Service',
-                    '*.*Controller',
-                    '*.Auth*'
+                    "our/yurivongella/instagramclone/controller/*",
+                    "our/yurivongella/instagramclone/jwt/*",
+                    "our/yurivongella/instagramclone/service/S3Service",
             ]
         }
     }
