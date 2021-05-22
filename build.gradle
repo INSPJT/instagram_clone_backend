@@ -36,7 +36,9 @@ jacocoTestReport {
 
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
-                    exclude: [] + Qdomains)
+                    exclude: ["*.*Controller*",
+                              "*.Jwt*",
+                              "*.S3Service*"] + Qdomains)
         }))
     }
 
@@ -121,6 +123,6 @@ task testCoverage(type: Test) {
     tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
 
-bootJar{
+bootJar {
     enabled = true
 }
