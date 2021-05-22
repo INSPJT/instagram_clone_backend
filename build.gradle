@@ -46,7 +46,12 @@ jacocoTestCoverageVerification {
                 minimum = 0
             }
 
-            excludes = []
+            excludes = [
+                    '*.*Dto',
+                    '*.Jwt',
+                    '*.TokenProvider',
+                    '*.S3Service'
+            ]
         }
     }
 }
