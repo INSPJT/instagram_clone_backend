@@ -51,7 +51,8 @@ jacocoTestCoverageVerification {
                     '*.Jwt',
                     '*.TokenProvider',
                     '*.S3Service',
-                    '*.*Controller'
+                    '*.*Controller',
+                    '*.Auth*'
             ]
         }
     }
