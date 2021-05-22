@@ -1,6 +1,5 @@
 package our.yurivongella.instagramclone.service;
 
-
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
@@ -52,25 +52,25 @@ class FollowServiceTest {
     public void signupBeforeTest() {
         // 두명 가입시키기
         SignupRequestDto signupRequestDto1 = SignupRequestDto.builder()
-                .displayId(myDisplayId)
-                .nickname(myNickname)
-                .email(myEmail)
-                .password(myPassword)
-                .build();
+                                                             .displayId(myDisplayId)
+                                                             .nickname(myNickname)
+                                                             .email(myEmail)
+                                                             .password(myPassword)
+                                                             .build();
 
         SignupRequestDto signupRequestDto2 = SignupRequestDto.builder()
-                .displayId(targetDisplayId)
-                .nickname(targetNickname)
-                .email(targetEmail)
-                .password(targetPassword)
-                .build();
+                                                             .displayId(targetDisplayId)
+                                                             .nickname(targetNickname)
+                                                             .email(targetEmail)
+                                                             .password(targetPassword)
+                                                             .build();
 
         SignupRequestDto signupRequestDto3 = SignupRequestDto.builder()
-                .displayId(targetDisplayId + 3)
-                .nickname(targetNickname + 3)
-                .email(targetEmail + 3)
-                .password(targetPassword + 3)
-                .build();
+                                                             .displayId(targetDisplayId + 3)
+                                                             .nickname(targetNickname + 3)
+                                                             .email(targetEmail + 3)
+                                                             .password(targetPassword + 3)
+                                                             .build();
 
         authService.signup(signupRequestDto1);
         authService.signup(signupRequestDto2);
