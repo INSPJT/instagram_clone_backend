@@ -1,14 +1,18 @@
+aws:
+  credentials:
+    accessKey: testkey
+    secretKey: testkey
+
+cloud:
+  aws:
+    s3:
+      bucket: yurivongella
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
 spring:
-  h2:
-    console:
-      enabled: true
-
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -18,10 +22,6 @@ spring:
         format_sql: true
         show_sql: true
         default_batch_fetch_size: 1000
-
-logging:
-  level:
-    our.yurivongella.instagramclone: debug
 
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=

@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("가입/로그인 테스트")
 @SpringBootTest
@@ -51,7 +50,6 @@ public class AuthServiceTest {
                                                             .password(password)
                                                             .build();
 
-        // when
         authService.signup(signupRequestDto);
     }
 
@@ -82,7 +80,6 @@ public class AuthServiceTest {
                                                                 .email(email)
                                                                 .password("1q2w3e4r5t")
                                                                 .build();
-
             Assertions.assertThrows(
                     RuntimeException.class,
                     () -> authService.signup(signupRequestDto)
@@ -102,7 +99,6 @@ public class AuthServiceTest {
                                                                 .email(email)
                                                                 .password(password)
                                                                 .build();
-
             // when
             TokenDto tokenDto = authService.signin(signinRequestDto);
 
@@ -263,5 +259,23 @@ public class AuthServiceTest {
             CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("test"));
             assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
         }
+    }
+
+    @DisplayName("activate 테스트")
+    @Test
+    void activate() {
+
+    }
+
+    @DisplayName("de-activate 테스트")
+    @Test
+    void deactivate() {
+
+    }
+
+    @DisplayName("delete 테스트")
+    @Test
+    void delete() {
+
     }
 }

@@ -12,6 +12,7 @@ import com.sun.istack.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
@@ -56,6 +57,9 @@ public class Member extends BaseEntity {
     @Nullable
     private String introduction;
 
+    @Column(name = "active", columnDefinition = "boolean default true")
+    private boolean active;
+
     @Column(name = "member_post_count", columnDefinition = "long default 0")
     private Long postCount;
 
@@ -98,10 +102,19 @@ public class Member extends BaseEntity {
         this.postCount = 0L;
         this.followingCount = 0L;
         this.followerCount = 0L;
+        this.active = true;
     }
 
     public enum Authority {
         ROLE_USER, ROLE_ADMIN
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
+
+    public void activate() {
+        this.active = true;
     }
 
     public boolean equals(Member other) {
