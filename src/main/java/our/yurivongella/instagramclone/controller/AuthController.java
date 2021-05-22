@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +19,6 @@ import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.service.AuthService;
 
 @Slf4j
@@ -55,12 +52,5 @@ public class AuthController {
     @PutMapping("/check")
     public ResponseEntity<Boolean> check(@RequestParam(value = "target") @NotNull String target) {
         return ResponseEntity.ok(authService.validate(target));
-    }
-
-    @ApiOperation("회원 상태 변경")
-    @PutMapping("/activate")
-    public ResponseEntity<ProcessStatus> activate(@RequestParam("state") boolean state){
-        ProcessStatus result = state ? authService.activate() : authService.deactivate();
-        return ResponseEntity.ok(result);
     }
 }

@@ -260,4 +260,22 @@ public class AuthServiceTest {
             assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
         }
     }
+
+    @DisplayName("activate 테스트")
+    @Test
+    void activate() {
+
+    }
+
+    @DisplayName("de-activate 테스트")
+    @Test
+    void deactivate() {
+
+    }
+
+    @DisplayName("delete 테스트")
+    @Test
+    void delete() {
+
+    }
 }

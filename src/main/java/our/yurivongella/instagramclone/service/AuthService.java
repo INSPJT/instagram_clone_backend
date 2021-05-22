@@ -118,27 +118,4 @@ public class AuthService {
         if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
         return true;
     }
-
-    @Transactional
-    public ProcessStatus deactivate() {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-        if(!member.isActive()) throw new CustomException(ErrorCode.ALREADY_DEACTIVATED);
-        member.deactivate();
-        return ProcessStatus.SUCCESS;
-    }
-
-    @Transactional
-    public ProcessStatus activate() {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-        if(member.isActive()) throw new CustomException(ErrorCode.ALREADY_ACTIVATED);
-        member.activate();
-        return ProcessStatus.SUCCESS;
-    }
-
-
-    @Transactional
-    protected void delete() {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-        memberRepository.delete(member);
-    }
 }

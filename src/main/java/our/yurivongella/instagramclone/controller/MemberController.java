@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.service.FollowService;
+import our.yurivongella.instagramclone.service.MemberService;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/member")
 public class MemberController {
     private final FollowService followService;
+    private final MemberService memberService;
 
     @ApiOperation("상대방 팔로우")
     @PutMapping("/follow/{displayId}")
@@ -40,5 +42,12 @@ public class MemberController {
     @GetMapping("/followings")
     public ResponseEntity<List<MemberResponseDto>> getFollowing() {
         return ResponseEntity.ok(followService.getFollowings());
+    }
+
+    @ApiOperation("회원 상태 변경")
+    @PutMapping("/activate")
+    public ResponseEntity<ProcessStatus> activate(@RequestParam("state") boolean state){
+        ProcessStatus result = state ? memberService.activate() : memberService.deactivate();
+        return ResponseEntity.ok(result);
     }
 }
