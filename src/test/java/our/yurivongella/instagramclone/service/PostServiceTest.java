@@ -33,10 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Transactional
 @SpringBootTest
 public class PostServiceTest {
-
-    @Autowired
-    private EntityManager em;
-
     @Autowired
     private PostService postService;
 
@@ -221,8 +217,6 @@ public class PostServiceTest {
             postService.likePost(postId);
             Post post = postRepository.findById(postId).get();
             assertEquals(1L, post.getLikeCount());
-            em.flush();
-            em.clear();
         }
 
         @DisplayName("좋아요 취소 테스트")

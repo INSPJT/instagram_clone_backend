@@ -1,22 +1,27 @@
-logging:
-  level:
-    our.yurivongella.instagramclone: INFO
-  file:
-    name: /var/log/insta-log.txt
-
 spring:
   profiles:
     active: h2
-  h2:
-    console:
-      settings:
-        web-allow-others: true
+
+logging:
+  level:
+    our.yurivongella.instagramclone: DEBUG
+  file:
+    name: /var/log/insta-log.txt
 
 # HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
 # Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
 # $ echo 'spring-boot-security-jwt-inspjt-instgram-clone-backend-spring-boot-security-jwt' | base64
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=
+
+cloud:
+  aws:
+    s3:
+      bucket: yurivongella
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
 server:
   error:
@@ -26,15 +31,14 @@ server:
     whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
 
 ---
-
 spring:
-  config:
-    activate:
-      on-profile: h2
+  profiles: h2
 
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true
 
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
@@ -53,11 +57,8 @@ spring:
         default_batch_fetch_size: 1000
 
 ---
-
 spring:
-  config:
-    activate:
-      on-profile: mysql
+  profiles: mysql
 
   datasource:
     url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
@@ -69,6 +70,27 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+#        format_sql: true
+#        show_sql: true
+
+---
+spring:
+  profiles: mysql-rds
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://yuribon.cihrlagdbfuq.ap-northeast-2.rds.amazonaws.com:3306/insta?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username:
+    password:
+#    initialization-mode: always
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
     properties:
       hibernate:
         default_batch_fetch_size: 1000

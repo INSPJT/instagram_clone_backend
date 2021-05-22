@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
+
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
@@ -32,11 +33,11 @@ public class CustomUserDetailsServiceTest {
         String password = "1q2w3e4r";
 
         Member member = Member.builder()
-                .displayId(displayId)
-                .nickname(nickname)
-                .email(email)
-                .password(password)
-                .build();
+                              .displayId(displayId)
+                              .nickname(nickname)
+                              .email(email)
+                              .password(password)
+                              .build();
 
         // when
         memberRepository.save(member);

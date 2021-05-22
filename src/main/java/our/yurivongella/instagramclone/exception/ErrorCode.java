@@ -12,6 +12,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorCode {
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
+    INVALID_DUP_CHK_REQUEST(BAD_REQUEST, "중복 체크를 원하는 대상은 반드시 1개여야 합니다"),
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 유효하지 않습니다"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
     CANNOT_FOLLOW_MYSELF(BAD_REQUEST, "자기 자신은 팔로우 할 수 없습니다"),
@@ -31,6 +32,8 @@ public enum ErrorCode {
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
     ALREADY_LIKE(CONFLICT, "더 이상 좋아요를 할 수 없습니다"),
+    ALREADY_DEACTIVATED(CONFLICT, "이미 비활성화 상태입니다."),
+    ALREADY_ACTIVATED(CONFLICT, "이미 활성화 상태입니다."),
 
     /* 서버 내 데이터 오류 */
     INVALID_STATUS(INTERNAL_SERVER_ERROR, "서버 내 데이터에 오류가 있습니다");

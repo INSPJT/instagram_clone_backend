@@ -9,21 +9,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
+import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshToken;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshTokenRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
+import java.util.Optional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -34,6 +42,11 @@ public class AuthService {
     @Transactional
     public String signup(SignupRequestDto signupRequestDto) {
         Member member = signupRequestDto.toMember(passwordEncoder);
+        Optional<Member> optMember = memberRepository.findByEmail(signupRequestDto.getEmail());
+        if (optMember.isPresent()) {
+            log.error("이미 존재하는 유저입니다.");
+            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
+        }
         return memberRepository.save(member).getEmail();
     }
 
@@ -88,5 +101,21 @@ public class AuthService {
 
         // 토큰 발급
         return tokenDto;
+    }
+
+    public boolean validate(String target) {
+        return target.contains("@") ? checkEmail(target) : checkDisplayId(target);
+    }
+
+    private boolean checkDisplayId(String displayId) {
+        Optional<Member> member = memberRepository.findByDisplayId(displayId);
+        if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
+        return true;
+    }
+
+    private boolean checkEmail(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
+        return true;
     }
 }
