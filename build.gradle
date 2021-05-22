@@ -62,9 +62,9 @@ jacocoTestCoverageVerification {
             }
 
             excludes = [
-                    "*.controller/*",
-                    "*.jwt/*",
-                    "our/yurivongella/instagramclone/service/S3Service",
+                    "*.*Controller*",
+                    "*.Jwt*",
+                    "*.S3Service*",
             ] + Qdomains
         }
     }
