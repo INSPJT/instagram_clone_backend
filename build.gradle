@@ -38,7 +38,7 @@ jacocoTestReport {
             fileTree(dir: it,
                     exclude: ["**/*Controller*",
                               "**/Jwt*",
-                              "**/S3Service"] + Qdomains)
+                              "**/S3Service*"] + Qdomains)
         }))
     }
 
