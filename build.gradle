@@ -25,15 +25,30 @@ jacocoTestReport {
         xml.enabled true
         csv.enabled false
     }
+
+    def Qdomains = []
+
+    for (qPattern in "*.QA".."*.QZ") {
+        Qdomains.add(qPattern + "*")
+    }
+
+    afterEvaluate {
+
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [] + Qdomains)
+        }))
+    }
+
 }
 
 
 jacocoTestCoverageVerification {
-//    def Qdomains = []
-//
-//    for (qPattern in "*.QA".."*.QZ") {
-//        Qdomains.add(qPattern + "*")
-//    }
+    def Qdomains = []
+
+    for (qPattern in "*.QA".."*.QZ") {
+        Qdomains.add(qPattern + "*")
+    }
 
     violationRules {
         rule {
@@ -47,10 +62,10 @@ jacocoTestCoverageVerification {
             }
 
             excludes = [
-                    "our/yurivongella/instagramclone/controller/*",
-                    "our/yurivongella/instagramclone/jwt/*",
+                    "*.controller/*",
+                    "*.jwt/*",
                     "our/yurivongella/instagramclone/service/S3Service",
-            ]
+            ] + Qdomains
         }
     }
 }
