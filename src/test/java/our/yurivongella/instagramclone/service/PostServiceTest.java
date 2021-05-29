@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,6 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -146,15 +146,16 @@ public class PostServiceTest {
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Long lastPostId = 66L;
-        int pageSize = 5;
 
+        int lastPostId = 1;
+        int pageSize = 5;
+        PageRequest pageRequest = PageRequest.of(lastPostId, pageSize);
         // when
-        List<PostReadResponseDto> feeds = postService.getFeeds(lastPostId);
+        List<PostReadResponseDto> feeds = postService.getFeeds(pageRequest).getContent();
 
         // then
         assertThat(feeds.size()).isEqualTo(pageSize);
-        feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
+        feeds.forEach(feed -> assertThat(feed.getId()).isGreaterThan(lastPostId));
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")
@@ -166,10 +167,9 @@ public class PostServiceTest {
                 new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         int pageSize = 5;
-
+        PageRequest pageRequest = PageRequest.of(0, pageSize);
         // when
-        List<PostReadResponseDto> feeds = postService.getFeeds(null);
-
+        List<PostReadResponseDto> feeds = postService.getFeeds(pageRequest).getContent();
         // then
         assertThat(feeds.size()).isEqualTo(pageSize);
     }

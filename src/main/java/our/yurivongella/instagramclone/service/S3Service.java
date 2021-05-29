@@ -45,6 +45,8 @@ public class S3Service {
                                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
                                         .withRegion(this.region)
                                         .build();
+
+
     }
 
     public String upload(MultipartFile file) throws IOException {

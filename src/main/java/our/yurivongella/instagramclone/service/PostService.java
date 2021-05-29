@@ -3,8 +3,9 @@ package our.yurivongella.instagramclone.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,27 +127,26 @@ public class PostService {
     }
 
     /**
-     * Instagram Feeds
+     * @Parameter : lastPostId = Offset
      */
     @Transactional(readOnly = true)
-    public List<PostReadResponseDto> getFeeds(Long lastPostId) {
-        if (lastPostId == null) {
-            lastPostId = Long.MAX_VALUE;
-        }
-
+    public Slice<PostReadResponseDto> getFeeds(Pageable pageRequest) {
         Member currentMember = getCurrentMember();
 
-        PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by("id").descending());
+        //페이지를 가져오고
+        Slice<Post> result = postRepository.findAllByJoinFollow(getCurrentMember().getId(), pageRequest);
+        List<PostReadResponseDto> postReadResponseDtoList = result.getContent()
+                                                  .stream()
+                                                  .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
+                                                          commentRepository.findTop3ByPostOrderByIdDesc(post)
+                                                                           .stream()
+                                                                           .map(comment -> CommentResponseDto.of(comment, currentMember))
+                                                                           .collect(Collectors.toList())
+                                                       )
+                                                  )
+                                                  .collect(Collectors.toList());
 
-        return postRepository.findAllByJoinFollow(getCurrentMember().getId(), lastPostId, pageRequest)
-                             .stream()
-                             .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
-                                     commentRepository.findTop3ByPostOrderByIdDesc(post)
-                                                      .stream()
-                                                      .map(comment -> CommentResponseDto.of(comment, currentMember))
-                                                      .collect(Collectors.toList())
-                                  )
-                             )
-                             .collect(Collectors.toList());
+        System.out.println("hasNext = " + result.hasNext());
+        return new SliceImpl<>(postReadResponseDtoList, result.getPageable(), result.hasNext());
     }
 }

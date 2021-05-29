@@ -1,0 +1,3 @@
+vault:
+   uri: https://vault-cluster.vault.621339b5-a8f9-4c69-8b4a-254425f3c64b.aws.hashicorp.cloud:8200
+   token: s.VU1aPj8MzPa3bfUmzPqjtyXi.rkbeQ
