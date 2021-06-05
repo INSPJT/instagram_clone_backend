@@ -1,6 +1,7 @@
 
 -- 지금 데이터들은 테스트 돌릴 때 사용되므로 추가되거나 수정되면 안됨 --
 -- 테스트를 위해 다른 데이터 필요 시 다른 Member, Post, Follow 만들 것 --
+-- 테스트용 ID 비밀번호 : 1q2w3e4r
 INSERT INTO MEMBER (member_id, display_id, email, password, nickname, profile_image_url, authority, created_date, modified_date, member_post_count, member_following_count, member_follower_count)
 VALUES (1, 'woody', 'woody@test.net', '$2a$10$1sRKcKzA7fK.P7Yjj8nva.ygpMN9lMyOGpS1.oy5pWOLj0ALdAA9O', 'woody', null, 'ROLE_USER', '2021-03-15 00:01:23.278192', '2021-03-15 00:01:23.278192', 1, 8, 1);
 

@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.3'
+    id 'org.springframework.boot' version '2.4.5'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
@@ -25,15 +25,32 @@ jacocoTestReport {
         xml.enabled true
         csv.enabled false
     }
+
+    def Qdomains = []
+
+    for (qPattern in "**/QA".."**/QZ") {
+        Qdomains.add(qPattern + "*")
+    }
+
+    afterEvaluate {
+
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ["**/*Controller*",
+                              "**/Jwt*",
+                              "**/S3Service*"] + Qdomains)
+        }))
+    }
+
 }
 
 
 jacocoTestCoverageVerification {
-//    def Qdomains = []
-//
-//    for (qPattern in "*.QA".."*.QZ") {
-//        Qdomains.add(qPattern + "*")
-//    }
+    def Qdomains = []
+
+    for (qPattern in "*.QA".."*.QZ") {
+        Qdomains.add(qPattern + "*")
+    }
 
     violationRules {
         rule {
@@ -43,17 +60,22 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.0
+                minimum = 0
             }
 
-            excludes = []
+            excludes = [
+                    "*.*Controller*",
+                    "*.Jwt*",
+                    "*.S3Service*",
+            ] + Qdomains
         }
     }
 }
 
 
 repositories {
-    jcenter()
+    mavenCentral()
+    maven { url 'https://repo.spring.io/libs-milestone' }
 }
 
 dependencies {
@@ -71,16 +93,16 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.6.1'
     implementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.3'
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.7.1'
 
-    // for HealthIndicator
+    implementation 'com.amazonaws:aws-java-sdk-s3'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-autoconfigure', version: '2.2.6.RELEASE'
+
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
-    runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
-    runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
-
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 }
 
 test {
@@ -103,6 +125,6 @@ task testCoverage(type: Test) {
     tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }
 
-bootJar{
+bootJar {
     enabled = true
 }

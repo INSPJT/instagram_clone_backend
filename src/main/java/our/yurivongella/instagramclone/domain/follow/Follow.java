@@ -1,10 +1,13 @@
 package our.yurivongella.instagramclone.domain.follow;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
 
@@ -46,5 +49,13 @@ public class Follow extends BaseEntity {
         this.toMember.minusFollowerCount();
         this.toMember.getFollowers().remove(this);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Follow{" +
+               "fromMember.id=" + fromMember.getId() +
+               ", toMember.id=" + toMember.getId() +
+               '}';
     }
 }
