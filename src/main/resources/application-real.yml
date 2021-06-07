@@ -29,7 +29,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://instagram.cihrlagdbfuq.ap-northeast-2.rds.amazonaws.com:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    url: instagram.cihrlagdbfuq.ap-northeast-2.rds.amazonaws.com
     username: admin
     password: manager1!
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -44,5 +44,4 @@ spring:
 
 vault:
   url: http://localhost:8200
-  token: s.b2aTieePBXHdYeWzFFQ3Mlfn
-#  token: s.0R8FejKT0SKAim85JYPJklDK
+  token: s.0R8FejKT0SKAim85JYPJklDK
