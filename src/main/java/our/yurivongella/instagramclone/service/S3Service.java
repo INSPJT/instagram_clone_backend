@@ -1,12 +1,18 @@
 package our.yurivongella.instagramclone.service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.vault.authentication.TokenAuthentication;
+import org.springframework.vault.client.VaultEndpoint;
+import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.support.VaultResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -26,11 +32,12 @@ import our.yurivongella.instagramclone.util.SecurityUtil;
 @NoArgsConstructor
 public class S3Service {
     private AmazonS3 s3Client;
-    @Value("${aws.credentials.accessKey}")
-    private String accessKey;
 
-    @Value("${aws.credentials.secretKey}")
-    private String secretKey;
+    @Value("${vault.url}")
+    private URI url;
+
+    @Value("${vault.token}")
+    private String token;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -40,12 +47,19 @@ public class S3Service {
 
     @PostConstruct
     public void setS3Client() {
-        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+        System.out.println("token = " + token);
+
+        VaultTemplate vaultTemplate = new VaultTemplate(VaultEndpoint.from(url), new TokenAuthentication(token));
+        VaultResponse vaultResponse = vaultTemplate.read("aws/insta");
+        Map<String, Object> data = vaultResponse.getData();
+        
+        String accessKey = data.get("accessKey").toString();
+        String secretKey = data.get("secretKey").toString();
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         s3Client = AmazonS3ClientBuilder.standard()
                                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
                                         .withRegion(this.region)
                                         .build();
-
 
     }
 
