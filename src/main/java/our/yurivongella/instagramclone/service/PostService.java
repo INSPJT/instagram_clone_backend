@@ -146,7 +146,6 @@ public class PostService {
                                                   )
                                                   .collect(Collectors.toList());
 
-        System.out.println("hasNext = " + result.hasNext());
         return new SliceImpl<>(postReadResponseDtoList, result.getPageable(), result.hasNext());
     }
 }

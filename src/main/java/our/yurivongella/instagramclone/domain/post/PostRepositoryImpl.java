@@ -29,8 +29,6 @@ public class PostRepositoryImpl implements CustomPostRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        System.out.println("size:"+content.size());
-
         return SliceHelper.getSlice(content, pageable);
     }
 }
