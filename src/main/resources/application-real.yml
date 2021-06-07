@@ -44,5 +44,4 @@ spring:
 
 vault:
   url: http://localhost:8200
-  token: s.b2aTieePBXHdYeWzFFQ3Mlfn
-#  token: s.0R8FejKT0SKAim85JYPJklDK
+  token: s.0R8FejKT0SKAim85JYPJklDK
