@@ -6,12 +6,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+
+import our.yurivongella.instagramclone.controller.ImageController;
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
@@ -33,6 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Transactional
 @SpringBootTest
 public class PostServiceTest {
+    @MockBean
+    private S3Service s3Service;
+
     @Autowired
     private PostService postService;
 
@@ -56,11 +63,11 @@ public class PostServiceTest {
     @BeforeEach
     public void signupBeforeTest() {
         SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                .displayId(displayId)
-                .nickname(nickname)
-                .email(email)
-                .password(password)
-                .build();
+                                                            .displayId(displayId)
+                                                            .nickname(nickname)
+                                                            .email(email)
+                                                            .password(password)
+                                                            .build();
 
         // 가입
         authService.signup(signupRequestDto);
@@ -205,10 +212,9 @@ public class PostServiceTest {
         assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode());
     }
 
-
     @DisplayName("취소 테스트")
     @Nested
-    class WithdrawalClass{
+    class WithdrawalClass {
         private Long postId;
 
         @BeforeEach
