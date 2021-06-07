@@ -57,16 +57,16 @@ public class Member extends BaseEntity {
     @Nullable
     private String introduction;
 
-    @Column(name = "active", columnDefinition = "boolean default true")
+    @Column(name = "active")
     private boolean active;
 
-    @Column(name = "member_post_count", columnDefinition = "long default 0")
+    @Column(name = "member_post_count")
     private Long postCount;
 
-    @Column(name = "member_following_count", columnDefinition = "long default 0")
+    @Column(name = "member_following_count")
     private Long followingCount;
 
-    @Column(name = "member_follower_count", columnDefinition = "long default 0")
+    @Column(name = "member_follower_count")
     private Long followerCount;
 
     @Enumerated(EnumType.STRING)
@@ -107,6 +107,13 @@ public class Member extends BaseEntity {
 
     public enum Authority {
         ROLE_USER, ROLE_ADMIN
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.postCount = 0L;
+        this.followingCount = 0L;
+        this.followerCount = 0L;
     }
 
     public void deactivate() {

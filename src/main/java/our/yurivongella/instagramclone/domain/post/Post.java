@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -41,13 +42,13 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "text")
     private String content;
 
-    @Column(name = "views", columnDefinition = "long default 0")
+    @Column(name = "views")
     private Long views;
 
-    @Column(name = "post_like_count", columnDefinition = "long default 0")
+    @Column(name = "post_like_count")
     private Long likeCount;
 
-    @Column(name = "post_comment_count", columnDefinition = "long default 0")
+    @Column(name = "post_comment_count")
     private Long commentCount;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
@@ -64,6 +65,13 @@ public class Post extends BaseEntity {
         this.content = content;
         this.likeCount = 0L;
         this.views = 0L;
+        this.commentCount = 0L;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.views = 0L;
+        this.likeCount = 0L;
         this.commentCount = 0L;
     }
 
