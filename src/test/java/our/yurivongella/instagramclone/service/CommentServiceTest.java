@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,14 +34,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @SpringBootTest
 class CommentServiceTest {
+    @MockBean
+    private S3Service s3Service;
+
     @Autowired
     private CommentService commentService;
+
     @Autowired
     private PostRepository postRepository;
+
     @Autowired
     private CommentRepository commentRepository;
+
     @Autowired
     private MemberRepository memberRepository;
+
     @Autowired
     private AuthService authService;
 

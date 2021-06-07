@@ -3,6 +3,10 @@ package our.yurivongella.instagramclone.controller;
 import io.swagger.annotations.ApiOperation;
 
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +27,7 @@ public class FeedController {
 
     @ApiOperation("lastPostId 보다 작은 5 개의 인스타그램 피드 조회")
     @GetMapping("/feeds")
-    public ResponseEntity<List<PostReadResponseDto>> getFeeds(@RequestParam(required = false) Long lastPostId) {
-        return ResponseEntity.ok(postService.getFeeds(lastPostId));
+    public ResponseEntity<Slice<PostReadResponseDto>> getFeeds(Pageable pageable) {
+        return ResponseEntity.ok(postService.getFeeds(pageable));
     }
 }

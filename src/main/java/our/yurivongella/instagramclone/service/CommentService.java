@@ -126,7 +126,6 @@ public class CommentService {
     }
 
     private Comment getCurrentComment(Long commentId) {
-        System.out.println("commentId:" + commentId);
         return commentRepository.findById(commentId)
                                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }

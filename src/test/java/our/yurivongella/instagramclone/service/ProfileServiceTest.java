@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,8 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 @SpringBootTest
 class ProfileServiceTest {
+    @MockBean
+    private S3Service s3Service;
 
     @Autowired
     private ProfileService profileService;
