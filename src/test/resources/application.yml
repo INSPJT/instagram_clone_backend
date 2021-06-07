@@ -25,3 +25,7 @@ spring:
 
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWluc3BqdC1pbnN0Z3JhbS1jbG9uZS1iYWNrZW5kLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dAo=
+
+vault:
+  url: test.com
+  token: testtoken

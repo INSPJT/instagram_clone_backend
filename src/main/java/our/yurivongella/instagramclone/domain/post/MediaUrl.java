@@ -55,7 +55,7 @@ public class MediaUrl extends BaseEntity {
                             : MediaUrlType.VIDEO;
     }
 
-    private enum MediaUrlType {
+    protected enum MediaUrlType {
         IMAGE, VIDEO
     }
 

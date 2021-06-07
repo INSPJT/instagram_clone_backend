@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
@@ -13,6 +14,7 @@ import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.service.AuthService;
+import our.yurivongella.instagramclone.service.S3Service;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -22,11 +24,15 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class CommentRepositoryTest {
+    @MockBean
+    private S3Service s3Service;
 
     @Autowired
     private MemberRepository memberRepository;
+
     @Autowired
     private PostRepository postRepository;
+
     @Autowired
     private CommentRepository commentRepository;
 
