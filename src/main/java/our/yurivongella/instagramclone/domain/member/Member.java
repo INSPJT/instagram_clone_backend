@@ -58,7 +58,7 @@ public class Member extends BaseEntity {
     private String introduction;
 
     @Column(name = "active")
-    private boolean active;
+    private Boolean active;
 
     @Column(name = "member_post_count")
     private Long postCount;
@@ -111,6 +111,7 @@ public class Member extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
+        this.active = true;
         this.postCount = 0L;
         this.followingCount = 0L;
         this.followerCount = 0L;
@@ -165,5 +166,9 @@ public class Member extends BaseEntity {
     public void minusPostCount() {
         if (this.postCount <= 0) { throw new CustomException(INVALID_STATUS); }
         this.postCount -= 1;
+    }
+
+    public boolean isActive(){
+        return this.active.booleanValue();
     }
 }
