@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -47,8 +48,13 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private Set<CommentLike> commentLikes = new HashSet<>();
 
-    @Column(name = "comment_like_count", columnDefinition = "long default 0")
+    @Column(name = "comment_like_count")
     private Long likeCount;
+
+    @PrePersist
+    public void prePersist() {
+        this.likeCount = 0L;
+    }
 
     public Comment create(Member member, Post post, String content) {
         this.member = member;
