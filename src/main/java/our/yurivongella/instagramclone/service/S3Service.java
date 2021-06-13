@@ -48,7 +48,7 @@ public class S3Service {
     @PostConstruct
     public void setS3Client() {
         VaultTemplate vaultTemplate = new VaultTemplate(VaultEndpoint.from(url), new TokenAuthentication(token));
-        VaultResponse vaultResponse = vaultTemplate.read("aws/insta");
+        VaultResponse vaultResponse = vaultTemplate.read("secret/aws/insta");
         Map<String, Object> data = vaultResponse.getData();
         
         String accessKey = data.get("accessKey").toString();
