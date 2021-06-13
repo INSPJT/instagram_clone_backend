@@ -43,5 +43,5 @@ spring:
         default_batch_fetch_size: 1000
 
 vault:
-  url: http://localhost:8200
-  token: s.0R8FejKT0SKAim85JYPJklDK
+  url: http://localhost:8199
+  token: s.CeVGOZuw3S2x58niL4HXgP0q
