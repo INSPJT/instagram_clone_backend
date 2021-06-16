@@ -43,5 +43,5 @@ spring:
         default_batch_fetch_size: 1000
 
 vault:
-  url: http://localhost:8199
+  url: ip-172-31-42-119.ap-northeast-2.compute.internal:8199
   token: s.CeVGOZuw3S2x58niL4HXgP0q
