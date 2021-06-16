@@ -47,6 +47,7 @@ public class S3Service {
 
     @PostConstruct
     public void setS3Client() {
+        log.info("[접속 경로] : {}", url);
         VaultTemplate vaultTemplate = new VaultTemplate(VaultEndpoint.from(url), new TokenAuthentication(token));
         VaultResponse vaultResponse = vaultTemplate.read("/aws/insta");
         Map<String, Object> data = vaultResponse.getData();
