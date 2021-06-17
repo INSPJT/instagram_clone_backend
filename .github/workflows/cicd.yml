@@ -52,4 +52,4 @@ jobs:
       - name: Docker run
         run: |
           docker ps -q --filter "name=insta" | grep -q . && docker stop insta && docker rm -fv insta
-          docker run -itd -v /var/log:/var/log -p 8080:8080 --name insta --restart always ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+          docker run -itd -v /var/log:/var/log -p 8080:8080 --name insta --network host --restart always ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
