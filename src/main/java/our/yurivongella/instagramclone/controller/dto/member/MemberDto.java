@@ -1,19 +1,20 @@
 package our.yurivongella.instagramclone.controller.dto.member;
 
+import our.yurivongella.instagramclone.domain.member.Member;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import our.yurivongella.instagramclone.domain.member.Member;
 
 @ToString
 @Getter
 @NoArgsConstructor
 public class MemberDto {
-    String displayId;
-    String nickname;
-    String profileImageUrl;
-    Boolean isFollowedByMe;
+    private String displayId;
+    private String nickname;
+    private String profileImageUrl;
+    private Boolean isFollowedByMe;
 
     @Builder
     public MemberDto(final String displayId, final String nickname, final String profileImageUrl, final Boolean isFollowedByMe) {

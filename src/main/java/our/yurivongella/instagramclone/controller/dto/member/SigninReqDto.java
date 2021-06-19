@@ -13,7 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SigninRequestDto {
+public class SigninReqDto {
 
     @NotNull
     private String email;

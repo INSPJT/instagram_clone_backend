@@ -2,11 +2,12 @@ package our.yurivongella.instagramclone.domain.follow;
 
 import javax.persistence.*;
 
+import our.yurivongella.instagramclone.domain.member.Member;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.member.Member;
 
 @Getter
 @Entity

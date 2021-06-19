@@ -9,21 +9,27 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
+import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.domain.post.MediaUrl;
+import our.yurivongella.instagramclone.domain.post.MediaUrlRepository;
+import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.domain.post.PostLike;
+import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
+import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 import com.sun.istack.NotNull;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
-import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
-import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
+
+import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.domain.post.*;
-import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 @Transactional(readOnly = true)
 @Slf4j
@@ -39,12 +45,12 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
 
     @Transactional
-    public Long create(PostCreateRequestDto postCreateRequestDto) {
+    public Long create(PostCreateReqDto postCreateReqDto) {
         Member member = getCurrentMember();
 
         try {
-            Post post = postRepository.save(postCreateRequestDto.toPost(member));
-            List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateRequestDto.getMediaUrls(post));
+            Post post = postRepository.save(postCreateReqDto.toPost(member));
+            List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateReqDto.getMediaUrls(post));
             post.getMediaUrls().addAll(list);
             return post.getId();
         } catch (Exception e) {
@@ -54,11 +60,11 @@ public class PostService {
     }
 
     @Transactional
-    public PostReadResponseDto read(Long postId) {
+    public PostReadResDto read(Long postId) {
         Member member = getCurrentMember();
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         post.viewCountUp();
-        return PostReadResponseDto.of(post, member);
+        return PostReadResDto.of(post, member);
     }
 
     @Transactional
@@ -130,22 +136,22 @@ public class PostService {
      * @Parameter : lastPostId = Offset
      */
     @Transactional(readOnly = true)
-    public Slice<PostReadResponseDto> getFeeds(Pageable pageRequest) {
+    public Slice<PostReadResDto> getFeeds(Pageable pageRequest) {
         Member currentMember = getCurrentMember();
 
         //페이지를 가져오고
         Slice<Post> result = postRepository.findAllByJoinFollow(getCurrentMember().getId(), pageRequest);
-        List<PostReadResponseDto> postReadResponseDtoList = result.getContent()
-                                                  .stream()
-                                                  .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
-                                                          commentRepository.findTop3ByPostOrderByIdDesc(post)
+        List<PostReadResDto> postReadResDtoList = result.getContent()
+                                                        .stream()
+                                                        .map(post -> PostReadResDto.of(post, currentMember).setCommentPreview(
+                                                          commentRepository.findCommentsLatest(post, 3)
                                                                            .stream()
-                                                                           .map(comment -> CommentResponseDto.of(comment, currentMember))
+                                                                           .map(comment -> CommentResDto.of(comment, currentMember))
                                                                            .collect(Collectors.toList())
                                                        )
                                                   )
-                                                  .collect(Collectors.toList());
+                                                        .collect(Collectors.toList());
 
-        return new SliceImpl<>(postReadResponseDtoList, result.getPageable(), result.hasNext());
+        return new SliceImpl<>(postReadResDtoList, result.getPageable(), result.hasNext());
     }
 }

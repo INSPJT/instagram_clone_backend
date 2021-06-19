@@ -1,14 +1,12 @@
 package our.yurivongella.instagramclone.domain.post;
 
-import static our.yurivongella.instagramclone.domain.follow.QFollow.follow;
-import static our.yurivongella.instagramclone.domain.post.QPost.post;
-
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.support.PageableExecutionUtils;
 
+import our.yurivongella.instagramclone.domain.follow.QFollow;
+import our.yurivongella.instagramclone.domain.post.QPost;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -22,9 +20,9 @@ public class PostRepositoryImpl implements CustomPostRepository {
     @Override
     public Slice<Post> findAllByJoinFollow(final Long memberId, final Pageable pageable) {
         List<Post> content = queryFactory
-                .selectFrom(post)
-                .join(follow).on(post.member.id.eq(follow.toMember.id))
-                .where(follow.fromMember.id.eq(memberId))
+                .selectFrom(QPost.post)
+                .join(QFollow.follow).on(QPost.post.member.id.eq(QFollow.follow.toMember.id))
+                .where(QFollow.follow.fromMember.id.eq(memberId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

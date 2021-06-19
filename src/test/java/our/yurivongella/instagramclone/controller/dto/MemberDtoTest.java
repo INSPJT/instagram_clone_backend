@@ -17,10 +17,10 @@ public class MemberDtoTest {
     public void otherAndMemberToMemberDto() {
         // given
         Member member = Member.builder()
-                .displayId(PREFIX + "current")
-                .email(PREFIX + "current@test.net")
-                .password(PREFIX + "current")
-                .build();
+                              .displayId(PREFIX + "current")
+                              .email(PREFIX + "current@test.net")
+                              .password(PREFIX + "current")
+                              .build();
 
         Member other = Member.builder()
                 .displayId(PREFIX + "other")
@@ -29,9 +29,9 @@ public class MemberDtoTest {
                 .build();
 
         Follow follow = Follow.builder()
-                .fromMember(member)
-                .toMember(other)
-                .build();
+                              .fromMember(member)
+                              .toMember(other)
+                              .build();
 
         other.getFollowers().add(follow);
         member.getFollowings().add(follow);

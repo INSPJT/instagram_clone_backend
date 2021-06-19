@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CommentList {
-    List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
+    List<CommentResDto> commentResDtos = new ArrayList<>();
 }

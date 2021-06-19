@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.member.MemberResponseDto;
-import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
-import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.util.SecurityUtil;
+import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
@@ -56,7 +56,7 @@ public class FollowService {
     }
 
     @Transactional
-    public List<MemberResponseDto> getFollowers() {
+    public List<MemberResDto> getFollowers() {
         Member currentMember = getCurrentMember();
         log.info("현재 자신의 follower를 알고 싶은 유저 = {}", currentMember.getDisplayId());
 
@@ -67,12 +67,12 @@ public class FollowService {
                                 log.info("{}를 팔로우 하는 유저 = {}", currentMember.getDisplayId(), fromMember.getDisplayId());
                                 return fromMember;
                             })
-                            .map(MemberResponseDto::of)
+                            .map(MemberResDto::of)
                             .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<MemberResponseDto> getFollowings() {
+    public List<MemberResDto> getFollowings() {
         Member currentMember = getCurrentMember();
         log.info("현재 자신이 following 하고 있는 사람들을 알고 싶은 유저 = {}", currentMember.getDisplayId());
 
@@ -83,7 +83,7 @@ public class FollowService {
                                 log.info("{}가 {}를 팔로잉 하고 있습니다.", currentMember.getDisplayId(), toMember.getDisplayId());
                                 return toMember;
                             })
-                            .map(MemberResponseDto::of)
+                            .map(MemberResDto::of)
                             .collect(Collectors.toList());
     }
 

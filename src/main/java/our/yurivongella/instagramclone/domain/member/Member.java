@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import our.yurivongella.instagramclone.domain.comment.CommentLike;
+
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
 
@@ -15,7 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostLike;
@@ -55,17 +56,17 @@ public class Member extends BaseEntity {
     @Nullable
     private String introduction;
 
-    @Column(name = "active", columnDefinition = "bit default 1")
-    private Boolean active;
+    @Column(name = "active")
+    private Boolean active = true;
 
-    @Column(name = "member_post_count", columnDefinition = "bigint default 0")
-    private Long postCount;
+    @Column(name = "member_post_count")
+    private Long postCount = 0L;
 
-    @Column(name = "member_following_count", columnDefinition = "bigint default 0")
-    private Long followingCount;
+    @Column(name = "member_following_count")
+    private Long followingCount = 0L;
 
-    @Column(name = "member_follower_count", columnDefinition = "bigint default 0")
-    private Long followerCount;
+    @Column(name = "member_follower_count")
+    private Long followerCount = 0L;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -76,12 +77,6 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<PostLike> postLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<CommentLike> commentLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "fromMember")
     private List<Follow> followings = new ArrayList<>();
@@ -97,10 +92,6 @@ public class Member extends BaseEntity {
         this.password = password;
         this.profileImageUrl = profileImageUrl;
         this.authority = Authority.ROLE_USER;
-        this.postCount = 0L;
-        this.followingCount = 0L;
-        this.followerCount = 0L;
-        this.active = true;
     }
 
     public enum Authority {
@@ -158,7 +149,7 @@ public class Member extends BaseEntity {
         this.postCount -= 1;
     }
 
-    public boolean isActive(){
+    public boolean isActive() {
         return this.active.booleanValue();
     }
 }

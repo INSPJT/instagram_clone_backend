@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import our.yurivongella.instagramclone.controller.dto.member.SigninReqDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenReqDto;
+import our.yurivongella.instagramclone.service.AuthService;
 import com.sun.istack.NotNull;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.member.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.member.token.TokenRequestDto;
-import our.yurivongella.instagramclone.service.AuthService;
 
 @Slf4j
 @RestController
@@ -30,22 +30,22 @@ public class AuthController {
 
     @ApiOperation("가입하기")
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequestDto signupRequestDto) {
-        String email = authService.signup(signupRequestDto);
+    public ResponseEntity<String> signup(@RequestBody SignupReqDto signupReqDto) {
+        String email = authService.signup(signupReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(email + " 회원가입이 완료되었습니다.");
     }
 
     @ApiOperation("로그인")
     @PostMapping("/signin")
-    public ResponseEntity<TokenDto> signin(@RequestBody SigninRequestDto signinRequestDto) {
-        TokenDto tokenDto = authService.signin(signinRequestDto);
+    public ResponseEntity<TokenDto> signin(@RequestBody SigninReqDto signinReqDto) {
+        TokenDto tokenDto = authService.signin(signinReqDto);
         return ResponseEntity.ok(tokenDto);
     }
 
     @ApiOperation("로그인 토큰 재발급")
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+    public ResponseEntity<TokenDto> reissue(@RequestBody TokenReqDto tokenReqDto) {
+        return ResponseEntity.ok(authService.reissue(tokenReqDto));
     }
 
     @ApiOperation("중복 체크")

@@ -2,14 +2,16 @@ package our.yurivongella.instagramclone.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
+import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
+import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
-import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
+
 import our.yurivongella.instagramclone.service.ProfileService;
 
 import java.util.List;

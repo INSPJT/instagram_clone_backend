@@ -8,10 +8,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.member.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.SigninReqDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.member.token.TokenRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenReqDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
@@ -46,14 +46,14 @@ public class AuthServiceTest {
     @BeforeEach
     public void signupBeforeTest() {
         // given
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .displayId(displayId)
-                                                            .nickname(nickname)
-                                                            .email(email)
-                                                            .password(password)
-                                                            .build();
+        SignupReqDto signupReqDto = SignupReqDto.builder()
+                                                .displayId(displayId)
+                                                .nickname(nickname)
+                                                .email(email)
+                                                .password(password)
+                                                .build();
 
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
     }
 
     @DisplayName("가입하기")
@@ -77,15 +77,15 @@ public class AuthServiceTest {
         @DisplayName("중복 가입해서 실패")
         @Test
         public void failSignup() {
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                                .displayId("test2")
-                                                                .nickname("testNickname2")
-                                                                .email(email)
-                                                                .password("1q2w3e4r5t")
-                                                                .build();
+            SignupReqDto signupReqDto = SignupReqDto.builder()
+                                                    .displayId("test2")
+                                                    .nickname("testNickname2")
+                                                    .email(email)
+                                                    .password("1q2w3e4r5t")
+                                                    .build();
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.signup(signupRequestDto)
+                    () -> authService.signup(signupReqDto)
             );
         }
     }
@@ -98,12 +98,12 @@ public class AuthServiceTest {
         @Test
         public void successLogin() {
             // given
-            SigninRequestDto signinRequestDto = SigninRequestDto.builder()
-                                                                .email(email)
-                                                                .password(password)
-                                                                .build();
+            SigninReqDto signinReqDto = SigninReqDto.builder()
+                                                    .email(email)
+                                                    .password(password)
+                                                    .build();
             // when
-            TokenDto tokenDto = authService.signin(signinRequestDto);
+            TokenDto tokenDto = authService.signin(signinReqDto);
 
             // then
             assertThat(tokenDto.getAccessToken()).isNotNull();
@@ -116,15 +116,15 @@ public class AuthServiceTest {
         @Test
         public void mismatchEmail() {
             // given
-            SigninRequestDto signinRequestDto = SigninRequestDto.builder()
-                                                                .email("mismatch" + email)
-                                                                .password(password)
-                                                                .build();
+            SigninReqDto signinReqDto = SigninReqDto.builder()
+                                                    .email("mismatch" + email)
+                                                    .password(password)
+                                                    .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.signin(signinRequestDto)
+                    () -> authService.signin(signinReqDto)
             );
         }
 
@@ -132,15 +132,15 @@ public class AuthServiceTest {
         @Test
         public void mismatchPassword() {
             // given
-            SigninRequestDto signinRequestDto = SigninRequestDto.builder()
-                                                                .email(email)
-                                                                .password(password + "adfsdf")
-                                                                .build();
+            SigninReqDto signinReqDto = SigninReqDto.builder()
+                                                    .email(email)
+                                                    .password(password + "adfsdf")
+                                                    .build();
 
             // when
             Assertions.assertThrows(
                     BadCredentialsException.class,
-                    () -> authService.signin(signinRequestDto)
+                    () -> authService.signin(signinReqDto)
             );
         }
     }
@@ -154,10 +154,10 @@ public class AuthServiceTest {
         @BeforeEach
         public void signinBeforeTest() {
             tokenDto = authService.signin(
-                    SigninRequestDto.builder()
-                                    .email(email)
-                                    .password(password)
-                                    .build()
+                    SigninReqDto.builder()
+                                .email(email)
+                                .password(password)
+                                .build()
             );
         }
 
@@ -165,13 +165,13 @@ public class AuthServiceTest {
         @Test
         public void accessRefresh() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getAccessToken())
-                                                             .refreshToken(tokenDto.getRefreshToken())
-                                                             .build();
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                 .accessToken(tokenDto.getAccessToken())
+                                                 .refreshToken(tokenDto.getRefreshToken())
+                                                 .build();
 
             // when
-            TokenDto reissue = authService.reissue(tokenRequestDto);
+            TokenDto reissue = authService.reissue(tokenReqDto);
 
             // then
             boolean accessIsLongerThanRefresh = reissue.getAccessToken().length() > reissue.getRefreshToken().length();
@@ -187,15 +187,15 @@ public class AuthServiceTest {
         @Test
         public void accessAccess() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getAccessToken())
-                                                             .refreshToken(tokenDto.getAccessToken())
-                                                             .build();
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                 .accessToken(tokenDto.getAccessToken())
+                                                 .refreshToken(tokenDto.getAccessToken())
+                                                 .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.reissue(tokenRequestDto)
+                    () -> authService.reissue(tokenReqDto)
             );
         }
 
@@ -203,15 +203,15 @@ public class AuthServiceTest {
         @Test
         public void refreshRefresh() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getRefreshToken())
-                                                             .refreshToken(tokenDto.getRefreshToken())
-                                                             .build();
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                 .accessToken(tokenDto.getRefreshToken())
+                                                 .refreshToken(tokenDto.getRefreshToken())
+                                                 .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.reissue(tokenRequestDto)
+                    () -> authService.reissue(tokenReqDto)
             );
         }
 
@@ -219,15 +219,15 @@ public class AuthServiceTest {
         @Test
         public void refreshAccess() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getRefreshToken())
-                                                             .refreshToken(tokenDto.getAccessToken())
-                                                             .build();
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                 .accessToken(tokenDto.getRefreshToken())
+                                                 .refreshToken(tokenDto.getAccessToken())
+                                                 .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.reissue(tokenRequestDto)
+                    () -> authService.reissue(tokenReqDto)
             );
         }
     }

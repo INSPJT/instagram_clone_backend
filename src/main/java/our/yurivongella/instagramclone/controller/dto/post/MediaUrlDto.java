@@ -1,10 +1,11 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
+import our.yurivongella.instagramclone.domain.post.MediaUrl;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.post.MediaUrl;
 
 @Getter @Builder
 @AllArgsConstructor

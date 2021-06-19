@@ -17,13 +17,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Table(name = "comment")
 @Getter
@@ -49,8 +50,8 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private Set<CommentLike> commentLikes = new HashSet<>();
 
-    @Column(name = "comment_like_count", columnDefinition = "bigint default 0")
-    private Long likeCount;
+    @Column(name = "comment_like_count")
+    private Long likeCount = 0L;
 
     /**
      * 대댓글
@@ -64,8 +65,14 @@ public class Comment extends BaseEntity {
 
     public Comment(final Member member, final Post post, final String content) {
         this.member = member;
-        this.post = post;
         this.content = content;
+        addComment(post);
+    }
+
+    private void addComment(final Post post) {
+        this.post = post;
+        post.getComments().add(this);
+        post.plusCommentCount();
     }
 
     public void plusLikeCount() {

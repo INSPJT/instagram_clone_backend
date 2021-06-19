@@ -1,30 +1,32 @@
 package our.yurivongella.instagramclone.service;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.istack.NotNull;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.comment.CommentCreateDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
-import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.comment.CommentLikeRepository;
-import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
+import com.sun.istack.NotNull;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.domain.comment.CommentRepository;
+import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
 @Transactional(readOnly = true)
 @Service
@@ -36,26 +38,26 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-    public List<CommentResponseDto> getComments(Long postId) {
+    public List<CommentResDto> getCommentsFromPost(Long postId) {
         Member member = getCurrentMember();
 
         return postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND))
                              .getComments()
                              .stream()
-                             .map(c -> CommentResponseDto.of(c, member))
-                             .collect(Collectors.toList());
+                             .map(c -> CommentResDto.of(c, member))
+                             .collect(toList());
     }
 
     @Transactional
-    public CommentResponseDto createComment(Long postId, CommentCreateDto commentCreateDto) {
+    public CommentResDto createComment(Long postId, CommentReqDto commentReqDto) {
         Member member = getCurrentMember();
 
         Post post = postRepository.findById(postId)
                                   .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
 
-        Comment comment = new Comment(member, post, commentCreateDto.getContent());
+        Comment comment = new Comment(member, post, commentReqDto.getContent());
         commentRepository.save(comment);
-        return CommentResponseDto.of(comment, member);
+        return CommentResDto.of(comment, member);
     }
 
     @Transactional
@@ -128,13 +130,20 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto createNestedComment(final Long baseCommentId, final CommentCreateDto commentCreateDto) {
+    public CommentResDto createNestedComment(final Long baseCommentId, final CommentReqDto commentReqDto) {
         final Member currentMember = getCurrentMember();
         final Comment baseComment = commentRepository.findById(baseCommentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
-        final Comment comment = commentCreateDto.toEntity(currentMember, baseComment.getPost());
+        final Comment comment = commentReqDto.toEntity(currentMember, baseComment.getPost());
         comment.addComment(baseComment);
 
         final Comment savedComment = commentRepository.save(comment);
-        return CommentResponseDto.of(savedComment, currentMember);
+        return CommentResDto.of(savedComment, currentMember);
+    }
+
+    public List<CommentResDto> findNestedComments(final Long commentId) {
+        List<Comment> comments = commentRepository.findNestedCommentsById(commentId);
+        return comments.stream()
+                .map(comment -> CommentResDto.of(comment, getCurrentMember()))
+                .collect(toList());
     }
 }

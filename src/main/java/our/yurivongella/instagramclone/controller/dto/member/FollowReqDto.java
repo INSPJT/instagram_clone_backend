@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowRequestDto {
+public class FollowReqDto {
     private Long id;
 }

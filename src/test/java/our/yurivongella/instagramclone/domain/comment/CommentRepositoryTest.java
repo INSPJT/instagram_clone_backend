@@ -42,12 +42,12 @@ class CommentRepositoryTest {
         postRepository.save(post);
 
         IntStream.range(1, 11).forEach(i -> {
-            Comment comment = new Comment().create(member, post, "comment content " + i);
+            Comment comment = new Comment(member, post, "comment content " + i);
             commentRepository.save(comment);
         });
 
         // when
-        List<Comment> comments = commentRepository.findTop3ByPostOrderByIdDesc(post);
+        List<Comment> comments = commentRepository.findCommentsLatest(post, 3);
 
         // then
         assertThat(comments.size()).isEqualTo(3);
