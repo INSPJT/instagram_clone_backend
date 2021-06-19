@@ -132,8 +132,9 @@ public class CommentService {
         final Member currentMember = getCurrentMember();
         final Comment baseComment = commentRepository.findById(baseCommentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         final Comment comment = commentCreateDto.toEntity(currentMember, baseComment.getPost());
-        baseComment.addComment(comment);
-        commentRepository.save(comment);
-        return CommentResponseDto.of(comment, currentMember);
+        comment.addComment(baseComment);
+
+        final Comment savedComment = commentRepository.save(comment);
+        return CommentResponseDto.of(savedComment, currentMember);
     }
 }

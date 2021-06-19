@@ -2,7 +2,6 @@ package our.yurivongella.instagramclone.config;
 
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.Parameter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
