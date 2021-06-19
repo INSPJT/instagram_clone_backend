@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.member.token;
 
 import com.sun.istack.NotNull;
 

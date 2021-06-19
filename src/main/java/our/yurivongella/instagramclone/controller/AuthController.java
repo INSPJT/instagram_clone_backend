@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sun.istack.NotNull;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.SigninRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenRequestDto;
 import our.yurivongella.instagramclone.service.AuthService;
 
 @Slf4j

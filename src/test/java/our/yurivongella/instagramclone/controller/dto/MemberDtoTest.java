@@ -2,7 +2,7 @@ package our.yurivongella.instagramclone.controller.dto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import our.yurivongella.instagramclone.controller.dto.post.MemberDto;
+import our.yurivongella.instagramclone.controller.dto.member.MemberDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.member.Member;
 

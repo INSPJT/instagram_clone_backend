@@ -16,10 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentCreateDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;

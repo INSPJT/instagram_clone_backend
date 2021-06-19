@@ -9,8 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.MemberResponseDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;

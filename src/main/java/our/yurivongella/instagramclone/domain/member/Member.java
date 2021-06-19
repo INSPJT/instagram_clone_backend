@@ -12,7 +12,6 @@ import com.sun.istack.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
@@ -21,7 +20,6 @@ import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostLike;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
@@ -57,16 +55,16 @@ public class Member extends BaseEntity {
     @Nullable
     private String introduction;
 
-    @Column(name = "active")
+    @Column(name = "active", columnDefinition = "bit default 1")
     private Boolean active;
 
-    @Column(name = "member_post_count")
+    @Column(name = "member_post_count", columnDefinition = "bigint default 0")
     private Long postCount;
 
-    @Column(name = "member_following_count")
+    @Column(name = "member_following_count", columnDefinition = "bigint default 0")
     private Long followingCount;
 
-    @Column(name = "member_follower_count")
+    @Column(name = "member_follower_count", columnDefinition = "bigint default 0")
     private Long followerCount;
 
     @Enumerated(EnumType.STRING)
@@ -107,14 +105,6 @@ public class Member extends BaseEntity {
 
     public enum Authority {
         ROLE_USER, ROLE_ADMIN
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.active = true;
-        this.postCount = 0L;
-        this.followingCount = 0L;
-        this.followerCount = 0L;
     }
 
     public void deactivate() {

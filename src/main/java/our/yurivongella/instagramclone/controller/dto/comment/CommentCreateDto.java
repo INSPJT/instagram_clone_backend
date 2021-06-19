@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.comment;
 
 import com.sun.istack.NotNull;
 
@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentCreateDto {
 
-    @NotNull
     private String content;
 
     public CommentCreateDto(String content) {

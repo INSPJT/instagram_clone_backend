@@ -6,16 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.service.PostService;
-import our.yurivongella.instagramclone.util.SecurityUtil;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController

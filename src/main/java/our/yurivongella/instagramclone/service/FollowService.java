@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.member.MemberResponseDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;

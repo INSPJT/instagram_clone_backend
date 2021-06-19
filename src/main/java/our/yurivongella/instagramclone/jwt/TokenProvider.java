@@ -14,9 +14,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import java.security.Key;
 import java.util.Arrays;

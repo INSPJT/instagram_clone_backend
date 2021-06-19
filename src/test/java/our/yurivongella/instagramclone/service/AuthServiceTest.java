@@ -8,10 +8,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.SigninRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenRequestDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;

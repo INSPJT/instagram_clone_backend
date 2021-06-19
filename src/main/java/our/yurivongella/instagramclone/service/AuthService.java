@@ -10,11 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.member.SigninRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenRequestDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshToken;
@@ -22,7 +21,6 @@ import our.yurivongella.instagramclone.domain.refeshtoken.RefreshTokenRepository
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 

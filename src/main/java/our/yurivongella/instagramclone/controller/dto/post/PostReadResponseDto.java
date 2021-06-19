@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import our.yurivongella.instagramclone.controller.dto.member.MemberDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.post.MediaUrl;
 import our.yurivongella.instagramclone.domain.post.Post;
@@ -62,14 +64,14 @@ public class PostReadResponseDto {
         this.viewCount = viewCount;
     }
 
-    public static PostReadResponseDto of(Post post, Member member) {
+    public static PostReadResponseDto of(Post post, Member currentMember) {
         return PostReadResponseDto.builder()
                                   .id(post.getId())
-                                  .author(MemberDto.of(post.getMember(), member))
+                                  .author(MemberDto.of(post.getMember(), currentMember))
                                   .mediaUrls(post.getMediaUrls().stream().map(MediaUrl::getUrl).collect(Collectors.toList()))
                                   .content(post.getContent())
-                                  .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(member.getId())))
-                                  .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), member)).orElse(null))
+                                  .isLike(post.getPostLikes().stream().anyMatch(v -> v.getMember().getId().equals(currentMember.getId())))
+                                  .usersWhoLike(post.getPostLikes().stream().findFirst().map(v -> MemberDto.of(v.getMember(), currentMember)).orElse(null))
                                   .likeCount(post.getPostLikes().size())
                                   .commentCount(post.getComments().size())
                                   .viewCount(post.getViews())

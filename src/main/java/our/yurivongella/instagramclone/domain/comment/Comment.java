@@ -1,6 +1,8 @@
 package our.yurivongella.instagramclone.domain.comment;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -48,13 +49,18 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private Set<CommentLike> commentLikes = new HashSet<>();
 
-    @Column(name = "comment_like_count")
+    @Column(name = "comment_like_count", columnDefinition = "bigint default 0")
     private Long likeCount;
 
-    @PrePersist
-    public void prePersist() {
-        this.likeCount = 0L;
-    }
+    /**
+     * 대댓글
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nested_comment_id")
+    private Comment nestedComment;
+
+    @OneToMany(mappedBy = "nestedComment")
+    private List<Comment> nestedComments = new ArrayList<>();
 
     public Comment create(Member member, Post post, String content) {
         this.member = member;
@@ -74,5 +80,13 @@ public class Comment extends BaseEntity {
     public void minusLikeCount() {
         if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
         this.likeCount -= 1;
+    }
+
+    /**
+     * 대댓글 달기
+     */
+    public void addComment(Comment baseComment, Comment comment){
+        baseComment.getNestedComments().add(comment);
+        this.nestedComment = comment;
     }
 }
