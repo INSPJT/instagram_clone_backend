@@ -2,6 +2,8 @@ package our.yurivongella.instagramclone.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +36,14 @@ public class CommentController {
 
     @ApiOperation("게시글에 content 로 새로운 댓글 생성")
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<?> createComment(@PathVariable("postId") Long postId, @RequestBody CommentCreateDto commentCreateDto) {
+    public ResponseEntity<?> createComment(@PathVariable("postId") Long postId, @RequestBody @Valid CommentCreateDto commentCreateDto) {
         return ResponseEntity.ok(commentService.createComment(postId, commentCreateDto));
+    }
+
+    @ApiOperation("대댓글 달기")
+    @PostMapping("/comments/{commentId}/comments")
+    public ResponseEntity<?> createNestedComment(@PathVariable("commentId") Long commentId, @RequestBody @Valid CommentCreateDto commentCreateDto) {
+        return ResponseEntity.ok(commentService.createNestedComment(commentId, commentCreateDto));
     }
 
     @ApiOperation("해당 댓글 삭제")

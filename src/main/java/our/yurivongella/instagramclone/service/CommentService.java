@@ -53,8 +53,7 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                                   .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
 
-        Comment comment = new Comment();
-        comment.create(member, post, commentCreateDto.getContent());
+        Comment comment = new Comment(member, post, commentCreateDto.getContent());
         commentRepository.save(comment);
         return CommentResponseDto.of(comment, member);
     }
@@ -126,5 +125,15 @@ public class CommentService {
     private Comment getCurrentComment(Long commentId) {
         return commentRepository.findById(commentId)
                                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    @Transactional
+    public CommentResponseDto createNestedComment(final Long baseCommentId, final CommentCreateDto commentCreateDto) {
+        final Member currentMember = getCurrentMember();
+        final Comment baseComment = commentRepository.findById(baseCommentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+        final Comment comment = commentCreateDto.toEntity(currentMember, baseComment.getPost());
+        baseComment.addComment(comment);
+        commentRepository.save(comment);
+        return CommentResponseDto.of(comment, currentMember);
     }
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,15 +63,10 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "nestedComment")
     private List<Comment> nestedComments = new ArrayList<>();
 
-    public Comment create(Member member, Post post, String content) {
+    public Comment(final Member member, final Post post, final String content) {
         this.member = member;
         this.post = post;
         this.content = content;
-        this.likeCount = 0L;
-        member.getComments().add(this);
-        post.getComments().add(this);
-        post.plusCommentCount();
-        return this;
     }
 
     public void plusLikeCount() {
@@ -85,8 +81,9 @@ public class Comment extends BaseEntity {
     /**
      * 대댓글 달기
      */
-    public void addComment(Comment baseComment, Comment comment){
-        baseComment.getNestedComments().add(comment);
-        this.nestedComment = comment;
+    public Long addComment(Comment comment) {
+        comment.nestedComment = comment;
+        getNestedComments().add(this);
+        return comment.getId();
     }
 }
