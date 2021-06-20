@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentDto;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
+import our.yurivongella.instagramclone.domain.SliceHelper;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.comment.CommentLikeRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -19,6 +21,7 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
+
 import com.sun.istack.NotNull;
 
 import lombok.RequiredArgsConstructor;
@@ -33,23 +36,34 @@ import our.yurivongella.instagramclone.domain.member.MemberRepository;
 @Slf4j
 @RequiredArgsConstructor
 public class CommentService {
+    private static final int COMMENT_PAGE_SIZE = 12;
+    private static final int NESTED_COMMENT_PAGE_SIZE = 3;
+
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-    public List<CommentResDto> getCommentsFromPost(Long postId) {
+    public CommentResDto getCommentsFromPost(Long postId, Long lastId) {
         Member member = getCurrentMember();
+        final List<Comment> content = commentRepository.findCommentsFromPost(postId, lastId, COMMENT_PAGE_SIZE);// 그냥 댓글만 가져옴
+        return getCommentResDto(member, content);
+    }
 
-        return postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND))
-                             .getComments()
-                             .stream()
-                             .map(c -> CommentResDto.of(c, member))
-                             .collect(toList());
+    private CommentResDto getCommentResDto(final Member member, final List<Comment> content) {
+        CommentResDto commentResDto = new CommentResDto();
+
+        final boolean hasNext = SliceHelper.checkLast(content, COMMENT_PAGE_SIZE);
+        commentResDto.setCommentResDtos(SliceHelper.getContents(content, hasNext, COMMENT_PAGE_SIZE)
+                                                   .stream()
+                                                   .map(comment -> CommentDto.of(comment, member))
+                                                   .collect(toList()));
+        commentResDto.setHasNext(hasNext);
+        return commentResDto;
     }
 
     @Transactional
-    public CommentResDto createComment(Long postId, CommentReqDto commentReqDto) {
+    public CommentDto createComment(Long postId, CommentReqDto commentReqDto) {
         Member member = getCurrentMember();
 
         Post post = postRepository.findById(postId)
@@ -57,7 +71,7 @@ public class CommentService {
 
         Comment comment = new Comment(member, post, commentReqDto.getContent());
         commentRepository.save(comment);
-        return CommentResDto.of(comment, member);
+        return CommentDto.of(comment, member);
     }
 
     @Transactional
@@ -81,7 +95,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ProcessStatus likeComment(@NotNull Long commentId) throws Exception {
+    public ProcessStatus likeComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
         try {
@@ -104,7 +118,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ProcessStatus unlikeComment(@NotNull Long commentId) throws Exception {
+    public ProcessStatus unlikeComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
         CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, member.getId()).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
@@ -130,20 +144,19 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResDto createNestedComment(final Long baseCommentId, final CommentReqDto commentReqDto) {
+    public CommentDto createNestedComment(final Long baseCommentId, final CommentReqDto commentReqDto) {
         final Member currentMember = getCurrentMember();
         final Comment baseComment = commentRepository.findById(baseCommentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         final Comment comment = commentReqDto.toEntity(currentMember, baseComment.getPost());
         comment.addComment(baseComment);
 
         final Comment savedComment = commentRepository.save(comment);
-        return CommentResDto.of(savedComment, currentMember);
+        return CommentDto.of(savedComment, currentMember);
     }
 
-    public List<CommentResDto> findNestedComments(final Long commentId) {
-        List<Comment> comments = commentRepository.findNestedCommentsById(commentId);
-        return comments.stream()
-                .map(comment -> CommentResDto.of(comment, getCurrentMember()))
-                .collect(toList());
+    public CommentResDto findNestedComments(final Long commentId, final Long lastId) {
+        Member member = getCurrentMember();
+        List<Comment> content = commentRepository.findNestedCommentsById(commentId, lastId, NESTED_COMMENT_PAGE_SIZE);
+        return getCommentResDto(member, content);
     }
 }

@@ -3,15 +3,13 @@ package our.yurivongella.instagramclone.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import our.yurivongella.instagramclone.controller.dto.PostResDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
+import our.yurivongella.instagramclone.domain.SliceHelper;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.post.MediaUrl;
 import our.yurivongella.instagramclone.domain.post.MediaUrlRepository;
@@ -22,13 +20,13 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
+
 import com.sun.istack.NotNull;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
-import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
 @Transactional(readOnly = true)
@@ -41,7 +39,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final MediaUrlRepository mediaUrlRepository;
     private final MemberRepository memberRepository;
-    private final CommentRepository commentRepository;
     private final PostLikeRepository postLikeRepository;
 
     @Transactional
@@ -132,26 +129,26 @@ public class PostService {
                                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
-    /**
-     * @Parameter : lastPostId = Offset
-     */
     @Transactional(readOnly = true)
-    public Slice<PostReadResDto> getFeeds(Pageable pageRequest) {
+    public PostResDto getFeeds(Long lastId) {
         Member currentMember = getCurrentMember();
+        List<Post> content = postRepository.findAllByJoinFollow(getCurrentMember().getId(), lastId, pageSize);
+        PostResDto postResDto = getFeeds(currentMember, content);
+        return postResDto;
+    }
 
-        //페이지를 가져오고
-        Slice<Post> result = postRepository.findAllByJoinFollow(getCurrentMember().getId(), pageRequest);
-        List<PostReadResDto> postReadResDtoList = result.getContent()
-                                                        .stream()
-                                                        .map(post -> PostReadResDto.of(post, currentMember).setCommentPreview(
-                                                          commentRepository.findCommentsLatest(post, 3)
-                                                                           .stream()
-                                                                           .map(comment -> CommentResDto.of(comment, currentMember))
-                                                                           .collect(Collectors.toList())
-                                                       )
-                                                  )
-                                                        .collect(Collectors.toList());
+    private PostResDto getFeeds(final Member currentMember, List<Post> content) {
+        PostResDto postResDto = new PostResDto();
+        for (Post post : content) {
+            System.out.println("post.getId() = " + post.getId());
+        }
+        final boolean hasNext = SliceHelper.checkLast(content, pageSize);
+        postResDto.setHasNext(hasNext);
+        content = SliceHelper.getContents(content, hasNext, pageSize);
 
-        return new SliceImpl<>(postReadResDtoList, result.getPageable(), result.hasNext());
+        postResDto.setFeeds(content.stream()
+                                   .map(post -> PostReadResDto.of(post, currentMember))
+                                   .collect(Collectors.toList()));
+        return postResDto;
     }
 }

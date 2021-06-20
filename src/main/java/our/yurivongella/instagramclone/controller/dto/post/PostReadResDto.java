@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
+
 import our.yurivongella.instagramclone.controller.dto.member.MemberDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 
@@ -36,21 +36,16 @@ public class PostReadResDto {
 
     @JsonProperty("likeLength")
     private Integer likeCount;
-    private List<CommentResDto> commentPreview;
 
     @JsonProperty("commentLength")
     private Integer commentCount;
     private Long viewCount;
     //Boolean bookMark;
 
-    public PostReadResDto setCommentPreview(List<CommentResDto> commentPreview) {
-        this.commentPreview = commentPreview;
-        return this;
-    }
-
     @Builder
-    public PostReadResDto(Long id, MemberDto author, List<String> mediaUrls, String content, String createdAt, String modifiedAt, Boolean isLike,
-                          MemberDto usersWhoLike, Integer likeCount, List<CommentResDto> commentPreview, Integer commentCount, Long viewCount) {
+    public PostReadResDto(final Long id, final MemberDto author, final List<String> mediaUrls, final String content, final String createdAt, final String modifiedAt,
+                          final Boolean isLike,
+                          final MemberDto usersWhoLike, final Integer likeCount, final Integer commentCount, final Long viewCount) {
         this.id = id;
         this.author = author;
         this.mediaUrls = mediaUrls;
@@ -60,7 +55,6 @@ public class PostReadResDto {
         this.isLike = isLike;
         this.usersWhoLike = usersWhoLike;
         this.likeCount = likeCount;
-        this.commentPreview = commentPreview;
         this.commentCount = commentCount;
         this.viewCount = viewCount;
     }

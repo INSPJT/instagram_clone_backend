@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Transactional
 @SpringBootTest
 public class PostServiceTest {
+
     @MockBean
     private S3Service s3Service;
 
@@ -152,15 +152,13 @@ public class PostServiceTest {
                 new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        int lastPostId = 1;
-        int pageSize = 5;
-        PageRequest pageRequest = PageRequest.of(lastPostId, pageSize);
+        Long lastPostId = 224L;
         // when
-        List<PostReadResDto> feeds = postService.getFeeds(pageRequest).getContent();
+        List<PostReadResDto> feeds = postService.getFeeds(lastPostId).getFeeds();
 
         // then
-        assertThat(feeds.size()).isEqualTo(pageSize);
-        feeds.forEach(feed -> assertThat(feed.getId()).isGreaterThan(lastPostId));
+        assertThat(feeds.size()).isEqualTo(5);
+        feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")
@@ -172,9 +170,8 @@ public class PostServiceTest {
                 new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         int pageSize = 5;
-        PageRequest pageRequest = PageRequest.of(0, pageSize);
         // when
-        List<PostReadResDto> feeds = postService.getFeeds(pageRequest).getContent();
+        List<PostReadResDto> feeds = postService.getFeeds(null).getFeeds();
         // then
         assertThat(feeds.size()).isEqualTo(pageSize);
     }

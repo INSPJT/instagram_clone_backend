@@ -2,13 +2,12 @@ package our.yurivongella.instagramclone.controller;
 
 import io.swagger.annotations.ApiOperation;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
+import our.yurivongella.instagramclone.controller.dto.PostResDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +20,9 @@ import our.yurivongella.instagramclone.service.PostService;
 public class FeedController {
     private final PostService postService;
 
-    @ApiOperation("lastPostId 보다 작은 5 개의 인스타그램 피드 조회")
+    @ApiOperation("lastId보다 작은 5 개의 인스타그램 피드 조회")
     @GetMapping("/feeds")
-    public ResponseEntity<Slice<PostReadResDto>> getFeeds(Pageable pageable) {
-        return ResponseEntity.ok(postService.getFeeds(pageable));
+    public ResponseEntity<PostResDto> getFeeds(@RequestParam(name = "lastId", required = false) Long lastId) {
+        return ResponseEntity.ok(postService.getFeeds(lastId));
     }
 }

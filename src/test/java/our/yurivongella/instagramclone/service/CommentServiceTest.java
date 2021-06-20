@@ -1,7 +1,6 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,9 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
 import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentDto;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -100,7 +100,7 @@ class CommentServiceTest {
         @DisplayName("댓글 달기")
         void create_comment() {
             CommentReqDto commentReqDto = new CommentReqDto("test");
-            CommentResDto comment = commentService.createComment(postId, commentReqDto);
+            CommentDto comment = commentService.createComment(postId, commentReqDto);
 
             assertEquals("test", comment.getContent());
             assertEquals("testName", comment.getAuthor().getDisplayId());
@@ -121,8 +121,8 @@ class CommentServiceTest {
         @Test
         @DisplayName("댓글 불러오기")
         void getComment_test() {
-            List<CommentResDto> comments = commentService.getCommentsFromPost(postId);
-            assertEquals(0, comments.size());
+            CommentResDto commentResDto =  commentService.getCommentsFromPost(postId, null);
+            assertEquals(0, commentResDto.getCommentResDtos().size());
         }
 
         @DisplayName("존재하지 않는 댓글 좋아요")
@@ -148,7 +148,7 @@ class CommentServiceTest {
         public void prepare_data() {// 댓글 불러오기, 삭제/좋아요 취소 테스트를 위해 댓글 1건을 미리 준비합니다.
             CommentReqDto commentReqDto = new CommentReqDto("test");
             Post post = postRepository.findById(postId).get();
-            CommentResDto comment = commentService.createComment(postId, commentReqDto);
+            CommentDto comment = commentService.createComment(postId, commentReqDto);
             commentId = post.getComments().get(0).getId();
             assertNotNull(comment);
         }
@@ -193,10 +193,10 @@ class CommentServiceTest {
 
         @Test
         @DisplayName("댓글 불러오기")
-        public void getComment_test() throws Exception {
-            List<CommentResDto> comments = commentService.getCommentsFromPost(postId);
-            assertEquals("test", comments.get(0).getContent());
-            assertEquals(1, comments.size());
+        public void getComment_test() {
+            CommentResDto dto = commentService.getCommentsFromPost(postId, null);
+            assertEquals("test", dto.getCommentResDtos().get(0).getContent());
+            assertEquals(1, dto.getCommentResDtos().size());
         }
 
         @DisplayName("댓글 좋아요")
@@ -262,7 +262,7 @@ class CommentServiceTest {
     void nestedComment_read() {
         CommentReqDto commentReqDto = new CommentReqDto("댓글");
         Post post = postRepository.findById(postId).get();
-        CommentResDto comment = commentService.createComment(postId, commentReqDto);
+        CommentDto comment = commentService.createComment(postId, commentReqDto);
         commentId = post.getComments().get(0).getId();
         assertNotNull(comment);
 
@@ -285,7 +285,7 @@ class CommentServiceTest {
     void is_not_nestedComment() {
         CommentReqDto commentReqDto = new CommentReqDto("댓글");
         Post post = postRepository.findById(postId).get();
-        CommentResDto commentDto = commentService.createComment(postId, commentReqDto);
+        CommentDto commentDto = commentService.createComment(postId, commentReqDto);
         assertNotNull(commentDto);
 
         final Comment comment = post.getComments().get(0);

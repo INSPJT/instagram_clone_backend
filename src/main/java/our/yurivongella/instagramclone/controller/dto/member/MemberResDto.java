@@ -1,7 +1,8 @@
 package our.yurivongella.instagramclone.controller.dto.member;
 
+import javax.validation.constraints.NotNull;
+
 import our.yurivongella.instagramclone.domain.member.Member;
-import com.sun.istack.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
