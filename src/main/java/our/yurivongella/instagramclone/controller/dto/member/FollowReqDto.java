@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowRequestDto {
+public class FollowReqDto {
     private Long id;
 }

@@ -10,11 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.member.SigninReqDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.member.token.TokenReqDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.refeshtoken.RefreshToken;
@@ -22,7 +21,6 @@ import our.yurivongella.instagramclone.domain.refeshtoken.RefreshTokenRepository
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
@@ -40,9 +38,9 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public String signup(SignupRequestDto signupRequestDto) {
-        Member member = signupRequestDto.toMember(passwordEncoder);
-        Optional<Member> optMember = memberRepository.findByEmail(signupRequestDto.getEmail());
+    public String signup(SignupReqDto signupReqDto) {
+        Member member = signupReqDto.toMember(passwordEncoder);
+        Optional<Member> optMember = memberRepository.findByEmail(signupReqDto.getEmail());
         if (optMember.isPresent()) {
             log.error("이미 존재하는 유저입니다.");
             throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
@@ -51,9 +49,9 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto signin(SigninRequestDto signinRequestDto) {
+    public TokenDto signin(SigninReqDto signinReqDto) {
         // 1. username, password 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = signinRequestDto.toAuthenticationToken();
+        UsernamePasswordAuthenticationToken authenticationToken = signinReqDto.toAuthenticationToken();
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
@@ -75,21 +73,21 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+    public TokenDto reissue(TokenReqDto tokenReqDto) {
         // 1. Refresh Token 검증
-        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+        if (!tokenProvider.validateToken(tokenReqDto.getRefreshToken())) {
             throw new CustomException(INVALID_REFRESH_TOKEN);
         }
 
         // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+        Authentication authentication = tokenProvider.getAuthentication(tokenReqDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                                                           .orElseThrow(() -> new CustomException(REFRESH_TOKEN_NOT_FOUND));
 
         // 4. Refresh Token 일치하는지 검사
-        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+        if (!refreshToken.getValue().equals(tokenReqDto.getRefreshToken())) {
             throw new CustomException(MISMATCH_REFRESH_TOKEN);
         }
 

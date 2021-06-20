@@ -6,20 +6,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.ImageController;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
-import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
@@ -37,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Transactional
 @SpringBootTest
 public class PostServiceTest {
+
     @MockBean
     private S3Service s3Service;
 
@@ -53,7 +51,7 @@ public class PostServiceTest {
     private AuthService authService;
 
     private Long memberId;
-    private static PostCreateRequestDto postCreateRequestDto;
+    private static PostCreateReqDto postCreateReqDto;
 
     private final String displayId = "test";
     private final String nickname = "testNickname";
@@ -62,15 +60,15 @@ public class PostServiceTest {
 
     @BeforeEach
     public void signupBeforeTest() {
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .displayId(displayId)
-                                                            .nickname(nickname)
-                                                            .email(email)
-                                                            .password(password)
-                                                            .build();
+        SignupReqDto signupReqDto = SignupReqDto.builder()
+                                                .displayId(displayId)
+                                                .nickname(nickname)
+                                                .email(email)
+                                                .password(password)
+                                                .build();
 
         // 가입
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
         memberId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication =
@@ -86,15 +84,15 @@ public class PostServiceTest {
         mediaUrls.add("mock url 2");
         mediaUrls.add("mock url 3");
         // make mock PostRequestDto
-        PostCreateRequestDto postCreateRequestDto = new PostCreateRequestDto(mediaUrls, "시험중인 글 입니다.");
-        this.postCreateRequestDto = postCreateRequestDto;
+        PostCreateReqDto postCreateReqDto = new PostCreateReqDto(mediaUrls, "시험중인 글 입니다.");
+        this.postCreateReqDto = postCreateReqDto;
     }
 
     @DisplayName("게시글 생성")
     @Test
     public void createPost() {
         // request mock Post
-        postService.create(postCreateRequestDto);
+        postService.create(postCreateReqDto);
         Member member = memberRepository.findById(memberId).get();
 
         List<Post> list = postRepository.findAllByMember(member);
@@ -102,7 +100,7 @@ public class PostServiceTest {
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getMember().getId()).isEqualTo(memberId);
         assertThat(list.get(0).getMember().getPostCount()).isEqualTo(1);
-        assertThat(list.get(0).getContent()).isEqualTo(postCreateRequestDto.getContent());
+        assertThat(list.get(0).getContent()).isEqualTo(postCreateReqDto.getContent());
         assertThat(list.get(0).getMediaUrls().size()).isEqualTo(3);
     }
 
@@ -110,16 +108,16 @@ public class PostServiceTest {
     @Test
     public void readOnePost() {
         // request mock Post
-        Long postId = postService.create(postCreateRequestDto);
+        Long postId = postService.create(postCreateReqDto);
 
         // reqeust mock get
-        PostReadResponseDto postResponseDto = postService.read(postId);
+        PostReadResDto postResponseDto = postService.read(postId);
 
         assertThat(postResponseDto.getAuthor().getDisplayId()).isEqualTo(displayId);
-        assertThat(postResponseDto.getContent()).isEqualTo(postCreateRequestDto.getContent());
+        assertThat(postResponseDto.getContent()).isEqualTo(postCreateReqDto.getContent());
 
-        for (int i = 0; i < postCreateRequestDto.getMediaUrls().size(); ++i) {
-            assertThat(postResponseDto.getMediaUrls().get(i)).isEqualTo(postCreateRequestDto.getMediaUrls().get(i));
+        for (int i = 0; i < postCreateReqDto.getMediaUrls().size(); ++i) {
+            assertThat(postResponseDto.getMediaUrls().get(i)).isEqualTo(postCreateReqDto.getMediaUrls().get(i));
         }
 
         assertThat(postResponseDto.getLikeCount()).isEqualTo(0);
@@ -130,7 +128,7 @@ public class PostServiceTest {
     @Test
     public void deleteOnePost() {
         // given
-        Long postId = postService.create(postCreateRequestDto);
+        Long postId = postService.create(postCreateReqDto);
         Post post = postRepository.findById(postId).get();
         assertThat(post.getMember().getPostCount()).isEqualTo(1);
 
@@ -154,15 +152,13 @@ public class PostServiceTest {
                 new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        int lastPostId = 1;
-        int pageSize = 5;
-        PageRequest pageRequest = PageRequest.of(lastPostId, pageSize);
+        Long lastPostId = 224L;
         // when
-        List<PostReadResponseDto> feeds = postService.getFeeds(pageRequest).getContent();
+        List<PostReadResDto> feeds = postService.getFeeds(lastPostId).getFeeds();
 
         // then
-        assertThat(feeds.size()).isEqualTo(pageSize);
-        feeds.forEach(feed -> assertThat(feed.getId()).isGreaterThan(lastPostId));
+        assertThat(feeds.size()).isEqualTo(5);
+        feeds.forEach(feed -> assertThat(feed.getId()).isLessThan(lastPostId));
     }
 
     @DisplayName("특정 유저의 게시글 피드 가져오기")
@@ -174,9 +170,8 @@ public class PostServiceTest {
                 new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         int pageSize = 5;
-        PageRequest pageRequest = PageRequest.of(0, pageSize);
         // when
-        List<PostReadResponseDto> feeds = postService.getFeeds(pageRequest).getContent();
+        List<PostReadResDto> feeds = postService.getFeeds(null).getFeeds();
         // then
         assertThat(feeds.size()).isEqualTo(pageSize);
     }
@@ -185,7 +180,7 @@ public class PostServiceTest {
     @Test
     @Transactional
     public void likeTest() {
-        Long postId = postService.create(postCreateRequestDto);
+        Long postId = postService.create(postCreateReqDto);
         ProcessStatus processStatus = postService.likePost(postId);
         assertEquals(ProcessStatus.SUCCESS, processStatus);
 
@@ -199,7 +194,7 @@ public class PostServiceTest {
     @Test
     @Transactional
     public void like_duple_Test() {
-        Long postId = postService.create(postCreateRequestDto);
+        Long postId = postService.create(postCreateReqDto);
         ProcessStatus processStatus = postService.likePost(postId);
         assertEquals(ProcessStatus.SUCCESS, processStatus);
 
@@ -209,7 +204,7 @@ public class PostServiceTest {
         assertEquals(displayId, post.getPostLikes().get(0).getMember().getDisplayId());
 
         CustomException customException = Assertions.assertThrows(CustomException.class, () -> postService.likePost(postId));
-        assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode());
+        Assertions.assertEquals(ErrorCode.ALREADY_LIKE, customException.getErrorCode());
     }
 
     @DisplayName("취소 테스트")
@@ -219,7 +214,7 @@ public class PostServiceTest {
 
         @BeforeEach
         public void likePost() {
-            postId = postService.create(postCreateRequestDto);
+            postId = postService.create(postCreateReqDto);
             postService.likePost(postId);
             Post post = postRepository.findById(postId).get();
             assertEquals(1L, post.getLikeCount());

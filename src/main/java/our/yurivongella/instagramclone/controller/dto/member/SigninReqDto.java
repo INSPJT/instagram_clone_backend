@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.member;
 
 import com.sun.istack.NotNull;
 
@@ -13,7 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SigninRequestDto {
+public class SigninReqDto {
 
     @NotNull
     private String email;

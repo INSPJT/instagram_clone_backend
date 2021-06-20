@@ -1,5 +1,6 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.member;
 
+import our.yurivongella.instagramclone.domain.member.Member;
 import com.sun.istack.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -9,13 +10,11 @@ import lombok.NoArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import our.yurivongella.instagramclone.domain.member.Member;
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequestDto {
+public class SignupReqDto {
 
     @NotNull
     private String displayId;

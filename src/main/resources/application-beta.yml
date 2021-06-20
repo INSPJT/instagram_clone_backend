@@ -26,29 +26,22 @@ server:
     include-stacktrace: on_param  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
     whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
 
-spring:
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
 
+spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC&autoReconnection=true&useSSL=false
+    username: admin
+    password: manager1!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
-        format_sql: true
-        show_sql: true
         default_batch_fetch_size: 1000
 
 vault:
   url: http://localhost:8200
-  token: s.b2aTieePBXHdYeWzFFQ3Mlfn
+  token: s.Wfrjta9K19ZJNqey0MR7UbBy

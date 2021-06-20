@@ -3,27 +3,31 @@ package our.yurivongella.instagramclone.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import our.yurivongella.instagramclone.controller.dto.PostResDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
+import our.yurivongella.instagramclone.domain.SliceHelper;
+import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.domain.post.MediaUrl;
+import our.yurivongella.instagramclone.domain.post.MediaUrlRepository;
+import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.domain.post.PostLike;
+import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
+import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import com.sun.istack.NotNull;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
-import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
-import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
-import our.yurivongella.instagramclone.domain.comment.CommentRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
+
+import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.domain.post.*;
-import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 @Transactional(readOnly = true)
 @Slf4j
@@ -35,16 +39,15 @@ public class PostService {
     private final PostRepository postRepository;
     private final MediaUrlRepository mediaUrlRepository;
     private final MemberRepository memberRepository;
-    private final CommentRepository commentRepository;
     private final PostLikeRepository postLikeRepository;
 
     @Transactional
-    public Long create(PostCreateRequestDto postCreateRequestDto) {
+    public Long create(PostCreateReqDto postCreateReqDto) {
         Member member = getCurrentMember();
 
         try {
-            Post post = postRepository.save(postCreateRequestDto.toPost(member));
-            List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateRequestDto.getMediaUrls(post));
+            Post post = postRepository.save(postCreateReqDto.toPost(member));
+            List<MediaUrl> list = mediaUrlRepository.saveAll(postCreateReqDto.getMediaUrls(post));
             post.getMediaUrls().addAll(list);
             return post.getId();
         } catch (Exception e) {
@@ -54,11 +57,11 @@ public class PostService {
     }
 
     @Transactional
-    public PostReadResponseDto read(Long postId) {
+    public PostReadResDto read(Long postId) {
         Member member = getCurrentMember();
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         post.viewCountUp();
-        return PostReadResponseDto.of(post, member);
+        return PostReadResDto.of(post, member);
     }
 
     @Transactional
@@ -126,26 +129,23 @@ public class PostService {
                                .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
     }
 
-    /**
-     * @Parameter : lastPostId = Offset
-     */
     @Transactional(readOnly = true)
-    public Slice<PostReadResponseDto> getFeeds(Pageable pageRequest) {
+    public PostResDto getFeeds(Long lastId) {
         Member currentMember = getCurrentMember();
+        List<Post> content = postRepository.findAllByJoinFollow(getCurrentMember().getId(), lastId, pageSize);
+        PostResDto postResDto = getFeeds(currentMember, content);
+        return postResDto;
+    }
 
-        //페이지를 가져오고
-        Slice<Post> result = postRepository.findAllByJoinFollow(getCurrentMember().getId(), pageRequest);
-        List<PostReadResponseDto> postReadResponseDtoList = result.getContent()
-                                                  .stream()
-                                                  .map(post -> PostReadResponseDto.of(post, currentMember).setCommentPreview(
-                                                          commentRepository.findTop3ByPostOrderByIdDesc(post)
-                                                                           .stream()
-                                                                           .map(comment -> CommentResponseDto.of(comment, currentMember))
-                                                                           .collect(Collectors.toList())
-                                                       )
-                                                  )
-                                                  .collect(Collectors.toList());
+    private PostResDto getFeeds(final Member currentMember, List<Post> content) {
+        PostResDto postResDto = new PostResDto();
+        final boolean hasNext = SliceHelper.hasNext(content, pageSize);
+        postResDto.setHasNext(hasNext);
+        content = SliceHelper.getContents(content, hasNext, pageSize);
 
-        return new SliceImpl<>(postReadResponseDtoList, result.getPageable(), result.hasNext());
+        postResDto.setFeeds(content.stream()
+                                   .map(post -> PostReadResDto.of(post, currentMember))
+                                   .collect(Collectors.toList()));
+        return postResDto;
     }
 }

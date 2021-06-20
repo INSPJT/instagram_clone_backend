@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static our.yurivongella.instagramclone.exception.ErrorCode.*;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class })
     protected ResponseEntity<ErrorResponse> handleDataException() {
-        log.error("handleDataException throw Exception : {}", DUPLICATE_RESOURCE);
-        return ErrorResponse.toResponseEntity(DUPLICATE_RESOURCE);
+        log.error("handleDataException throw Exception : {}", ErrorCode.DUPLICATE_RESOURCE);
+        return ErrorResponse.toResponseEntity(ErrorCode.DUPLICATE_RESOURCE);
     }
 
     @ExceptionHandler(value = { CustomException.class })

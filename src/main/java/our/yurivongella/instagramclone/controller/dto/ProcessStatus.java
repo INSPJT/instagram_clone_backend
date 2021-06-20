@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto.comment;
+package our.yurivongella.instagramclone.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
