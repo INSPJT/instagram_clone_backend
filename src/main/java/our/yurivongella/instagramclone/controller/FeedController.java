@@ -20,7 +20,7 @@ import our.yurivongella.instagramclone.service.PostService;
 public class FeedController {
     private final PostService postService;
 
-    @ApiOperation("lastId보다 작은 5 개의 인스타그램 피드 조회")
+    @ApiOperation("lastId보다 작은 5개의 인스타그램 피드 조회")
     @GetMapping("/feeds")
     public ResponseEntity<PostResDto> getFeeds(@RequestParam(name = "lastId", required = false) Long lastId) {
         return ResponseEntity.ok(postService.getFeeds(lastId));

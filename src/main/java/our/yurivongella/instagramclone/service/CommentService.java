@@ -45,21 +45,9 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     public CommentResDto getCommentsFromPost(Long postId, Long lastId) {
-        Member member = getCurrentMember();
+        final Member member = getCurrentMember();
         final List<Comment> content = commentRepository.findCommentsFromPost(postId, lastId, COMMENT_PAGE_SIZE);// 그냥 댓글만 가져옴
-        return getCommentResDto(member, content);
-    }
-
-    private CommentResDto getCommentResDto(final Member member, final List<Comment> content) {
-        CommentResDto commentResDto = new CommentResDto();
-
-        final boolean hasNext = SliceHelper.hasNext(content, COMMENT_PAGE_SIZE);
-        commentResDto.setCommentResDtos(SliceHelper.getContents(content, hasNext, COMMENT_PAGE_SIZE)
-                                                   .stream()
-                                                   .map(comment -> CommentDto.of(comment, member))
-                                                   .collect(toList()));
-        commentResDto.setHasNext(hasNext);
-        return commentResDto;
+        return CommentResDto.create(member, content, COMMENT_PAGE_SIZE);
     }
 
     @Transactional
@@ -155,8 +143,8 @@ public class CommentService {
     }
 
     public CommentResDto findNestedComments(final Long commentId, final Long lastId) {
-        Member member = getCurrentMember();
-        List<Comment> content = commentRepository.findNestedCommentsById(commentId, lastId, NESTED_COMMENT_PAGE_SIZE);
-        return getCommentResDto(member, content);
+        final Member member = getCurrentMember();
+        final List<Comment> content = commentRepository.findNestedCommentsById(commentId, lastId, NESTED_COMMENT_PAGE_SIZE);
+        return CommentResDto.create(member, content, NESTED_COMMENT_PAGE_SIZE);
     }
 }

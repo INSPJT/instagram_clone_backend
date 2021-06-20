@@ -139,9 +139,6 @@ public class PostService {
 
     private PostResDto getFeeds(final Member currentMember, List<Post> content) {
         PostResDto postResDto = new PostResDto();
-        for (Post post : content) {
-            System.out.println("post.getId() = " + post.getId());
-        }
         final boolean hasNext = SliceHelper.hasNext(content, pageSize);
         postResDto.setHasNext(hasNext);
         content = SliceHelper.getContents(content, hasNext, pageSize);
