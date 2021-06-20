@@ -6,22 +6,21 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import our.yurivongella.instagramclone.domain.comment.CommentLike;
+
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostLike;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
@@ -58,16 +57,16 @@ public class Member extends BaseEntity {
     private String introduction;
 
     @Column(name = "active")
-    private Boolean active;
+    private Boolean active = true;
 
     @Column(name = "member_post_count")
-    private Long postCount;
+    private Long postCount = 0L;
 
     @Column(name = "member_following_count")
-    private Long followingCount;
+    private Long followingCount = 0L;
 
     @Column(name = "member_follower_count")
-    private Long followerCount;
+    private Long followerCount = 0L;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -78,12 +77,6 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<PostLike> postLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<CommentLike> commentLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "fromMember")
     private List<Follow> followings = new ArrayList<>();
@@ -99,22 +92,10 @@ public class Member extends BaseEntity {
         this.password = password;
         this.profileImageUrl = profileImageUrl;
         this.authority = Authority.ROLE_USER;
-        this.postCount = 0L;
-        this.followingCount = 0L;
-        this.followerCount = 0L;
-        this.active = true;
     }
 
     public enum Authority {
         ROLE_USER, ROLE_ADMIN
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.active = true;
-        this.postCount = 0L;
-        this.followingCount = 0L;
-        this.followerCount = 0L;
     }
 
     public void deactivate() {
@@ -168,7 +149,7 @@ public class Member extends BaseEntity {
         this.postCount -= 1;
     }
 
-    public boolean isActive(){
+    public boolean isActive() {
         return this.active.booleanValue();
     }
 }

@@ -1,64 +1,65 @@
 package our.yurivongella.instagramclone.service;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.istack.NotNull;
-
-import javassist.NotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
-import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
+import our.yurivongella.instagramclone.domain.SliceHelper;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.comment.CommentLikeRepository;
-import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
+import com.sun.istack.NotNull;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import our.yurivongella.instagramclone.domain.comment.Comment;
+import our.yurivongella.instagramclone.domain.comment.CommentRepository;
+import our.yurivongella.instagramclone.domain.member.MemberRepository;
+
 @Transactional(readOnly = true)
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CommentService {
+    private static final int COMMENT_PAGE_SIZE = 12;
+    private static final int NESTED_COMMENT_PAGE_SIZE = 3;
+
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-    public List<CommentResponseDto> getComments(Long postId) {
-        Member member = getCurrentMember();
-
-        return postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND))
-                             .getComments()
-                             .stream()
-                             .map(c -> CommentResponseDto.of(c, member))
-                             .collect(Collectors.toList());
+    public CommentResDto getCommentsFromPost(Long postId, Long lastId) {
+        final Member member = getCurrentMember();
+        final List<Comment> content = commentRepository.findCommentsFromPost(postId, lastId, COMMENT_PAGE_SIZE);// 그냥 댓글만 가져옴
+        return CommentResDto.create(member, content, COMMENT_PAGE_SIZE);
     }
 
     @Transactional
-    public CommentResponseDto createComment(Long postId, CommentCreateDto commentCreateDto) {
+    public CommentDto createComment(Long postId, CommentReqDto commentReqDto) {
         Member member = getCurrentMember();
 
         Post post = postRepository.findById(postId)
                                   .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
 
-        Comment comment = new Comment();
-        comment.create(member, post, commentCreateDto.getContent());
+        Comment comment = new Comment(member, post, commentReqDto.getContent());
         commentRepository.save(comment);
-        return CommentResponseDto.of(comment, member);
+        return CommentDto.of(comment, member);
     }
 
     @Transactional
@@ -82,7 +83,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ProcessStatus likeComment(@NotNull Long commentId) throws Exception {
+    public ProcessStatus likeComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
         try {
@@ -105,7 +106,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ProcessStatus unlikeComment(@NotNull Long commentId) throws Exception {
+    public ProcessStatus unlikeComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
         CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, member.getId()).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
@@ -128,5 +129,22 @@ public class CommentService {
     private Comment getCurrentComment(Long commentId) {
         return commentRepository.findById(commentId)
                                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    @Transactional
+    public CommentDto createNestedComment(final Long baseCommentId, final CommentReqDto commentReqDto) {
+        final Member currentMember = getCurrentMember();
+        final Comment baseComment = commentRepository.findById(baseCommentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+        final Comment comment = commentReqDto.toEntity(currentMember, baseComment.getPost());
+        comment.addComment(baseComment);
+
+        final Comment savedComment = commentRepository.save(comment);
+        return CommentDto.of(savedComment, currentMember);
+    }
+
+    public CommentResDto findNestedComments(final Long commentId, final Long lastId) {
+        final Member member = getCurrentMember();
+        final List<Comment> content = commentRepository.findNestedCommentsById(commentId, lastId, NESTED_COMMENT_PAGE_SIZE);
+        return CommentResDto.create(member, content, NESTED_COMMENT_PAGE_SIZE);
     }
 }

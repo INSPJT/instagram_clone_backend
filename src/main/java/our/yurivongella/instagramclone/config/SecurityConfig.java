@@ -1,10 +1,10 @@
 package our.yurivongella.instagramclone.config;
 
 import lombok.RequiredArgsConstructor;
+import our.yurivongella.instagramclone.jwt.JwtAuthenticationEntryPoint;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import our.yurivongella.instagramclone.jwt.JwtAccessDeniedHandler;
-import our.yurivongella.instagramclone.jwt.JwtAuthenticationEntryPoint;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
 
 @Configuration

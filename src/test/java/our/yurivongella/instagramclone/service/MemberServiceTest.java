@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +17,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
+import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
+import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
 @Transactional
 @SpringBootTest
@@ -45,15 +46,15 @@ class MemberServiceTest {
         final String nickname = "testNickname";
         final String email = "authService1@test.net";
         final String password = "1q2w3e4r";
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .displayId(displayId)
-                                                            .nickname(nickname)
-                                                            .email(email)
-                                                            .password(password)
-                                                            .build();
+        SignupReqDto signupReqDto = SignupReqDto.builder()
+                                                .displayId(displayId)
+                                                .nickname(nickname)
+                                                .email(email)
+                                                .password(password)
+                                                .build();
 
         // 가입
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
         memberId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(memberId, "", Collections.emptyList());
@@ -64,7 +65,7 @@ class MemberServiceTest {
     @Test
     void activate() {
         CustomException customException = assertThrows(CustomException.class, () -> memberService.activate());
-        assertEquals(ErrorCode.ALREADY_ACTIVATED, customException.getErrorCode());
+        Assertions.assertEquals(ErrorCode.ALREADY_ACTIVATED, customException.getErrorCode());
 
         memberService.deactivate();
         memberService.activate();

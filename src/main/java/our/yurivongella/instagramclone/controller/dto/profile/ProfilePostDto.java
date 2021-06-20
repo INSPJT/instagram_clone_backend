@@ -1,7 +1,7 @@
 package our.yurivongella.instagramclone.controller.dto.profile;
 
 import lombok.*;
-import our.yurivongella.instagramclone.controller.dto.MediaUrlDto;
+import our.yurivongella.instagramclone.controller.dto.post.MediaUrlDto;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.util.DateTimeUtil;
 

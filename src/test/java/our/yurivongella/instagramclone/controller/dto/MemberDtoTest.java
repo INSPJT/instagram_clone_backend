@@ -2,7 +2,7 @@ package our.yurivongella.instagramclone.controller.dto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import our.yurivongella.instagramclone.controller.dto.post.MemberDto;
+import our.yurivongella.instagramclone.controller.dto.member.MemberDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.member.Member;
 
@@ -17,10 +17,10 @@ public class MemberDtoTest {
     public void otherAndMemberToMemberDto() {
         // given
         Member member = Member.builder()
-                .displayId(PREFIX + "current")
-                .email(PREFIX + "current@test.net")
-                .password(PREFIX + "current")
-                .build();
+                              .displayId(PREFIX + "current")
+                              .email(PREFIX + "current@test.net")
+                              .password(PREFIX + "current")
+                              .build();
 
         Member other = Member.builder()
                 .displayId(PREFIX + "other")
@@ -29,9 +29,9 @@ public class MemberDtoTest {
                 .build();
 
         Follow follow = Follow.builder()
-                .fromMember(member)
-                .toMember(other)
-                .build();
+                              .fromMember(member)
+                              .toMember(other)
+                              .build();
 
         other.getFollowers().add(follow);
         member.getFollowings().add(follow);
