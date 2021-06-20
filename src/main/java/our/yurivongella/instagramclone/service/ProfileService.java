@@ -1,28 +1,29 @@
 package our.yurivongella.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
 import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostLike;
 import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
 import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @Transactional(readOnly = true)
 @Service
@@ -91,11 +92,11 @@ public class ProfileService {
      */
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                                .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+                                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_MEMBER));
     }
 
     private Member getMemberByDisplayId(String displayId) {
         return memberRepository.findByDisplayId(displayId)
-                                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+                                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 }

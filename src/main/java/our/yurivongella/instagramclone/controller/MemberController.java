@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
-import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.service.FollowService;
 import our.yurivongella.instagramclone.service.MemberService;
 
@@ -34,13 +34,13 @@ public class MemberController {
 
     @ApiOperation("나를 팔로우 하는 Followers 조회")
     @GetMapping("/followers")
-    public ResponseEntity<List<MemberResponseDto>> getFollowers() {
+    public ResponseEntity<List<MemberResDto>> getFollowers() {
         return ResponseEntity.ok(followService.getFollowers());
     }
 
     @ApiOperation("내가 팔로우 하는 Followings 조회")
     @GetMapping("/followings")
-    public ResponseEntity<List<MemberResponseDto>> getFollowing() {
+    public ResponseEntity<List<MemberResDto>> getFollowing() {
         return ResponseEntity.ok(followService.getFollowings());
     }
 

@@ -1,6 +1,6 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.member.token;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenRequestDto {
+public class TokenReqDto {
 
-    @NotNull
+    @NotBlank
     private String accessToken;
 
-    @NotNull
+    @NotBlank
     private String refreshToken;
 }

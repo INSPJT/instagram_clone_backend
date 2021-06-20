@@ -1,6 +1,8 @@
 package our.yurivongella.instagramclone.domain.comment;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,16 +15,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Table(name = "comment")
 @Getter
@@ -49,22 +51,28 @@ public class Comment extends BaseEntity {
     private Set<CommentLike> commentLikes = new HashSet<>();
 
     @Column(name = "comment_like_count")
-    private Long likeCount;
+    private Long likeCount = 0L;
 
-    @PrePersist
-    public void prePersist() {
-        this.likeCount = 0L;
+    /**
+     * 대댓글
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "base_comment_id")
+    private Comment baseComment;
+
+    @OneToMany(mappedBy = "baseComment")
+    private List<Comment> nestedComments = new ArrayList<>();
+
+    public Comment(final Member member, final Post post, final String content) {
+        this.member = member;
+        this.content = content;
+        addComment(post);
     }
 
-    public Comment create(Member member, Post post, String content) {
-        this.member = member;
+    private void addComment(final Post post) {
         this.post = post;
-        this.content = content;
-        this.likeCount = 0L;
-        member.getComments().add(this);
         post.getComments().add(this);
         post.plusCommentCount();
-        return this;
     }
 
     public void plusLikeCount() {
@@ -74,5 +82,13 @@ public class Comment extends BaseEntity {
     public void minusLikeCount() {
         if (this.likeCount <= 0) { throw new CustomException(ErrorCode.INVALID_STATUS); }
         this.likeCount -= 1;
+    }
+
+    /**
+     * 대댓글 달기
+     */
+    public void addComment(Comment baseComment) {
+        this.baseComment = baseComment;
+        baseComment.getNestedComments().add(this);
     }
 }

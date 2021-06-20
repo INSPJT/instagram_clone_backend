@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
+import our.yurivongella.instagramclone.domain.member.Member;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 
 import java.util.Collections;

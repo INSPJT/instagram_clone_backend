@@ -1,9 +1,9 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,10 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
+import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
+import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentDto;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -29,6 +30,7 @@ import our.yurivongella.instagramclone.domain.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
@@ -63,15 +65,15 @@ class CommentServiceTest {
 
     @BeforeEach
     public void prepare_member_and_post() {
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                            .displayId(displayId)
-                                                            .nickname(nickname)
-                                                            .email(email)
-                                                            .password(password)
-                                                            .build();
+        SignupReqDto signupReqDto = SignupReqDto.builder()
+                                                .displayId(displayId)
+                                                .nickname(nickname)
+                                                .email(email)
+                                                .password(password)
+                                                .build();
 
         // 가입
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
         userId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication =
@@ -96,9 +98,9 @@ class CommentServiceTest {
 
         @Test
         @DisplayName("댓글 달기")
-        public void create_comment() {
-            CommentCreateDto commentCreateDto = new CommentCreateDto("test");
-            CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
+        void create_comment() {
+            CommentReqDto commentReqDto = new CommentReqDto("test");
+            CommentDto comment = commentService.createComment(postId, commentReqDto);
 
             assertEquals("test", comment.getContent());
             assertEquals("testName", comment.getAuthor().getDisplayId());
@@ -111,28 +113,28 @@ class CommentServiceTest {
 
         @DisplayName("존재하지 않는 댓글 삭제")
         @Test
-        public void delete_comment1() {
+        void delete_comment1() {
             CustomException customException = assertThrows(CustomException.class, () -> commentService.deleteComment(notExistCommendId));
-            assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
+            Assertions.assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
         }
 
         @Test
         @DisplayName("댓글 불러오기")
-        public void getComment_test() {
-            List<CommentResponseDto> comments = commentService.getComments(postId);
-            assertEquals(0, comments.size());
+        void getComment_test() {
+            CommentResDto commentResDto =  commentService.getCommentsFromPost(postId, null);
+            assertEquals(0, commentResDto.getCommentResDtos().size());
         }
 
         @DisplayName("존재하지 않는 댓글 좋아요")
         @Test
-        public void like() throws Exception {
+        void like() {
             CustomException customException = assertThrows(CustomException.class, () -> commentService.likeComment(notExistCommendId));
             assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
         }
 
         @DisplayName("존재하지 않는 댓글 좋아요 취소")
         @Test
-        public void unlike() throws Exception {
+        void unlike() {
             CustomException customException = assertThrows(CustomException.class, () -> commentService.unlikeComment(notExistCommendId));
             assertEquals(ErrorCode.COMMENT_NOT_FOUND, customException.getErrorCode());
 
@@ -141,19 +143,19 @@ class CommentServiceTest {
 
     @Nested
     @DisplayName("댓글이 존재할 때의 테스트")
-    class CommentTest2 {
+    class CommentIs {
         @BeforeEach
         public void prepare_data() {// 댓글 불러오기, 삭제/좋아요 취소 테스트를 위해 댓글 1건을 미리 준비합니다.
-            CommentCreateDto commentCreateDto = new CommentCreateDto("test");
-            Post save = postRepository.findById(postId).get();
-            CommentResponseDto comment = commentService.createComment(postId, commentCreateDto);
-            commentId = save.getComments().get(0).getId();
+            CommentReqDto commentReqDto = new CommentReqDto("test");
+            Post post = postRepository.findById(postId).get();
+            CommentDto comment = commentService.createComment(postId, commentReqDto);
+            commentId = post.getComments().get(0).getId();
             assertNotNull(comment);
         }
 
         @DisplayName("본인이 본인 댓글 삭제")
         @Test
-        public void delete_comment1() throws Exception {
+        void delete_comment1() {
             Comment deletedComment = commentRepository.findById(commentId).get();
             assertEquals(1, deletedComment.getPost().getCommentCount());
 
@@ -166,20 +168,20 @@ class CommentServiceTest {
 
         @DisplayName("타인이 타인 댓글 삭제")
         @Test
-        public void delete_comment2() throws Exception {
+        void delete_comment2() {
             String displayId = "other";
             String nickname = "other";
             String email = "other@naver.com";
             String password = "other";
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-                                                                .displayId(displayId)
-                                                                .nickname(nickname)
-                                                                .email(email)
-                                                                .password(password)
-                                                                .build();
+            SignupReqDto signupReqDto = SignupReqDto.builder()
+                                                    .displayId(displayId)
+                                                    .nickname(nickname)
+                                                    .email(email)
+                                                    .password(password)
+                                                    .build();
 
             // 가입
-            authService.signup(signupRequestDto);
+            authService.signup(signupReqDto);
             Long otherId = memberRepository.findByEmail(email).get().getId();
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(otherId, "", Collections.emptyList());
@@ -191,10 +193,10 @@ class CommentServiceTest {
 
         @Test
         @DisplayName("댓글 불러오기")
-        public void getComment_test() throws Exception {
-            List<CommentResponseDto> comments = commentService.getComments(postId);
-            assertEquals("test", comments.get(0).getContent());
-            assertEquals(1, comments.size());
+        public void getComment_test() {
+            CommentResDto dto = commentService.getCommentsFromPost(postId, null);
+            assertEquals("test", dto.getCommentResDtos().get(0).getContent());
+            assertEquals(1, dto.getCommentResDtos().size());
         }
 
         @DisplayName("댓글 좋아요")
@@ -255,4 +257,41 @@ class CommentServiceTest {
         }
     }
 
+    @DisplayName("대댓글 조회하기")
+    @Test
+    void nestedComment_read() {
+        CommentReqDto commentReqDto = new CommentReqDto("댓글");
+        Post post = postRepository.findById(postId).get();
+        CommentDto comment = commentService.createComment(postId, commentReqDto);
+        commentId = post.getComments().get(0).getId();
+        assertNotNull(comment);
+
+        CommentReqDto commentReqDto2 = new CommentReqDto("대댓글");
+        commentService.createNestedComment(commentId, commentReqDto2);
+
+        CommentReqDto commentReqDto3 = new CommentReqDto("대댓글2");
+        commentService.createNestedComment(commentId, commentReqDto3);
+
+        final Comment baseComment = commentRepository.findById(commentId).get();
+
+        assertThat(baseComment.getBaseComment()).isNull(); // 최상위 댓글
+        assertThat(baseComment.getContent()).isEqualTo("댓글");
+        assertThat(baseComment.getNestedComments().size()).isEqualTo(2);
+        assertThat(baseComment.getNestedComments()).extracting("content").containsExactly("대댓글", "대댓글2");
+    }
+
+    @DisplayName("존재하지 않는 대댓글 조회 시도")
+    @Test
+    void is_not_nestedComment() {
+        CommentReqDto commentReqDto = new CommentReqDto("댓글");
+        Post post = postRepository.findById(postId).get();
+        CommentDto commentDto = commentService.createComment(postId, commentReqDto);
+        assertNotNull(commentDto);
+
+        final Comment comment = post.getComments().get(0);
+
+        assertThat(comment.getBaseComment()).isNull(); // 최상위 댓글
+        assertThat(comment.getContent()).isEqualTo("댓글");
+        assertThat(comment.getNestedComments().size()).isEqualTo(0);
+    }
 }

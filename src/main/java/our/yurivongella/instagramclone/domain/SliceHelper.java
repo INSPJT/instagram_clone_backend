@@ -16,4 +16,15 @@ public class SliceHelper {
         }
         return new SliceImpl<>(content, pageable, hasNext);
     }
+
+    public static <T> boolean hasNext(final List<T> content, final int pageSize) {
+        return content.size() > pageSize;
+    }
+
+    public static <T> List<T> getContents(final List<T> content, final boolean hasNext, final int pageSize) {
+        if (hasNext) {
+            content.remove(pageSize);
+        }
+        return content;
+    }
 }

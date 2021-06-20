@@ -13,17 +13,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
+
+import our.yurivongella.instagramclone.domain.BaseEntity;
+import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.exception.CustomException;
+import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import our.yurivongella.instagramclone.domain.BaseEntity;
 import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 @Getter
 @NoArgsConstructor
@@ -43,13 +43,13 @@ public class Post extends BaseEntity {
     private String content;
 
     @Column(name = "views")
-    private Long views;
+    private Long views = 0L;
 
     @Column(name = "post_like_count")
-    private Long likeCount;
+    private Long likeCount = 0L;
 
     @Column(name = "post_comment_count")
-    private Long commentCount;
+    private Long commentCount = 0L;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<MediaUrl> mediaUrls = new ArrayList<>();
@@ -63,16 +63,6 @@ public class Post extends BaseEntity {
     @Builder
     public Post(String content) {
         this.content = content;
-        this.likeCount = 0L;
-        this.views = 0L;
-        this.commentCount = 0L;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.views = 0L;
-        this.likeCount = 0L;
-        this.commentCount = 0L;
     }
 
     public Post addMember(Member member) {

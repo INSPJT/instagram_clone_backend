@@ -22,10 +22,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.util.SecurityUtil;
 
 @Slf4j
 @Service
