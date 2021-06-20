@@ -20,6 +20,7 @@ import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.domain.post.PostLike;
+import our.yurivongella.instagramclone.domain.story.Story;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 
@@ -90,6 +91,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "toMember")
     private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Story> stories = new ArrayList<>();
 
     @Builder
     public Member(String displayId, String email, String nickname, String password, String profileImageUrl) {
