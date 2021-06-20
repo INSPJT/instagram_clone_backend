@@ -16,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.auth.SignupReqDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
@@ -45,7 +45,7 @@ class MemberServiceTest {
         final String nickname = "testNickname";
         final String email = "authService1@test.net";
         final String password = "1q2w3e4r";
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+        SignupReqDto signupReqDto = SignupReqDto.builder()
                                                             .displayId(displayId)
                                                             .nickname(nickname)
                                                             .email(email)
@@ -53,7 +53,7 @@ class MemberServiceTest {
                                                             .build();
 
         // 가입
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
         memberId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(memberId, "", Collections.emptyList());

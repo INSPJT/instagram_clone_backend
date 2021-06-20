@@ -1,10 +1,11 @@
-package our.yurivongella.instagramclone.controller.dto.post;
+package our.yurivongella.instagramclone.controller.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import our.yurivongella.instagramclone.controller.dto.member.MemberDto;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.member.Member;
 

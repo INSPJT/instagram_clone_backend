@@ -6,7 +6,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
 
 @Getter
 @Setter

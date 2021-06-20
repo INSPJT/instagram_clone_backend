@@ -10,10 +10,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfileMemberDto;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
-import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
+import our.yurivongella.instagramclone.controller.dto.member.ProfileDto;
+import our.yurivongella.instagramclone.controller.dto.member.ProfileMemberDto;
+import our.yurivongella.instagramclone.controller.dto.post.ProfilePostDto;
+import our.yurivongella.instagramclone.controller.dto.member.SimpleProfileDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;

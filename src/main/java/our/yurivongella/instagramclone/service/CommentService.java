@@ -2,7 +2,6 @@ package our.yurivongella.instagramclone.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -10,12 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sun.istack.NotNull;
 
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentCreateDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentLike;
 import our.yurivongella.instagramclone.domain.comment.CommentLikeRepository;

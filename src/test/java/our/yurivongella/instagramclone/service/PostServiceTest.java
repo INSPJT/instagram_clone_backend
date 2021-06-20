@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.ImageController;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.auth.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
@@ -62,7 +60,7 @@ public class PostServiceTest {
 
     @BeforeEach
     public void signupBeforeTest() {
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+        SignupReqDto signupReqDto = SignupReqDto.builder()
                                                             .displayId(displayId)
                                                             .nickname(nickname)
                                                             .email(email)
@@ -70,7 +68,7 @@ public class PostServiceTest {
                                                             .build();
 
         // 가입
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
         memberId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication =

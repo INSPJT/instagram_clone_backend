@@ -9,8 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.member.MemberResponseDto;
+import our.yurivongella.instagramclone.controller.dto.auth.SignupReqDto;
 import our.yurivongella.instagramclone.domain.follow.Follow;
 import our.yurivongella.instagramclone.domain.follow.FollowRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -54,30 +54,30 @@ class FollowServiceTest {
     @BeforeEach
     public void signupBeforeTest() {
         // 두명 가입시키기
-        SignupRequestDto signupRequestDto1 = SignupRequestDto.builder()
+        SignupReqDto signupReqDto1 = SignupReqDto.builder()
                                                              .displayId(myDisplayId)
                                                              .nickname(myNickname)
                                                              .email(myEmail)
                                                              .password(myPassword)
                                                              .build();
 
-        SignupRequestDto signupRequestDto2 = SignupRequestDto.builder()
+        SignupReqDto signupReqDto2 = SignupReqDto.builder()
                                                              .displayId(targetDisplayId)
                                                              .nickname(targetNickname)
                                                              .email(targetEmail)
                                                              .password(targetPassword)
                                                              .build();
 
-        SignupRequestDto signupRequestDto3 = SignupRequestDto.builder()
+        SignupReqDto signupReqDto3 = SignupReqDto.builder()
                                                              .displayId(targetDisplayId + 3)
                                                              .nickname(targetNickname + 3)
                                                              .email(targetEmail + 3)
                                                              .password(targetPassword + 3)
                                                              .build();
 
-        authService.signup(signupRequestDto1);
-        authService.signup(signupRequestDto2);
-        authService.signup(signupRequestDto3);
+        authService.signup(signupReqDto1);
+        authService.signup(signupReqDto2);
+        authService.signup(signupReqDto3);
     }
 
     @DisplayName("팔로우 테스트")

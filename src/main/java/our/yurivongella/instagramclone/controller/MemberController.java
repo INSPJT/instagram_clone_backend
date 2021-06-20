@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
-import our.yurivongella.instagramclone.controller.dto.MemberResponseDto;
+import our.yurivongella.instagramclone.controller.dto.member.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.service.FollowService;
 import our.yurivongella.instagramclone.service.MemberService;

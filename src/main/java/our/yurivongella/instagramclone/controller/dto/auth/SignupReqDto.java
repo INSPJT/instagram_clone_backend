@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.auth;
 
 import com.sun.istack.NotNull;
 
@@ -15,7 +15,7 @@ import our.yurivongella.instagramclone.domain.member.Member;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequestDto {
+public class SignupReqDto {
 
     @NotNull
     private String displayId;

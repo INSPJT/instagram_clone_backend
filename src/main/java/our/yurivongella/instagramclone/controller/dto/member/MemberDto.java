@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto.post;
+package our.yurivongella.instagramclone.controller.dto.member;
 
 import lombok.Builder;
 import lombok.Getter;

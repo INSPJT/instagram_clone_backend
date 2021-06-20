@@ -8,10 +8,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.SigninRequestDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
-import our.yurivongella.instagramclone.controller.dto.TokenRequestDto;
+import our.yurivongella.instagramclone.controller.dto.auth.SigninReqDto;
+import our.yurivongella.instagramclone.controller.dto.auth.SignupReqDto;
+import our.yurivongella.instagramclone.controller.dto.auth.TokenResDto;
+import our.yurivongella.instagramclone.controller.dto.auth.TokenReqDto;
 import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.domain.member.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
@@ -46,14 +46,14 @@ public class AuthServiceTest {
     @BeforeEach
     public void signupBeforeTest() {
         // given
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+        SignupReqDto signupReqDto = SignupReqDto.builder()
                                                             .displayId(displayId)
                                                             .nickname(nickname)
                                                             .email(email)
                                                             .password(password)
                                                             .build();
 
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
     }
 
     @DisplayName("가입하기")
@@ -77,7 +77,7 @@ public class AuthServiceTest {
         @DisplayName("중복 가입해서 실패")
         @Test
         public void failSignup() {
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+            SignupReqDto signupReqDto = SignupReqDto.builder()
                                                                 .displayId("test2")
                                                                 .nickname("testNickname2")
                                                                 .email(email)
@@ -85,7 +85,7 @@ public class AuthServiceTest {
                                                                 .build();
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.signup(signupRequestDto)
+                    () -> authService.signup(signupReqDto)
             );
         }
     }
@@ -98,25 +98,25 @@ public class AuthServiceTest {
         @Test
         public void successLogin() {
             // given
-            SigninRequestDto signinRequestDto = SigninRequestDto.builder()
+            SigninReqDto signinReqDto = SigninReqDto.builder()
                                                                 .email(email)
                                                                 .password(password)
                                                                 .build();
             // when
-            TokenDto tokenDto = authService.signin(signinRequestDto);
+            TokenResDto tokenResDto = authService.signin(signinReqDto);
 
             // then
-            assertThat(tokenDto.getAccessToken()).isNotNull();
-            assertThat(tokenDto.getRefreshToken()).isNotNull();
-            assertThat(tokenDto.getGrantType()).isNotNull();
-            assertThat(tokenDto.getAccessTokenExpiresIn()).isNotNull();
+            assertThat(tokenResDto.getAccessToken()).isNotNull();
+            assertThat(tokenResDto.getRefreshToken()).isNotNull();
+            assertThat(tokenResDto.getGrantType()).isNotNull();
+            assertThat(tokenResDto.getAccessTokenExpiresIn()).isNotNull();
         }
 
         @DisplayName("이메일 불일치로 실패")
         @Test
         public void mismatchEmail() {
             // given
-            SigninRequestDto signinRequestDto = SigninRequestDto.builder()
+            SigninReqDto signinReqDto = SigninReqDto.builder()
                                                                 .email("mismatch" + email)
                                                                 .password(password)
                                                                 .build();
@@ -124,7 +124,7 @@ public class AuthServiceTest {
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.signin(signinRequestDto)
+                    () -> authService.signin(signinReqDto)
             );
         }
 
@@ -132,7 +132,7 @@ public class AuthServiceTest {
         @Test
         public void mismatchPassword() {
             // given
-            SigninRequestDto signinRequestDto = SigninRequestDto.builder()
+            SigninReqDto signinReqDto = SigninReqDto.builder()
                                                                 .email(email)
                                                                 .password(password + "adfsdf")
                                                                 .build();
@@ -140,7 +140,7 @@ public class AuthServiceTest {
             // when
             Assertions.assertThrows(
                     BadCredentialsException.class,
-                    () -> authService.signin(signinRequestDto)
+                    () -> authService.signin(signinReqDto)
             );
         }
     }
@@ -149,12 +149,12 @@ public class AuthServiceTest {
     @Nested
     class ReissueTest {
 
-        private TokenDto tokenDto;
+        private TokenResDto tokenResDto;
 
         @BeforeEach
         public void signinBeforeTest() {
-            tokenDto = authService.signin(
-                    SigninRequestDto.builder()
+            tokenResDto = authService.signin(
+                    SigninReqDto.builder()
                                     .email(email)
                                     .password(password)
                                     .build()
@@ -165,13 +165,13 @@ public class AuthServiceTest {
         @Test
         public void accessRefresh() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getAccessToken())
-                                                             .refreshToken(tokenDto.getRefreshToken())
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                             .accessToken(tokenResDto.getAccessToken())
+                                                             .refreshToken(tokenResDto.getRefreshToken())
                                                              .build();
 
             // when
-            TokenDto reissue = authService.reissue(tokenRequestDto);
+            TokenResDto reissue = authService.reissue(tokenReqDto);
 
             // then
             boolean accessIsLongerThanRefresh = reissue.getAccessToken().length() > reissue.getRefreshToken().length();
@@ -187,15 +187,15 @@ public class AuthServiceTest {
         @Test
         public void accessAccess() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getAccessToken())
-                                                             .refreshToken(tokenDto.getAccessToken())
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                             .accessToken(tokenResDto.getAccessToken())
+                                                             .refreshToken(tokenResDto.getAccessToken())
                                                              .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.reissue(tokenRequestDto)
+                    () -> authService.reissue(tokenReqDto)
             );
         }
 
@@ -203,15 +203,15 @@ public class AuthServiceTest {
         @Test
         public void refreshRefresh() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getRefreshToken())
-                                                             .refreshToken(tokenDto.getRefreshToken())
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                             .accessToken(tokenResDto.getRefreshToken())
+                                                             .refreshToken(tokenResDto.getRefreshToken())
                                                              .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.reissue(tokenRequestDto)
+                    () -> authService.reissue(tokenReqDto)
             );
         }
 
@@ -219,15 +219,15 @@ public class AuthServiceTest {
         @Test
         public void refreshAccess() {
             // given
-            TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-                                                             .accessToken(tokenDto.getRefreshToken())
-                                                             .refreshToken(tokenDto.getAccessToken())
+            TokenReqDto tokenReqDto = TokenReqDto.builder()
+                                                             .accessToken(tokenResDto.getRefreshToken())
+                                                             .refreshToken(tokenResDto.getAccessToken())
                                                              .build();
 
             // when
             Assertions.assertThrows(
                     RuntimeException.class,
-                    () -> authService.reissue(tokenRequestDto)
+                    () -> authService.reissue(tokenReqDto)
             );
         }
     }

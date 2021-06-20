@@ -14,9 +14,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import our.yurivongella.instagramclone.controller.dto.TokenDto;
+import our.yurivongella.instagramclone.controller.dto.auth.TokenResDto;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -41,7 +40,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto generateTokenDto(Authentication authentication) {
+    public TokenResDto generateTokenDto(Authentication authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                                            .map(GrantedAuthority::getAuthority)
@@ -64,7 +63,7 @@ public class TokenProvider {
                                   .signWith(key, SignatureAlgorithm.HS512)
                                   .compact();
 
-        return TokenDto.builder()
+        return TokenResDto.builder()
                        .grantType(BEARER_TYPE)
                        .accessToken(accessToken)
                        .accessTokenExpiresIn(accessTokenExpiresIn.getTime())

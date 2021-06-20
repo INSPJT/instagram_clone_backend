@@ -16,10 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.CommentCreateDto;
-import our.yurivongella.instagramclone.controller.dto.SignupRequestDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentCreateDto;
+import our.yurivongella.instagramclone.controller.dto.auth.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.controller.dto.post.CommentResponseDto;
+import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
 import our.yurivongella.instagramclone.domain.comment.Comment;
 import our.yurivongella.instagramclone.domain.comment.CommentRepository;
 import our.yurivongella.instagramclone.domain.member.Member;
@@ -63,7 +63,7 @@ class CommentServiceTest {
 
     @BeforeEach
     public void prepare_member_and_post() {
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+        SignupReqDto signupReqDto = SignupReqDto.builder()
                                                             .displayId(displayId)
                                                             .nickname(nickname)
                                                             .email(email)
@@ -71,7 +71,7 @@ class CommentServiceTest {
                                                             .build();
 
         // 가입
-        authService.signup(signupRequestDto);
+        authService.signup(signupReqDto);
         userId = memberRepository.findByEmail(email).get().getId();
 
         Authentication authentication =
@@ -171,7 +171,7 @@ class CommentServiceTest {
             String nickname = "other";
             String email = "other@naver.com";
             String password = "other";
-            SignupRequestDto signupRequestDto = SignupRequestDto.builder()
+            SignupReqDto signupReqDto = SignupReqDto.builder()
                                                                 .displayId(displayId)
                                                                 .nickname(nickname)
                                                                 .email(email)
@@ -179,7 +179,7 @@ class CommentServiceTest {
                                                                 .build();
 
             // 가입
-            authService.signup(signupRequestDto);
+            authService.signup(signupReqDto);
             Long otherId = memberRepository.findByEmail(email).get().getId();
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(otherId, "", Collections.emptyList());
