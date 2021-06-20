@@ -53,7 +53,7 @@ public class CommentService {
     private CommentResDto getCommentResDto(final Member member, final List<Comment> content) {
         CommentResDto commentResDto = new CommentResDto();
 
-        final boolean hasNext = SliceHelper.checkLast(content, COMMENT_PAGE_SIZE);
+        final boolean hasNext = SliceHelper.hasNext(content, COMMENT_PAGE_SIZE);
         commentResDto.setCommentResDtos(SliceHelper.getContents(content, hasNext, COMMENT_PAGE_SIZE)
                                                    .stream()
                                                    .map(comment -> CommentDto.of(comment, member))

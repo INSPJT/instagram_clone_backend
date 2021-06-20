@@ -142,7 +142,7 @@ public class PostService {
         for (Post post : content) {
             System.out.println("post.getId() = " + post.getId());
         }
-        final boolean hasNext = SliceHelper.checkLast(content, pageSize);
+        final boolean hasNext = SliceHelper.hasNext(content, pageSize);
         postResDto.setHasNext(hasNext);
         content = SliceHelper.getContents(content, hasNext, pageSize);
 
