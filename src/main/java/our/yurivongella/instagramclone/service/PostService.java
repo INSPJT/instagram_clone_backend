@@ -17,12 +17,14 @@ import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateRequestDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResponseDto;
-import our.yurivongella.instagramclone.domain.comment.CommentRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.domain.post.*;
+import our.yurivongella.instagramclone.entity.MediaUrl;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.entity.PostLike;
+import our.yurivongella.instagramclone.repository.*;
+import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 @Transactional(readOnly = true)

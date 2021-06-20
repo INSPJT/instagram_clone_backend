@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.comment;
+package our.yurivongella.instagramclone.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,9 +18,6 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.Post;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 

@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain;
+package our.yurivongella.instagramclone.util;
 
 import java.util.List;
 

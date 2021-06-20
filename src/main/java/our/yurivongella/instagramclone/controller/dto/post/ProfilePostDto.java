@@ -1,7 +1,7 @@
 package our.yurivongella.instagramclone.controller.dto.post;
 
 import lombok.*;
-import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.entity.Post;
 import our.yurivongella.instagramclone.util.DateTimeUtil;
 
 import java.util.List;

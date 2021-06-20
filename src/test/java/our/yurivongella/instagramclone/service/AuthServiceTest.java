@@ -12,8 +12,8 @@ import our.yurivongella.instagramclone.controller.dto.auth.SigninReqDto;
 import our.yurivongella.instagramclone.controller.dto.auth.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.auth.TokenResDto;
 import our.yurivongella.instagramclone.controller.dto.auth.TokenReqDto;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 

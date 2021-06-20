@@ -7,10 +7,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
+import our.yurivongella.instagramclone.entity.Comment;
+import our.yurivongella.instagramclone.repository.CommentRepository;
 import our.yurivongella.instagramclone.service.S3Service;
 
 import java.util.List;

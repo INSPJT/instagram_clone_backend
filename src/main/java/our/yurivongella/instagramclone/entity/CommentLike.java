@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,38 +12,37 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.member.Member;
+import lombok.ToString;
 
+@NoArgsConstructor
 @Getter
 @Entity
-@NoArgsConstructor
-@Table(name = "post_like")
-public class PostLike extends BaseEntity {
+@Table(name = "comment_like")
+@ToString(of = "comment")
+public class CommentLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_like_id")
+    @Column(name = "comment_like_id")
     private Long id;
 
+    @JoinColumn(name = "comment_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public PostLike like(Member member, Post post) {
+    public CommentLike like(Member member, Comment comment) {
         this.member = member;
-        this.post = post;
-        post.getPostLikes().add(this);
-        post.plusLikeCount();
+        this.comment = comment;
+        comment.getCommentLikes().add(this);
+        comment.plusLikeCount();
         return this;
     }
 
     public void unlike() {
-        post.getPostLikes().remove(this);
-        post.minusLikeCount();
+        comment.getCommentLikes().remove(this);
+        comment.minusLikeCount();
     }
-
 }

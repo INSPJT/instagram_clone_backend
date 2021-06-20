@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.controller.dto.member.MemberResponseDto;
 import our.yurivongella.instagramclone.controller.dto.comment.ProcessStatus;
-import our.yurivongella.instagramclone.domain.follow.Follow;
-import our.yurivongella.instagramclone.domain.follow.FollowRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.entity.Follow;
+import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 

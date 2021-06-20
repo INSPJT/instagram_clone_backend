@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 
 import java.util.Collections;
 

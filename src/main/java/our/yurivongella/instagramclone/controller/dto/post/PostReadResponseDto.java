@@ -10,9 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentResponseDto;
 import our.yurivongella.instagramclone.controller.dto.member.MemberDto;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.MediaUrl;
-import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.MediaUrl;
+import our.yurivongella.instagramclone.entity.Post;
 import our.yurivongella.instagramclone.util.DateTimeUtil;
 
 @Getter

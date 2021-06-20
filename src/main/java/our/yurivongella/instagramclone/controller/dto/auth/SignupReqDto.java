@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.entity.Member;
 
 @Getter
 @Builder

@@ -1,18 +1,18 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.repository.post;
 
-import static our.yurivongella.instagramclone.domain.follow.QFollow.follow;
-import static our.yurivongella.instagramclone.domain.post.QPost.post;
+import static our.yurivongella.instagramclone.entity.QPost.post;
+import static our.yurivongella.instagramclone.entity.QFollow.follow;
 
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.support.PageableExecutionUtils;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import our.yurivongella.instagramclone.domain.SliceHelper;
+import our.yurivongella.instagramclone.util.SliceHelper;
+import our.yurivongella.instagramclone.entity.Post;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements CustomPostRepository {

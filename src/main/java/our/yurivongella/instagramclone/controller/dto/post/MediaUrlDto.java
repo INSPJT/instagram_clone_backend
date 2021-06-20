@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.post.MediaUrl;
+import our.yurivongella.instagramclone.entity.MediaUrl;
 
 @Getter @Builder
 @AllArgsConstructor

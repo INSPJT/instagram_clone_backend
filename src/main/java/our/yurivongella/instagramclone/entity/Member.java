@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.member;
+package our.yurivongella.instagramclone.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +12,8 @@ import com.sun.istack.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
-import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
-import our.yurivongella.instagramclone.domain.follow.Follow;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostLike;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
