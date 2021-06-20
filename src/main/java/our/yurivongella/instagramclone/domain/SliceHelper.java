@@ -18,10 +18,7 @@ public class SliceHelper {
     }
 
     public static <T> boolean checkLast(final List<T> content, final int pageSize) {
-        if (content.size() > pageSize) {
-            return true;
-        }
-        return false;
+        return content.size() > pageSize;
     }
 
     public static <T> List<T> getContents(final List<T> content, final boolean hasNext, final int pageSize) {
