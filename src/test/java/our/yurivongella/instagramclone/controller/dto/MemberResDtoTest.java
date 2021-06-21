@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.entity.Member;
 
 import static org.assertj.core.api.Assertions.*;
 

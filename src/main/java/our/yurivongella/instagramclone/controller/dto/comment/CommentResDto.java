@@ -10,9 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import our.yurivongella.instagramclone.domain.SliceHelper;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.util.SliceHelper;
+import our.yurivongella.instagramclone.entity.Comment;
+import our.yurivongella.instagramclone.entity.Member;
 
 @Getter
 @Setter

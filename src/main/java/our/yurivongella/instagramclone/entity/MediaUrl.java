@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.entity;
 
 import javax.persistence.*;
 
@@ -7,7 +7,6 @@ import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.BaseEntity;
 
 import java.util.List;
 

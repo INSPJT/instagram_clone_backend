@@ -1,6 +1,7 @@
-package our.yurivongella.instagramclone.domain.member;
+package our.yurivongella.instagramclone.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import our.yurivongella.instagramclone.entity.Member;
 
 import java.util.Optional;
 

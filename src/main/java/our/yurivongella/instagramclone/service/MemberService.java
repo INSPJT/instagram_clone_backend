@@ -4,14 +4,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 
 @RequiredArgsConstructor
 @Service

@@ -3,9 +3,9 @@ package our.yurivongella.instagramclone.controller.dto.post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.MediaUrl;
-import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.MediaUrl;
+import our.yurivongella.instagramclone.entity.Post;
 
 import java.util.List;
 import java.util.stream.Collectors;

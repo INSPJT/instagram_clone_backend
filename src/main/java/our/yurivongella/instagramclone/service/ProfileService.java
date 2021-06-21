@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
 import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
-import our.yurivongella.instagramclone.domain.follow.FollowRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostLike;
-import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
-import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.entity.PostLike;
+import our.yurivongella.instagramclone.repository.PostLikeRepository;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 
 import java.util.List;
 import java.util.Set;

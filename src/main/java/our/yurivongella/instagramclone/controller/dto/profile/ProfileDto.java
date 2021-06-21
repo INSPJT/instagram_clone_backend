@@ -1,6 +1,6 @@
 package our.yurivongella.instagramclone.controller.dto.profile;
 
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.entity.Member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

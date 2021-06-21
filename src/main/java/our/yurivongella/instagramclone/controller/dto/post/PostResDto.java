@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.post;
 
 import java.util.List;
 
