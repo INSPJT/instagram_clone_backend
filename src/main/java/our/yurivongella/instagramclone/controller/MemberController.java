@@ -13,33 +13,45 @@ import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.service.FollowService;
 import our.yurivongella.instagramclone.service.MemberService;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
     private final FollowService followService;
     private final MemberService memberService;
 
+    @ApiOperation("내 프로필 조회")
+    @GetMapping("/member/profiles")
+    public ResponseEntity<MemberResDto> getMyProfile() {
+        return ResponseEntity.ok(memberService.getMyProfile());
+    }
+
+    @ApiOperation("특정 사용자의 프로필 조회")
+    @GetMapping("/members/{displayId}/profiles")
+    public ResponseEntity<MemberResDto> getProfile(@PathVariable String displayId) {
+        return ResponseEntity.ok(memberService.getProfile(displayId));
+    }
+
     @ApiOperation("상대방 팔로우")
-    @PutMapping("/follow/{displayId}")
+    @PutMapping("/member/follow/{displayId}")
     public ResponseEntity<ProcessStatus> follow(@PathVariable String displayId) {
         return ResponseEntity.ok(followService.follow(displayId));
     }
 
     @ApiOperation("상대방 언팔로우")
-    @DeleteMapping("/follow/{displayId}")
+    @DeleteMapping("/member/follow/{displayId}")
     public ResponseEntity<ProcessStatus> unfollow(@PathVariable String displayId) {
         return ResponseEntity.ok(followService.unFollow(displayId));
     }
 
     @ApiOperation("나를 팔로우 하는 Followers 조회")
-    @GetMapping("/followers")
+    @GetMapping("/member/followers")
     public ResponseEntity<List<MemberResDto>> getFollowers() {
         return ResponseEntity.ok(followService.getFollowers());
     }
 
     @ApiOperation("내가 팔로우 하는 Followings 조회")
-    @GetMapping("/followings")
+    @GetMapping("/member/followings")
     public ResponseEntity<List<MemberResDto>> getFollowing() {
         return ResponseEntity.ok(followService.getFollowings());
     }
