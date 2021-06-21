@@ -1,7 +1,7 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.repository.post;
 
-import static our.yurivongella.instagramclone.domain.follow.QFollow.follow;
-import static our.yurivongella.instagramclone.domain.post.QPost.post;
+import static our.yurivongella.instagramclone.entity.QFollow.follow;
+import static our.yurivongella.instagramclone.entity.QPost.post;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import our.yurivongella.instagramclone.entity.Post;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements CustomPostRepository {

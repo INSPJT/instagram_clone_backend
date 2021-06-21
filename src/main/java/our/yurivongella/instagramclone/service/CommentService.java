@@ -1,7 +1,5 @@
 package our.yurivongella.instagramclone.service;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -12,12 +10,11 @@ import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentDto;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
-import our.yurivongella.instagramclone.domain.SliceHelper;
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
-import our.yurivongella.instagramclone.domain.comment.CommentLikeRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.entity.CommentLike;
+import our.yurivongella.instagramclone.repository.CommentLikeRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -27,9 +24,9 @@ import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.comment.CommentRepository;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.entity.Comment;
+import our.yurivongella.instagramclone.repository.comment.CommentRepository;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 
 @Transactional(readOnly = true)
 @Service

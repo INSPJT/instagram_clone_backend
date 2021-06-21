@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain;
+package our.yurivongella.instagramclone.entity;
 
 import java.time.LocalDateTime;
 

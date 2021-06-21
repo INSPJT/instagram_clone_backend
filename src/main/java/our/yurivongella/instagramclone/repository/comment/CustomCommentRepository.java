@@ -1,4 +1,6 @@
-package our.yurivongella.instagramclone.domain.comment;
+package our.yurivongella.instagramclone.repository.comment;
+
+import our.yurivongella.instagramclone.entity.Comment;
 
 import java.util.List;
 

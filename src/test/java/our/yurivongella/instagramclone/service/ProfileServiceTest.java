@@ -14,8 +14,8 @@ import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfileMemberDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
 import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.Collections;

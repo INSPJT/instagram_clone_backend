@@ -2,13 +2,13 @@ package our.yurivongella.instagramclone.controller.dto.comment;
 
 import javax.validation.constraints.NotBlank;
 
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.entity.Member;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.post.Post;
+import our.yurivongella.instagramclone.entity.Comment;
+import our.yurivongella.instagramclone.entity.Post;
 
 @Getter
 @Setter

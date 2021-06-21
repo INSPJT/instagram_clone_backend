@@ -6,17 +6,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.controller.dto.PostResDto;
+import our.yurivongella.instagramclone.controller.dto.post.PostResDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
-import our.yurivongella.instagramclone.domain.SliceHelper;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.MediaUrl;
-import our.yurivongella.instagramclone.domain.post.MediaUrlRepository;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostLike;
-import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
-import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.util.SliceHelper;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.MediaUrl;
+import our.yurivongella.instagramclone.repository.MediaUrlRepository;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.entity.PostLike;
+import our.yurivongella.instagramclone.repository.PostLikeRepository;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 
 @Transactional(readOnly = true)
 @Slf4j

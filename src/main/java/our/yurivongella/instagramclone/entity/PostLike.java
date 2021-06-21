@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,11 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import our.yurivongella.instagramclone.domain.member.Member;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import our.yurivongella.instagramclone.domain.BaseEntity;
 
 @Getter
 @Entity

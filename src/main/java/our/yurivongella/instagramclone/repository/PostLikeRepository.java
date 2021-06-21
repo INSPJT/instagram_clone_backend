@@ -1,7 +1,9 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.entity.PostLike;
 
 import java.util.List;
 import java.util.Optional;
