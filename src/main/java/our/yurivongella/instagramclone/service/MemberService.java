@@ -17,17 +17,16 @@ import our.yurivongella.instagramclone.repository.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
-    @Transactional(readOnly = true)
     public MemberResDto getMyProfile() {
         return MemberResDto.of(getCurrentMember());
     }
 
-    @Transactional(readOnly = true)
     public MemberResDto getProfile(String displayId) {
         Member member = getMemberByDisplayId(displayId);
         MemberResDto memberResDto = MemberResDto.of(member);
