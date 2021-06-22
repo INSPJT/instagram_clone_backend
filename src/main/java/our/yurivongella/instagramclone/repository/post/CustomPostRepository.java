@@ -1,4 +1,6 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.repository.post;
+
+import our.yurivongella.instagramclone.entity.Post;
 
 import java.util.List;
 

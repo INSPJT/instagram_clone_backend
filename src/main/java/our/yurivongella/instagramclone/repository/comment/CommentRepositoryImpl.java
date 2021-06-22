@@ -1,6 +1,6 @@
-package our.yurivongella.instagramclone.domain.comment;
+package our.yurivongella.instagramclone.repository.comment;
 
-import static our.yurivongella.instagramclone.domain.comment.QComment.comment;
+import static our.yurivongella.instagramclone.entity.QComment.comment;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import our.yurivongella.instagramclone.entity.Comment;
 
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements CustomCommentRepository {

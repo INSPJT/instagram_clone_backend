@@ -1,15 +1,12 @@
 package our.yurivongella.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
-import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
-import our.yurivongella.instagramclone.domain.follow.FollowRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostLike;
-import our.yurivongella.instagramclone.domain.post.PostLikeRepository;
-import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.entity.PostLike;
+import our.yurivongella.instagramclone.repository.PostLikeRepository;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
@@ -19,7 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -32,27 +29,8 @@ public class ProfileService {
     private static final PageRequest pageRequest = PageRequest.of(0, 12, Sort.by("id").descending());
 
     private final MemberRepository memberRepository;
-    private final FollowRepository followRepository;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
-
-    public SimpleProfileDto getMySimpleProfile() {
-        return SimpleProfileDto.of(getCurrentMember());
-    }
-
-    public ProfileDto getMyProfile() {
-        return ProfileDto.of(getCurrentMember());
-    }
-
-    public ProfileDto getProfile(String displayId) {
-        Member member = getMemberByDisplayId(displayId);
-        ProfileDto profileDto = ProfileDto.of(member);
-
-        followRepository.findByFromMemberAndToMember(getCurrentMember(), member)
-                        .ifPresent(ignored -> profileDto.getMemberDto().setFollowTrue());
-
-        return profileDto;
-    }
 
     public List<ProfilePostDto> getMyPosts(Long lastPostId) {
         if (lastPostId == null) {

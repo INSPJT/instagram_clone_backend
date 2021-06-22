@@ -1,12 +1,10 @@
-package our.yurivongella.instagramclone.domain.member;
+package our.yurivongella.instagramclone.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.*;
-
-import our.yurivongella.instagramclone.domain.comment.CommentLike;
 
 import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
@@ -15,11 +13,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.comment.Comment;
-import our.yurivongella.instagramclone.domain.follow.Follow;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostLike;
 import our.yurivongella.instagramclone.exception.CustomException;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
@@ -110,12 +103,6 @@ public class Member extends BaseEntity {
         return Objects.equals(id, other.getId());
     }
 
-    public boolean isFollowingTo(Member other) {
-        return followings.stream()
-                         .map(Follow::getToMember)
-                         .anyMatch(toMember -> toMember.equals(other));
-    }
-
     public boolean isFollowedBy(Member other) {
         return followers.stream()
                         .map(Follow::getFromMember)
@@ -150,6 +137,6 @@ public class Member extends BaseEntity {
     }
 
     public boolean isActive() {
-        return this.active.booleanValue();
+        return this.active;
     }
 }

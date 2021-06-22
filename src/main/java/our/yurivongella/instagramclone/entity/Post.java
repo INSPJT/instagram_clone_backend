@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.post;
+package our.yurivongella.instagramclone.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import our.yurivongella.instagramclone.domain.BaseEntity;
-import our.yurivongella.instagramclone.domain.member.Member;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import our.yurivongella.instagramclone.domain.comment.Comment;
 
 @Getter
 @NoArgsConstructor

@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
 import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
-import our.yurivongella.instagramclone.domain.follow.Follow;
-import our.yurivongella.instagramclone.domain.follow.FollowRepository;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
+import our.yurivongella.instagramclone.entity.Follow;
+import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.Collections;

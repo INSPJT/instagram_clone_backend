@@ -1,8 +1,9 @@
-package our.yurivongella.instagramclone.domain.comment;
+package our.yurivongella.instagramclone.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import our.yurivongella.instagramclone.entity.CommentLike;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
 

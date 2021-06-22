@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.domain.refeshtoken;
+package our.yurivongella.instagramclone.entity;
 
 import lombok.Builder;
 import lombok.Getter;

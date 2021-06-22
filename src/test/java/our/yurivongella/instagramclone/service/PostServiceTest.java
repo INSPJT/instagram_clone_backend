@@ -17,10 +17,10 @@ import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
 import our.yurivongella.instagramclone.controller.dto.post.PostReadResDto;
-import our.yurivongella.instagramclone.domain.member.Member;
-import our.yurivongella.instagramclone.domain.member.MemberRepository;
-import our.yurivongella.instagramclone.domain.post.Post;
-import our.yurivongella.instagramclone.domain.post.PostRepository;
+import our.yurivongella.instagramclone.entity.Member;
+import our.yurivongella.instagramclone.repository.MemberRepository;
+import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 
