@@ -18,10 +18,10 @@ import java.util.Collections;
 @SpringBootTest
 public abstract class TestBase {
     @MockBean
-    private S3Service s3Service;
+    protected S3Service s3Service;
 
     @Autowired
-    private MemberRepository memberRepository;
+    protected MemberRepository memberRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
