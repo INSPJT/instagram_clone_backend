@@ -19,14 +19,14 @@ public class MemberController {
     private final FollowService followService;
     private final MemberService memberService;
 
-    @ApiOperation("내 프로필 조회")
-    @GetMapping("/member/profiles")
+    @ApiOperation("내 정보 조회")
+    @GetMapping("/member")
     public ResponseEntity<MemberResDto> getMyProfile() {
         return ResponseEntity.ok(memberService.getMyProfile());
     }
 
-    @ApiOperation("특정 사용자의 프로필 조회")
-    @GetMapping("/members/{displayId}/profiles")
+    @ApiOperation("특정 사용자의 정보 조회")
+    @GetMapping("/members/{displayId}")
     public ResponseEntity<MemberResDto> getProfile(@PathVariable String displayId) {
         return ResponseEntity.ok(memberService.getProfile(displayId));
     }
