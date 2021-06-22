@@ -5,14 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
 
-@Transactional
 class MemberServiceTest extends TestBase {
 
     @Autowired

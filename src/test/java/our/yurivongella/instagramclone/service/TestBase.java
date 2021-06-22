@@ -7,12 +7,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.repository.MemberRepository;
 
 import java.util.Collections;
 
+@Transactional
 @SpringBootTest
 public abstract class TestBase {
     @MockBean
