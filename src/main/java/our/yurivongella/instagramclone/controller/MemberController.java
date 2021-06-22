@@ -14,7 +14,6 @@ import our.yurivongella.instagramclone.service.FollowService;
 import our.yurivongella.instagramclone.service.MemberService;
 
 @RestController
-@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final FollowService followService;
@@ -57,7 +56,7 @@ public class MemberController {
     }
 
     @ApiOperation("회원 상태 변경")
-    @PutMapping("/activate")
+    @PutMapping("/member/activate")
     public ResponseEntity<ProcessStatus> activate(@RequestParam("state") boolean state){
         ProcessStatus result = state ? memberService.activate() : memberService.deactivate();
         return ResponseEntity.ok(result);
