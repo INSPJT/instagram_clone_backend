@@ -1,75 +1,91 @@
 package our.yurivongella.instagramclone.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Collections;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 
+import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
-import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
-import our.yurivongella.instagramclone.repository.MemberRepository;
 
-@Transactional
-@SpringBootTest
-class MemberServiceTest {
-    @MockBean
-    private S3Service s3Service;
+class MemberServiceTest extends TestBase {
 
     @Autowired
     private MemberService memberService;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private FollowService followService;
 
-    @Autowired
-    private AuthService authService;
+    @DisplayName("내 정보 조회")
+    @Test
+    void getMyProfileTest() {
+        Member member = signupAndLogin("testDisplayId", "testEmail@test.net");
+        MemberResDto memberResDto = memberService.getMyProfile();
 
-    private Long memberId;
+        assertThat(memberResDto.getDisplayId()).isEqualTo(member.getDisplayId());
+        assertThat(memberResDto.getNickname()).isEqualTo(member.getNickname());
+        assertThat(memberResDto.getProfileImageUrl()).isNull();
+        assertThat(memberResDto.getIntroduction()).isNull();
+        assertThat(memberResDto.getPostCount()).isEqualTo(member.getPostCount());
+        assertThat(memberResDto.getFollowerCount()).isEqualTo(member.getFollowerCount());
+        assertThat(memberResDto.getFollowingCount()).isEqualTo(member.getFollowingCount());
+        assertThat(memberResDto.getIsFollowedByMe()).isFalse();
+    }
 
-    @BeforeEach
-    public void signupBeforeTest() {
-        final String displayId = "test";
-        final String nickname = "testNickname";
-        final String email = "authService1@test.net";
-        final String password = "1q2w3e4r";
-        SignupReqDto signupReqDto = SignupReqDto.builder()
-                                                .displayId(displayId)
-                                                .nickname(nickname)
-                                                .email(email)
-                                                .password(password)
-                                                .build();
+    @DisplayName("다른 사람 정보 조회")
+    @Nested
+    class getOtherProfileTest {
 
-        // 가입
-        authService.signup(signupReqDto);
-        memberId = memberRepository.findByEmail(email).get().getId();
+        @DisplayName("팔로우 중인 사람 정보 조회")
+        @Test
+        void getFollowingProfileTest() {
+            // given
+            signupAndLogin("testDisplayId", "testEmail@test.net");
+            Member other = signup("other", "other@test.net");
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(memberId, "", Collections.emptyList());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            // when
+            followService.follow(other.getDisplayId());
+            MemberResDto profile = memberService.getProfile(other.getDisplayId());
+
+            // then
+            assertThat(profile.getDisplayId()).isEqualTo(other.getDisplayId());
+            assertThat(profile.getNickname()).isEqualTo(other.getNickname());
+            assertThat(profile.getProfileImageUrl()).isNull();
+            assertThat(profile.getIntroduction()).isNull();
+            assertThat(profile.getPostCount()).isEqualTo(other.getPostCount());
+            assertThat(profile.getFollowerCount()).isEqualTo(other.getFollowerCount());
+            assertThat(profile.getFollowingCount()).isEqualTo(other.getFollowingCount());
+            assertThat(profile.getIsFollowedByMe()).isTrue();
+        }
+
+        @DisplayName("팔로우 하지 않은 사람 정보 조회")
+        @Test
+        void getUnfollowingProfileTest() {
+            // given
+            signupAndLogin("testDisplayId", "testEmail@test.net");
+            Member other = signup("other", "other@test.net");
+
+            // when
+            MemberResDto profile = memberService.getProfile(other.getDisplayId());
+
+            // then
+            assertThat(profile.getIsFollowedByMe()).isFalse();
+        }
     }
 
     @DisplayName("activate 테스트")
     @Test
     void activate() {
-        CustomException customException = assertThrows(CustomException.class, () -> memberService.activate());
-        Assertions.assertEquals(ErrorCode.ALREADY_ACTIVATED, customException.getErrorCode());
+        Member member = signupAndLogin("testDisplayId", "testEmail@test.net");
+
+        CustomException ex = assertThrows(CustomException.class, () -> memberService.activate());
+        assertEquals(ErrorCode.ALREADY_ACTIVATED, ex.getErrorCode());
 
         memberService.deactivate();
         memberService.activate();
-        Member member = memberRepository.findById(memberId).get();
 
         assertTrue(member.isActive());
     }
@@ -77,19 +93,11 @@ class MemberServiceTest {
     @DisplayName("de-activate 테스트")
     @Test
     void deactivate() {
+        Member member = signupAndLogin("testDisplayId", "testEmail@test.net");
         memberService.deactivate();
-        Member member = memberRepository.findById(memberId).get();
         assertFalse(member.isActive());
 
-        CustomException customException = assertThrows(CustomException.class, () -> memberService.deactivate());
-        assertEquals(ErrorCode.ALREADY_DEACTIVATED, customException.getErrorCode());
-    }
-
-    @DisplayName("delete 테스트")
-    @Test
-    void delete() {
-        memberService.delete();
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        assertEquals(Optional.empty(), findMember);
+        CustomException ex = assertThrows(CustomException.class, () -> memberService.deactivate());
+        assertEquals(ErrorCode.ALREADY_DEACTIVATED, ex.getErrorCode());
     }
 }

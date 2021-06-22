@@ -1,10 +1,7 @@
 package our.yurivongella.instagramclone.service;
 
 import lombok.RequiredArgsConstructor;
-import our.yurivongella.instagramclone.controller.dto.profile.ProfileDto;
 import our.yurivongella.instagramclone.controller.dto.profile.ProfilePostDto;
-import our.yurivongella.instagramclone.controller.dto.profile.SimpleProfileDto;
-import our.yurivongella.instagramclone.repository.FollowRepository;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.entity.Post;
 import our.yurivongella.instagramclone.entity.PostLike;
@@ -32,27 +29,8 @@ public class ProfileService {
     private static final PageRequest pageRequest = PageRequest.of(0, 12, Sort.by("id").descending());
 
     private final MemberRepository memberRepository;
-    private final FollowRepository followRepository;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
-
-    public SimpleProfileDto getMySimpleProfile() {
-        return SimpleProfileDto.of(getCurrentMember());
-    }
-
-    public ProfileDto getMyProfile() {
-        return ProfileDto.of(getCurrentMember());
-    }
-
-    public ProfileDto getProfile(String displayId) {
-        Member member = getMemberByDisplayId(displayId);
-        ProfileDto profileDto = ProfileDto.of(member);
-
-        followRepository.findByFromMemberAndToMember(getCurrentMember(), member)
-                        .ifPresent(ignored -> profileDto.getMemberDto().setFollowTrue());
-
-        return profileDto;
-    }
 
     public List<ProfilePostDto> getMyPosts(Long lastPostId) {
         if (lastPostId == null) {

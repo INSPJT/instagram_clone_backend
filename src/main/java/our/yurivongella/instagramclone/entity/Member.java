@@ -103,12 +103,6 @@ public class Member extends BaseEntity {
         return Objects.equals(id, other.getId());
     }
 
-    public boolean isFollowingTo(Member other) {
-        return followings.stream()
-                         .map(Follow::getToMember)
-                         .anyMatch(toMember -> toMember.equals(other));
-    }
-
     public boolean isFollowedBy(Member other) {
         return followers.stream()
                         .map(Follow::getFromMember)
@@ -143,6 +137,6 @@ public class Member extends BaseEntity {
     }
 
     public boolean isActive() {
-        return this.active.booleanValue();
+        return this.active;
     }
 }
