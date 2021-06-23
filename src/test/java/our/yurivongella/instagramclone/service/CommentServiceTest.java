@@ -50,7 +50,7 @@ class CommentServiceTest extends TestBase {
         CommentResDto dto =  commentService.getCommentsFromPost(postId, null);
 
         assertThat(dto.getHasNext()).isFalse();
-        assertThat(dto.getCommentResDtos()).isEmpty();
+        assertThat(dto.getComments()).isEmpty();
     }
 
     @DisplayName("댓글 추가 테스트")
@@ -69,7 +69,7 @@ class CommentServiceTest extends TestBase {
 
             // then
             CommentResDto commentResDto = commentService.getCommentsFromPost(postId, null);
-            List<CommentDto> commentDtos = commentResDto.getCommentResDtos();
+            List<CommentDto> commentDtos = commentResDto.getComments();
 
             assertThat(commentDtos.size()).isEqualTo(2);
 

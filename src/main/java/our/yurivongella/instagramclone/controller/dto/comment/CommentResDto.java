@@ -12,12 +12,12 @@ import lombok.*;
 @ToString
 public class CommentResDto {
     private Boolean hasNext;
-    private List<CommentDto> commentResDtos = new ArrayList<>();
+    private List<CommentDto> comments = new ArrayList<>();
 
-    public static CommentResDto of(boolean hasNext, List<CommentDto> commentResDto) {
+    public static CommentResDto of(boolean hasNext, List<CommentDto> comments) {
         return CommentResDto.builder()
                             .hasNext(hasNext)
-                            .commentResDtos(commentResDto)
+                            .comments(comments)
                             .build();
     }
 }
