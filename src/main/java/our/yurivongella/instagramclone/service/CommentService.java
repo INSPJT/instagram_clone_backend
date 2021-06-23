@@ -1,7 +1,6 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import our.yurivongella.instagramclone.entity.Post;
 import our.yurivongella.instagramclone.repository.FollowRepository;
 import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import com.sun.istack.NotNull;
@@ -55,9 +53,7 @@ public class CommentService {
     @Transactional
     public CommentDto createComment(Long postId, CommentReqDto commentReqDto) {
         Member member = getCurrentMember();
-
-        Post post = postRepository.findById(postId)
-                                  .orElseThrow(() -> new NoSuchElementException("해당 게시물이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         Comment comment = new Comment(member, post, commentReqDto.getContent());
         commentRepository.save(comment);
@@ -102,7 +98,7 @@ public class CommentService {
     private CommentLike createCommentLike(Member member, Comment comment) {
         commentLikeRepository.findByCommentIdAndMemberId(comment.getId(), member.getId()).ifPresent(commentLike -> {
             log.error("[댓글 번호:{}] {}가 이미 좋아요를 하고 있습니다.", comment.getId(), member.getId());
-            throw new CustomException(ErrorCode.ALREADY_LIKE);
+            throw new CustomException(ALREADY_LIKE);
         });
         return new CommentLike().like(member, comment);
     }
@@ -111,7 +107,7 @@ public class CommentService {
     public ProcessStatus unlikeComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
-        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, member.getId()).orElseThrow(() -> new CustomException(ErrorCode.ALREADY_UNLIKE));
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, member.getId()).orElseThrow(() -> new CustomException(ALREADY_UNLIKE));
 
         try {
             commentLike.unlike();
@@ -121,16 +117,6 @@ public class CommentService {
             return ProcessStatus.FAIL;
         }
         return ProcessStatus.SUCCESS;
-    }
-
-    private Member getCurrentMember() {
-        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                               .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
-    }
-
-    private Comment getCurrentComment(Long commentId) {
-        return commentRepository.findById(commentId)
-                                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
     @Transactional
@@ -171,5 +157,14 @@ public class CommentService {
 
         return commentDto;
     }
+
+    private Member getCurrentMember() {
+        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
+                               .orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+    }
+
+    private Comment getCurrentComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
     }
 }

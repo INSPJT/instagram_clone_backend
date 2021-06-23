@@ -126,7 +126,7 @@ public class PostService {
 
     private Member getCurrentMember() {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                               .orElseThrow(() -> new NoSuchElementException("현재 계정 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_MEMBER));
     }
 
     @Transactional(readOnly = true)
@@ -141,7 +141,7 @@ public class PostService {
         PostResDto postResDto = new PostResDto();
         final boolean hasNext = SliceHelper.hasNext(content, pageSize);
         postResDto.setHasNext(hasNext);
-        content = SliceHelper.getContents(content, hasNext, pageSize);
+        content = SliceHelper.getContents(content, pageSize);
 
         postResDto.setFeeds(content.stream()
                                    .map(post -> PostReadResDto.of(post, currentMember))
