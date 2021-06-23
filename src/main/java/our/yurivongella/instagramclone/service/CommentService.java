@@ -96,7 +96,7 @@ public class CommentService {
     }
 
     private CommentLike createCommentLike(Member member, Comment comment) {
-        commentLikeRepository.findByCommentIdAndMemberId(comment.getId(), member.getId()).ifPresent(commentLike -> {
+        commentLikeRepository.findByMemberAndComment(member, comment).ifPresent(commentLike -> {
             log.error("[댓글 번호:{}] {}가 이미 좋아요를 하고 있습니다.", comment.getId(), member.getId());
             throw new CustomException(ALREADY_LIKE);
         });
@@ -107,7 +107,7 @@ public class CommentService {
     public ProcessStatus unlikeComment(@NotNull Long commentId) {
         Member member = getCurrentMember();
         Comment comment = getCurrentComment(commentId);
-        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, member.getId()).orElseThrow(() -> new CustomException(ALREADY_UNLIKE));
+        CommentLike commentLike = commentLikeRepository.findByMemberAndComment(member, comment).orElseThrow(() -> new CustomException(ALREADY_UNLIKE));
 
         try {
             commentLike.unlike();
@@ -152,7 +152,7 @@ public class CommentService {
         followRepository.findByFromMemberAndToMember(currentMember, comment.getMember())
                         .ifPresent(ignored -> commentDto.getAuthor().setFollowTrue());
 
-        commentLikeRepository.findByCommentIdAndMemberId(comment.getId(), currentMember.getId())
+        commentLikeRepository.findByMemberAndComment(currentMember, comment)
                              .ifPresent(ignored -> commentDto.setLikeTrue());
 
         return commentDto;
