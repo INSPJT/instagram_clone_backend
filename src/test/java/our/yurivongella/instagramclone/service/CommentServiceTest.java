@@ -280,7 +280,11 @@ class CommentServiceTest extends TestBase {
             commentService.createNestedComment(commentDto.getId(), new CommentReqDto("대댓글2"));
 
             // then
+            CommentResDto nestedComments = commentService.findNestedComments(commentDto.getId(), null);
             Comment baseComment = commentRepository.findById(commentDto.getId()).get();
+
+            assertThat(nestedComments.getHasNext()).isFalse();
+            assertThat(nestedComments.getComments()).isNotEmpty();
 
             assertThat(baseComment.getBaseComment()).isNull(); // 최상위 댓글
             assertThat(baseComment.getContent()).isEqualTo("test comment");
@@ -296,9 +300,13 @@ class CommentServiceTest extends TestBase {
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when
+            CommentResDto nestedComments = commentService.findNestedComments(commentDto.getId(), null);
             Comment baseComment = commentRepository.findById(commentDto.getId()).get();
 
             // then
+            assertThat(nestedComments.getHasNext()).isFalse();
+            assertThat(nestedComments.getComments()).isEmpty();
+
             assertThat(baseComment.getBaseComment()).isNull(); // 최상위 댓글
             assertThat(baseComment.getContent()).isEqualTo("test comment");
             assertThat(baseComment.getNestedComments().size()).isEqualTo(0);
