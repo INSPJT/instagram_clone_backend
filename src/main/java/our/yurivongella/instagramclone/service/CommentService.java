@@ -14,6 +14,7 @@ import our.yurivongella.instagramclone.entity.CommentLike;
 import our.yurivongella.instagramclone.repository.CommentLikeRepository;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.entity.Post;
+import our.yurivongella.instagramclone.repository.FollowRepository;
 import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
@@ -27,6 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 import our.yurivongella.instagramclone.entity.Comment;
 import our.yurivongella.instagramclone.repository.comment.CommentRepository;
 import our.yurivongella.instagramclone.repository.MemberRepository;
+import our.yurivongella.instagramclone.util.SliceHelper;
+
+import static java.util.stream.Collectors.toList;
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @Transactional(readOnly = true)
 @Service
@@ -40,11 +45,11 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final FollowRepository followRepository;
 
     public CommentResDto getCommentsFromPost(Long postId, Long lastId) {
-        final Member member = getCurrentMember();
-        final List<Comment> content = commentRepository.findCommentsFromPost(postId, lastId, COMMENT_PAGE_SIZE);// 그냥 댓글만 가져옴
-        return CommentResDto.create(member, content, COMMENT_PAGE_SIZE);
+        final List<Comment> comments = commentRepository.findCommentsFromPost(postId, lastId, COMMENT_PAGE_SIZE);   // 그냥 댓글만 가져옴
+        return createCommentResDto(comments, COMMENT_PAGE_SIZE);
     }
 
     @Transactional
@@ -56,7 +61,7 @@ public class CommentService {
 
         Comment comment = new Comment(member, post, commentReqDto.getContent());
         commentRepository.save(comment);
-        return CommentDto.of(comment, member);
+        return CommentDto.of(comment);
     }
 
     @Transactional
@@ -131,17 +136,40 @@ public class CommentService {
     @Transactional
     public CommentDto createNestedComment(final Long baseCommentId, final CommentReqDto commentReqDto) {
         final Member currentMember = getCurrentMember();
-        final Comment baseComment = commentRepository.findById(baseCommentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+        final Comment baseComment = getCurrentComment(baseCommentId);
         final Comment comment = commentReqDto.toEntity(currentMember, baseComment.getPost());
         comment.addComment(baseComment);
 
         final Comment savedComment = commentRepository.save(comment);
-        return CommentDto.of(savedComment, currentMember);
+        return CommentDto.of(savedComment);
     }
 
     public CommentResDto findNestedComments(final Long commentId, final Long lastId) {
-        final Member member = getCurrentMember();
-        final List<Comment> content = commentRepository.findNestedCommentsById(commentId, lastId, NESTED_COMMENT_PAGE_SIZE);
-        return CommentResDto.create(member, content, NESTED_COMMENT_PAGE_SIZE);
+        final List<Comment> comments = commentRepository.findNestedCommentsById(commentId, lastId, NESTED_COMMENT_PAGE_SIZE);
+        return createCommentResDto(comments, NESTED_COMMENT_PAGE_SIZE);
+    }
+
+    private CommentResDto createCommentResDto(List<Comment> comments, int pageSize) {
+        boolean hasNext = SliceHelper.hasNext(comments, pageSize);
+        List<CommentDto> commentDtos = SliceHelper.getContents(comments, pageSize)
+                                                  .stream()
+                                                  .map(this::createCommentDto)
+                                                  .collect(toList());
+
+        return CommentResDto.of(hasNext, commentDtos);
+    }
+
+    private CommentDto createCommentDto(Comment comment) {
+        Member currentMember = getCurrentMember();
+        CommentDto commentDto = CommentDto.of(comment);
+
+        followRepository.findByFromMemberAndToMember(currentMember, comment.getMember())
+                        .ifPresent(ignored -> commentDto.getAuthor().setFollowTrue());
+
+        commentLikeRepository.findByCommentIdAndMemberId(comment.getId(), currentMember.getId())
+                             .ifPresent(ignored -> commentDto.setLikeTrue());
+
+        return commentDto;
+    }
     }
 }
