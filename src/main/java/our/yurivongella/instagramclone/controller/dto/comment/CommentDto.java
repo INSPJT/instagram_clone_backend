@@ -21,15 +21,15 @@ public class CommentDto {
     private LocalDateTime createdDate;
 
     public static CommentDto of(Comment comment) {
-        return CommentDto.builder()
-                         .id(comment.getId())
-                         .content(comment.getContent())
-                         .author(MemberResDto.of(comment.getMember()))
-                         .isLike(false)
-                         .likeCount(comment.getLikeCount())
-                         .nestedCommentCount(comment.getNestedComments().size())
-                         .createdDate(comment.getCreatedDate())
-                         .build();
+        return builder()
+              .id(comment.getId())
+              .content(comment.getContent())
+              .author(MemberResDto.of(comment.getMember()))
+              .isLike(false)
+              .likeCount(comment.getLikeCount())
+              .nestedCommentCount(comment.getNestedComments().size())
+              .createdDate(comment.getCreatedDate())
+              .build();
     }
 
     public void setLikeTrue() {

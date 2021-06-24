@@ -15,9 +15,9 @@ public class CommentResDto {
     private List<CommentDto> comments = new ArrayList<>();
 
     public static CommentResDto of(boolean hasNext, List<CommentDto> comments) {
-        return CommentResDto.builder()
-                            .hasNext(hasNext)
-                            .comments(comments)
-                            .build();
+        return builder()
+              .hasNext(hasNext)
+              .comments(comments)
+              .build();
     }
 }
