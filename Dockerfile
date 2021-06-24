@@ -12,4 +12,4 @@ COPY --from=builder build/libs/*.jar insta.jar
 VOLUME ["/var/log"]
 
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","-Dspring.profiles.active=real","/insta.jar"]
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=${profile}","/insta.jar"]
