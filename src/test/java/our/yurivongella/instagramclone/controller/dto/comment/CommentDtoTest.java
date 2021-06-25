@@ -1,11 +1,12 @@
 package our.yurivongella.instagramclone.controller.dto.comment;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import our.yurivongella.instagramclone.entity.Comment;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.entity.Post;
+
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -16,7 +17,7 @@ public class CommentDtoTest {
     void test() {
         // given
         Member member = createMember();
-        Post post = createPost();
+        Post post = new Post(member, "test post", Collections.emptyList());
         Comment comment = new Comment(member, post, "test content");
 
         // when
@@ -42,11 +43,5 @@ public class CommentDtoTest {
                      .password("1q2w3e4r")
                      .profileImageUrl("test.img")
                      .build();
-    }
-
-    private Post createPost() {
-        return Post.builder()
-                   .content("test post")
-                   .build();
     }
 }
