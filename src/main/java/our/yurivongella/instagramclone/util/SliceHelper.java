@@ -21,8 +21,8 @@ public class SliceHelper {
         return content.size() > pageSize;
     }
 
-    public static <T> List<T> getContents(final List<T> content, final boolean hasNext, final int pageSize) {
-        if (hasNext) {
+    public static <T> List<T> getContents(final List<T> content, final int pageSize) {
+        if (hasNext(content, pageSize)) {
             content.remove(pageSize);
         }
         return content;

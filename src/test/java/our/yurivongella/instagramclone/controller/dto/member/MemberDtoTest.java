@@ -1,4 +1,4 @@
-package our.yurivongella.instagramclone.controller.dto;
+package our.yurivongella.instagramclone.controller.dto.member;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
