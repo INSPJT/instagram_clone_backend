@@ -38,6 +38,18 @@ public class PostRepositoryImpl implements CustomPostRepository {
         return followings;
     }
 
+    @Override
+    public List<Post> findAllByMemberIdAndIdLessThan(Long memberId, Long lastId, int pageSize) {
+        return queryFactory.selectFrom(post)
+                           .where(
+                                   post.member.id.eq(memberId),
+                                   ltPostId(lastId)
+                           )
+                           .orderBy(post.id.desc())
+                           .limit(pageSize + 1)
+                           .fetch();
+    }
+
     private BooleanExpression ltPostId(final Long lastId) {
         return lastId == null ? null : post.id.lt(lastId);
     }
