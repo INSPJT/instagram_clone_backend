@@ -55,7 +55,7 @@ public class CommentService {
         Member member = getCurrentMember();
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-        Comment comment = new Comment(member, post, commentReqDto.getContent());
+        Comment comment = commentReqDto.toEntity(member, post);
         commentRepository.save(comment);
         return CommentDto.of(comment);
     }
