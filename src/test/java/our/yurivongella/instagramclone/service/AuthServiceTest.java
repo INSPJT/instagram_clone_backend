@@ -77,8 +77,7 @@ public class AuthServiceTest extends TestBase {
 
             // when
             assertThatExceptionOfType(BadCredentialsException.class)
-                    .isThrownBy(() -> authService.signin(signinReqDto))
-                    .withMessage("자격 증명에 실패하였습니다.");
+                    .isThrownBy(() -> authService.signin(signinReqDto));
         }
 
         @DisplayName("비밀번호 불일치로 실패")
@@ -90,8 +89,7 @@ public class AuthServiceTest extends TestBase {
 
             // when
             assertThatExceptionOfType(BadCredentialsException.class)
-                    .isThrownBy(() -> authService.signin(signinReqDto))
-                    .withMessage("자격 증명에 실패하였습니다.");
+                    .isThrownBy(() -> authService.signin(signinReqDto));
         }
     }
 
