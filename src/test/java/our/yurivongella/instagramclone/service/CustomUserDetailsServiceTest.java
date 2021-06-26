@@ -14,42 +14,23 @@ import our.yurivongella.instagramclone.repository.MemberRepository;
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("UserDetailsService 테스트")
-@SpringBootTest
-@Transactional
-public class CustomUserDetailsServiceTest {
-    @MockBean
-    private S3Service s3Service;
+public class CustomUserDetailsServiceTest extends TestBase {
 
     @Autowired
     CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    MemberRepository memberRepository;
 
     @DisplayName("이메일로 유저 정보 가져오기")
     @Test
     public void loadUserByUsernameTest() {
         // given
-        String displayId = "test";
-        String nickname = "testNickname";
-        String email = "customUserDetailsService@test.net";
-        String password = "1q2w3e4r";
-
-        Member member = Member.builder()
-                              .displayId(displayId)
-                              .nickname(nickname)
-                              .email(email)
-                              .password(password)
-                              .build();
+        final String EMAIL = "test@test.net";
+        signup("test", EMAIL);
 
         // when
-        memberRepository.save(member);
-
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(EMAIL);
 
         // then
-        Member foundMember = memberRepository.findByEmail(email).get();
-        assertThat(userDetails.getUsername()).isEqualTo(foundMember.getId().toString());
-        assertThat(memberRepository.findByEmail(email).isPresent()).isTrue();
+        Member member = memberRepository.findByEmail(EMAIL).get();
+        assertThat(userDetails.getUsername()).isEqualTo(member.getId().toString());
     }
 }
