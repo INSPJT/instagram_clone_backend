@@ -45,7 +45,6 @@ public class MediaUrl extends BaseEntity {
             "x-icon"
     );
 
-    @Builder
     public MediaUrl(String url, Post post) {
         this.url = url;
         this.post = post;

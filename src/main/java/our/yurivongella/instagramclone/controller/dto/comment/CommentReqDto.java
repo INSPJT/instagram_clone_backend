@@ -11,7 +11,6 @@ import our.yurivongella.instagramclone.entity.Comment;
 import our.yurivongella.instagramclone.entity.Post;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class CommentReqDto {
 

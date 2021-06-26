@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CustomPostRepository {
     List<Post> findAllByJoinFollow(Long memberId, Long lastId, int pageSize);
+    List<Post> findAllByMemberIdAndIdLessThan(Long memberId, Long lastId, int pageSize);
 }
