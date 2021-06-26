@@ -19,12 +19,9 @@ import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.entity.RefreshToken;
 import our.yurivongella.instagramclone.repository.RefreshTokenRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
 import our.yurivongella.instagramclone.jwt.TokenProvider;
 
 import static our.yurivongella.instagramclone.exception.ErrorCode.*;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,12 +36,9 @@ public class AuthService {
 
     @Transactional
     public String signup(SignupReqDto signupReqDto) {
+        checkDisplayId(signupReqDto.getDisplayId());
+        checkEmail(signupReqDto.getEmail());
         Member member = signupReqDto.toMember(passwordEncoder);
-        Optional<Member> optMember = memberRepository.findByEmail(signupReqDto.getEmail());
-        if (optMember.isPresent()) {
-            log.error("이미 존재하는 유저입니다.");
-            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE);
-        }
         return memberRepository.save(member).getEmail();
     }
 
@@ -106,14 +100,16 @@ public class AuthService {
     }
 
     private boolean checkDisplayId(String displayId) {
-        Optional<Member> member = memberRepository.findByDisplayId(displayId);
-        if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
+        memberRepository.findByDisplayId(displayId).ifPresent(ignored -> {
+            throw new CustomException(ALREADY_EXISTS_DISPLAY_ID);
+        });
         return true;
     }
 
     private boolean checkEmail(String email) {
-        Optional<Member> member = memberRepository.findByEmail(email);
-        if (member.isPresent()) { throw new CustomException(DUPLICATE_RESOURCE); }
+        memberRepository.findByEmail(email).ifPresent(ignored -> {
+            throw new CustomException(ALREADY_EXISTS_EMAIL);
+        });
         return true;
     }
 }

@@ -31,6 +31,8 @@ public enum ErrorCode {
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
+    ALREADY_EXISTS_DISPLAY_ID(CONFLICT, "이미 존재하는 Display ID 입니다."),
+    ALREADY_EXISTS_EMAIL(CONFLICT, "이미 존재하는 이메일입니다."),
     ALREADY_LIKE(CONFLICT, "더 이상 좋아요를 할 수 없습니다"),
     ALREADY_DEACTIVATED(CONFLICT, "이미 비활성화 상태입니다."),
     ALREADY_ACTIVATED(CONFLICT, "이미 활성화 상태입니다."),
