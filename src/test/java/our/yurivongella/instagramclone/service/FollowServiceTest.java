@@ -25,21 +25,10 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("회원 테스트")
 @Transactional
 @SpringBootTest
-class FollowServiceTest {
-    @MockBean
-    private S3Service s3Service;
-
-    @Autowired
-    private AuthService authService;
+class FollowServiceTest extends TestBase {
 
     @Autowired
     private FollowService followService;
-
-    @Autowired
-    private FollowRepository followRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
 
     private final String myDisplayId = "test1";
     private final String myNickname = "testNickname1";
