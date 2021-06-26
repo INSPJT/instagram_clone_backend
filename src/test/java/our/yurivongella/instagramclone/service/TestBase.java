@@ -22,20 +22,24 @@ import java.util.List;
 @Transactional
 @SpringBootTest
 public abstract class TestBase {
+
     @MockBean
     protected S3Service s3Service;
+
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
 
     @Autowired
     protected MemberRepository memberRepository;
 
     @Autowired
-    private FollowRepository followRepository;
+    protected FollowRepository followRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    protected AuthService authService;
 
     @Autowired
-    private PostService postService;
+    protected PostService postService;
 
     /* 테스트 계정 가입하기 */
     public Member signup(String displayId, String email) {
@@ -46,9 +50,8 @@ public abstract class TestBase {
                                                 .nickname("test nickname")
                                                 .build();
 
-        Member member = signupReqDto.toMember(passwordEncoder);
-        memberRepository.save(member);
-        return member;
+        authService.signup(signupReqDto);
+        return memberRepository.findByEmail(email).get();
     }
 
     /* 테스트 계정 로그인 시키기 */

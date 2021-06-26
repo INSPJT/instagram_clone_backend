@@ -1,60 +1,23 @@
 package our.yurivongella.instagramclone.service;
 
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import our.yurivongella.instagramclone.controller.dto.member.SigninReqDto;
-import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
 import our.yurivongella.instagramclone.controller.dto.member.token.TokenDto;
 import our.yurivongella.instagramclone.controller.dto.member.token.TokenReqDto;
 import our.yurivongella.instagramclone.entity.Member;
-import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
-import our.yurivongella.instagramclone.exception.ErrorCode;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static our.yurivongella.instagramclone.exception.ErrorCode.*;
 
 @DisplayName("가입/로그인 테스트")
-@SpringBootTest
-@Transactional
-public class AuthServiceTest {
-    @MockBean
-    private S3Service s3Service;
+public class AuthServiceTest extends TestBase {
 
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private final String displayId = "test";
-    private final String nickname = "testNickname";
-    private final String email = "authService1@test.net";
-    private final String password = "1q2w3e4r";
-
-    @BeforeEach
-    public void signupBeforeTest() {
-        // given
-        SignupReqDto signupReqDto = SignupReqDto.builder()
-                                                .displayId(displayId)
-                                                .nickname(nickname)
-                                                .email(email)
-                                                .password(password)
-                                                .build();
-
-        authService.signup(signupReqDto);
-    }
+    private static final String PASSWORD = "1q2w3e4r";
 
     @DisplayName("가입하기")
     @Nested
@@ -63,30 +26,24 @@ public class AuthServiceTest {
         @DisplayName("성공")
         @Test
         public void successSignup() {
+            // given
+            signup("testAuth", "testAuth@test.net");
+
             // then
-            Optional<Member> member = memberRepository.findByEmail(email);
-            assertThat(member.isPresent()).isTrue();
-            assertThat(member.get().getNickname()).isEqualTo(nickname);
-            assertThat(member.get().getDisplayId()).isEqualTo(displayId);
-            assertThat(member.get().getEmail()).isEqualTo(email);
-            assertThat(
-                    passwordEncoder.matches(password, member.get().getPassword())
-            ).isTrue();
+            Member member = memberRepository.findByEmail("testAuth@test.net").get();
+            assertThat(member.getNickname()).isEqualTo("test nickname");
+            assertThat(member.getDisplayId()).isEqualTo("testAuth");
+            assertThat(member.getEmail()).isEqualTo("testAuth@test.net");
+            assertThat(passwordEncoder.matches(PASSWORD, member.getPassword())).isTrue();
         }
 
         @DisplayName("중복 가입해서 실패")
         @Test
         public void failSignup() {
-            SignupReqDto signupReqDto = SignupReqDto.builder()
-                                                    .displayId("test2")
-                                                    .nickname("testNickname2")
-                                                    .email(email)
-                                                    .password("1q2w3e4r5t")
-                                                    .build();
-            Assertions.assertThrows(
-                    RuntimeException.class,
-                    () -> authService.signup(signupReqDto)
-            );
+            signup("testAuth", "testAuth@test.net");
+
+            CustomException ex = assertThrows(CustomException.class, () -> signup("testAuth", "testAuth@test.net"));
+            Assertions.assertEquals(ALREADY_EXISTS_DISPLAY_ID, ex.getErrorCode());
         }
     }
 
@@ -98,10 +55,9 @@ public class AuthServiceTest {
         @Test
         public void successLogin() {
             // given
-            SigninReqDto signinReqDto = SigninReqDto.builder()
-                                                    .email(email)
-                                                    .password(password)
-                                                    .build();
+            signup("testAuth", "testAuth@test.net");
+            SigninReqDto signinReqDto = new SigninReqDto("testAuth@test.net", PASSWORD);
+
             // when
             TokenDto tokenDto = authService.signin(signinReqDto);
 
@@ -116,32 +72,26 @@ public class AuthServiceTest {
         @Test
         public void mismatchEmail() {
             // given
-            SigninReqDto signinReqDto = SigninReqDto.builder()
-                                                    .email("mismatch" + email)
-                                                    .password(password)
-                                                    .build();
+            signup("testAuth", "testAuth@test.net");
+            SigninReqDto signinReqDto = new SigninReqDto("mismatch", PASSWORD);
 
             // when
-            Assertions.assertThrows(
-                    RuntimeException.class,
-                    () -> authService.signin(signinReqDto)
-            );
+            assertThatExceptionOfType(BadCredentialsException.class)
+                    .isThrownBy(() -> authService.signin(signinReqDto))
+                    .withMessage("자격 증명에 실패하였습니다.");
         }
 
         @DisplayName("비밀번호 불일치로 실패")
         @Test
         public void mismatchPassword() {
             // given
-            SigninReqDto signinReqDto = SigninReqDto.builder()
-                                                    .email(email)
-                                                    .password(password + "adfsdf")
-                                                    .build();
+            signup("testAuth", "testAuth@test.net");
+            SigninReqDto signinReqDto = new SigninReqDto("testAuth@test.net", "mismatch");
 
             // when
-            Assertions.assertThrows(
-                    BadCredentialsException.class,
-                    () -> authService.signin(signinReqDto)
-            );
+            assertThatExceptionOfType(BadCredentialsException.class)
+                    .isThrownBy(() -> authService.signin(signinReqDto))
+                    .withMessage("자격 증명에 실패하였습니다.");
         }
     }
 
@@ -153,10 +103,12 @@ public class AuthServiceTest {
 
         @BeforeEach
         public void signinBeforeTest() {
+            signup("testAuth", "testAuth@test.net");
+
             tokenDto = authService.signin(
                     SigninReqDto.builder()
-                                .email(email)
-                                .password(password)
+                                .email("testAuth@test.net")
+                                .password(PASSWORD)
                                 .build()
             );
         }
@@ -193,10 +145,8 @@ public class AuthServiceTest {
                                                  .build();
 
             // when
-            Assertions.assertThrows(
-                    RuntimeException.class,
-                    () -> authService.reissue(tokenReqDto)
-            );
+            CustomException ex = Assertions.assertThrows(CustomException.class, () -> authService.reissue(tokenReqDto));
+            assertEquals(MISMATCH_REFRESH_TOKEN, ex.getErrorCode());
         }
 
         @DisplayName("Refresh + Refresh 요청해서 실패")
@@ -209,10 +159,8 @@ public class AuthServiceTest {
                                                  .build();
 
             // when
-            Assertions.assertThrows(
-                    RuntimeException.class,
-                    () -> authService.reissue(tokenReqDto)
-            );
+            CustomException ex = Assertions.assertThrows(CustomException.class, () -> authService.reissue(tokenReqDto));
+            assertEquals(INVALID_AUTH_TOKEN, ex.getErrorCode());
         }
 
         @DisplayName("Refresh + Access 요청해서 실패")
@@ -225,60 +173,43 @@ public class AuthServiceTest {
                                                  .build();
 
             // when
-            Assertions.assertThrows(
-                    RuntimeException.class,
-                    () -> authService.reissue(tokenReqDto)
-            );
+            CustomException ex = Assertions.assertThrows(CustomException.class, () -> authService.reissue(tokenReqDto));
+            assertEquals(INVALID_AUTH_TOKEN, ex.getErrorCode());
         }
     }
 
     @DisplayName("중복 검사")
     @Nested
     class ValidateResource {
-        @DisplayName("검사 요청을 한 이메일이 DB에 존재하지 않을 때")
+
+        @DisplayName("검사 요청을 한 이메일이 DB 에 존재하지 않을 때")
         @Test
-        public void check_email_success() {
-            boolean validate = authService.validate("adamdoha@naver.com");
+        void check_email_success() {
+            boolean validate = authService.validate("testAuth@test.net");
             Assertions.assertTrue(validate);
         }
 
-        @DisplayName("검사 요청을 한 이메일이 DB에 이미 존재할 때")
+        @DisplayName("검사 요청을 한 이메일이 DB 에 이미 존재할 때")
         @Test
-        public void check_email_fail() {
-            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("authService1@test.net"));
-            assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
+        void check_email_fail() {
+            signup("testAuth", "testAuth@test.net");
+            CustomException ex = Assertions.assertThrows(CustomException.class, () -> authService.validate("testAuth@test.net"));
+            assertEquals(ALREADY_EXISTS_EMAIL, ex.getErrorCode());
         }
 
-        @DisplayName("검사 요청을 한 displayId가 DB에 존재하지 않을 때")
+        @DisplayName("검사 요청을 한 displayId 가 DB에 존재하지 않을 때")
         @Test
-        public void check_displayId_success() {
-            boolean validate = authService.validate("adamdoha");
+        void check_displayId_success() {
+            boolean validate = authService.validate("testAuth");
             Assertions.assertTrue(validate);
         }
 
-        @DisplayName("검사 요청을 한 displayId가 DB에 이미 존재할 때")
+        @DisplayName("검사 요청을 한 displayId 가 DB 에 이미 존재할 때")
         @Test
-        public void check_displayId_fail() {
-            CustomException customException = Assertions.assertThrows(CustomException.class, () -> authService.validate("test"));
-            assertEquals(ErrorCode.DUPLICATE_RESOURCE, customException.getErrorCode());
+        void check_displayId_fail() {
+            signup("testAuth", "testAuth@test.net");
+            CustomException ex = Assertions.assertThrows(CustomException.class, () -> authService.validate("testAuth"));
+            assertEquals(ALREADY_EXISTS_DISPLAY_ID, ex.getErrorCode());
         }
-    }
-
-    @DisplayName("activate 테스트")
-    @Test
-    void activate() {
-
-    }
-
-    @DisplayName("de-activate 테스트")
-    @Test
-    void deactivate() {
-
-    }
-
-    @DisplayName("delete 테스트")
-    @Test
-    void delete() {
-
     }
 }
