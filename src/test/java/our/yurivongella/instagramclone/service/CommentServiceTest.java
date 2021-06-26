@@ -1,6 +1,5 @@
 package our.yurivongella.instagramclone.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +13,6 @@ import our.yurivongella.instagramclone.controller.dto.comment.CommentReqDto;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentResDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.controller.dto.comment.CommentDto;
-import our.yurivongella.instagramclone.controller.dto.post.PostCreateReqDto;
 import our.yurivongella.instagramclone.entity.Comment;
 import our.yurivongella.instagramclone.repository.comment.CommentRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
@@ -44,7 +42,7 @@ class CommentServiceTest extends TestBase {
     @Test
     void testGetCommentsFromPost() {
         // given
-        Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+        Long postId = createPost("test post").getId();
 
         // then
         CommentResDto dto =  commentService.getCommentsFromPost(postId, null);
@@ -61,7 +59,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void success() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
 
             // when
             commentService.createComment(postId, new CommentReqDto("test comment"));
@@ -105,7 +103,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void successDelete() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
             Comment deletedComment = commentRepository.findById(commentDto.getId()).get();
 
@@ -129,7 +127,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void failWhenDeleteNotMineComment() {
             // testComment 계정으로 댓글 작성 후 other 계정으로 댓글 삭제 시도
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
             Comment deletedComment = commentRepository.findById(commentDto.getId()).get();
 
@@ -152,7 +150,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void successLike() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when
@@ -175,7 +173,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void failWhenAlreadyLiked() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when
@@ -195,7 +193,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void successUnlike() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when
@@ -219,7 +217,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void failWhenAlreadyUnlike() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when
@@ -236,7 +234,7 @@ class CommentServiceTest extends TestBase {
 
         @BeforeEach
         void beforeEach() {
-            postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            createPost("test post").getId();
         }
 
         @DisplayName("commentId = null 로 들어오는 comment 삭제 실패")
@@ -272,7 +270,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void successCreateAndRead() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when
@@ -296,7 +294,7 @@ class CommentServiceTest extends TestBase {
         @Test
         void failWhenNonExistentNestedComment() {
             // given
-            Long postId = postService.create(new PostCreateReqDto(Collections.emptyList(), "test post"));
+            Long postId = createPost("test post").getId();
             CommentDto commentDto = commentService.createComment(postId, new CommentReqDto("test comment"));
 
             // when

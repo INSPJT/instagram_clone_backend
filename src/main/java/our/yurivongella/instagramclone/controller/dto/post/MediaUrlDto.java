@@ -7,7 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter @Builder
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class MediaUrlDto {
@@ -17,9 +18,9 @@ public class MediaUrlDto {
 
     public static MediaUrlDto of(MediaUrl mediaUrl) {
         return MediaUrlDto.builder()
-                .mediaUrlId(mediaUrl.getId())
-                .url(mediaUrl.getUrl())
-                .type(mediaUrl.getTypeString())
-                .build();
+                          .mediaUrlId(mediaUrl.getId())
+                          .url(mediaUrl.getUrl())
+                          .type(mediaUrl.getTypeString())
+                          .build();
     }
 }

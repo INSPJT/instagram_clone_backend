@@ -2,6 +2,7 @@ package our.yurivongella.instagramclone.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,16 +57,22 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<Comment> comments = new ArrayList<>();
 
-    @Builder
-    public Post(String content) {
+    public Post(Member member, String content, List<String> imageUrls) {
         this.content = content;
+        addPost(member);
+        addMediaUrls(imageUrls);
     }
 
-    public Post addMember(Member member) {
+    private void addPost(Member member) {
         this.member = member;
         member.getPosts().add(this);
         member.plusPostCount();
-        return this;
+    }
+
+    private void addMediaUrls(List<String> imageUrls) {
+        this.mediaUrls = imageUrls.stream()
+                                  .map(url -> new MediaUrl(url, this))
+                                  .collect(Collectors.toList());
     }
 
     public void plusLikeCount() {
