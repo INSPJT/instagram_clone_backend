@@ -30,9 +30,6 @@ class CommentServiceTest extends TestBase {
     @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
-    private PostService postService;
-
     @BeforeEach
     void loginBeforeTest() {
         signupAndLogin("testComment", "testComment@test.net");
