@@ -11,7 +11,7 @@ import our.yurivongella.instagramclone.controller.dto.post.PostResDto;
 import our.yurivongella.instagramclone.controller.dto.ProcessStatus;
 import our.yurivongella.instagramclone.entity.*;
 import our.yurivongella.instagramclone.exception.ErrorCode;
-import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.repository.follow.FollowRepository;
 import our.yurivongella.instagramclone.util.SliceHelper;
 import our.yurivongella.instagramclone.repository.PostLikeRepository;
 import our.yurivongella.instagramclone.repository.post.PostRepository;

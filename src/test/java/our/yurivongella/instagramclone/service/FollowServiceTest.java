@@ -3,7 +3,6 @@ package our.yurivongella.instagramclone.service;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
 import our.yurivongella.instagramclone.controller.dto.member.SignupReqDto;
 import our.yurivongella.instagramclone.entity.Follow;
-import our.yurivongella.instagramclone.repository.FollowRepository;
 import our.yurivongella.instagramclone.entity.Member;
-import our.yurivongella.instagramclone.repository.MemberRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import java.util.Collections;
@@ -201,7 +198,10 @@ class FollowServiceTest extends TestBase {
         @DisplayName("내 팔로워 가져오기")
         @Test
         public void getFollowersTest() {
+            //when
             List<MemberResDto> followers = followService.getFollowers();
+
+            //then
             assertThat(followers.get(0).getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(followers.size()).isEqualTo(1);
         }
@@ -213,6 +213,49 @@ class FollowServiceTest extends TestBase {
             assertThat(followings.get(0).getDisplayId()).isEqualTo(targetDisplayId);
             assertThat(followings.get(1).getDisplayId()).isEqualTo(targetDisplayId + 3);
             assertThat(followings.size()).isEqualTo(2);
+        }
+    }
+
+    @DisplayName("특정유저 팔로워/팔로잉 리스트 가져오기")
+    @Nested
+    class UserFollowerAndFollowingTest {
+
+        @BeforeEach
+        public void followBeforeTest() {
+            Member member1 = memberRepository.findByEmail(myEmail).get();
+            Member member2 = memberRepository.findByEmail(targetEmail).get();
+            Member member3 = memberRepository.findByEmail(targetEmail + 3).get();
+
+            followRepository.save(Follow.builder().fromMember(member1).toMember(member2).build());
+            followRepository.save(Follow.builder().fromMember(member1).toMember(member3).build());
+            followRepository.save(Follow.builder().fromMember(member2).toMember(member1).build());
+
+            // 한명 로그인 처리
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(member1.getId(), "", Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        @DisplayName("특정 유저 팔로워 가져오기")
+        @Test
+        public void getFollowersTest() {
+            //when(Member2의 팔로워 정보)
+            List<MemberResDto> followers = followService.getFollowers(targetDisplayId);
+
+            //then
+            assertThat(followers.get(0).getDisplayId()).isEqualTo(myDisplayId);
+            assertThat(followers.size()).isEqualTo(1);
+        }
+
+        @DisplayName("특정 유저 팔로우 중인 대상들 가져오기")
+        @Test
+        public void getFollowingTest() {
+            //when(Member2의 팔로잉 정보)
+            List<MemberResDto> followings = followService.getFollowings(targetDisplayId);
+
+            //then
+            assertThat(followings.get(0).getDisplayId()).isEqualTo(myDisplayId);
+            assertThat(followings.size()).isEqualTo(1);
         }
     }
 }

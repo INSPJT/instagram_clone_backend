@@ -8,7 +8,7 @@ import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.exception.ErrorCode;
-import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.repository.follow.FollowRepository;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;

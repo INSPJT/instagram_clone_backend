@@ -55,6 +55,18 @@ public class MemberController {
         return ResponseEntity.ok(followService.getFollowings());
     }
 
+    @ApiOperation("특정 유저를 팔로우 하는 Followers 조회")
+    @GetMapping("/member/{displayId}/followers")
+    public ResponseEntity<List<MemberResDto>> getUserFollowers(@PathVariable String displayId) {
+        return ResponseEntity.ok(followService.getFollowers(displayId));
+    }
+
+    @ApiOperation("특정 유저가 팔로우 하는 Followings 조회")
+    @GetMapping("/member/{displayId}/followings")
+    public ResponseEntity<List<MemberResDto>> getUserFollowing(@PathVariable String displayId) {
+        return ResponseEntity.ok(followService.getFollowings(displayId));
+    }
+
     @ApiOperation("회원 상태 변경")
     @PutMapping("/member/activate")
     public ResponseEntity<ProcessStatus> activate(@RequestParam("state") boolean state){

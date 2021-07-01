@@ -13,7 +13,7 @@ import our.yurivongella.instagramclone.entity.CommentLike;
 import our.yurivongella.instagramclone.repository.CommentLikeRepository;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.entity.Post;
-import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.repository.follow.FollowRepository;
 import our.yurivongella.instagramclone.repository.post.PostRepository;
 import our.yurivongella.instagramclone.exception.CustomException;
 import our.yurivongella.instagramclone.util.SecurityUtil;

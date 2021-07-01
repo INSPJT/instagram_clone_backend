@@ -1,6 +1,7 @@
 package our.yurivongella.instagramclone.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import our.yurivongella.instagramclone.repository.FollowRepository;
+import our.yurivongella.instagramclone.repository.follow.FollowRepository;
 import our.yurivongella.instagramclone.entity.Member;
 import our.yurivongella.instagramclone.util.SecurityUtil;
 import our.yurivongella.instagramclone.controller.dto.member.MemberResDto;
@@ -85,6 +86,40 @@ public class FollowService {
                             })
                             .map(MemberResDto::of)
                             .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<MemberResDto> getFollowers(final String displayId) {
+        Member currentMember = getCurrentMember();
+        Optional<Member> targetMember = memberRepository.findByDisplayId(displayId);
+        log.info("현재 자신의 follower를 알고 싶은 유저 = {}", currentMember.getDisplayId());
+
+        // TODO: 페이지네이션으로 개션 필요
+        return currentMember.getFollowers().stream()
+                .map(f -> {
+                    Member fromMember = targetMember.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+                    log.info("{}를 팔로우 하는 유저 = {}", currentMember.getDisplayId(), fromMember.getDisplayId());
+                    return fromMember;
+                })
+                .map(MemberResDto::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<MemberResDto> getFollowings(final String displayId) {
+        Member currentMember = getCurrentMember();
+        Optional<Member> targetMember = memberRepository.findByDisplayId(displayId);
+        log.info("현재 자신이 following 하고 있는 사람들을 알고 싶은 유저 = {}", currentMember.getDisplayId());
+
+        // TODO: 페이지네이션으로 개션 필요
+        return currentMember.getFollowings().stream()
+                .map(f -> {
+                    Member toMember = targetMember.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+                    log.info("{}가 {}를 팔로잉 하고 있습니다.", currentMember.getDisplayId(), toMember.getDisplayId());
+                    return toMember;
+                })
+                .map(MemberResDto::of)
+                .collect(Collectors.toList());
     }
 
     /**
